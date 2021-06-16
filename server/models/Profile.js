@@ -31,10 +31,7 @@ const profileSchema = new mongoose.Schema({
     required: true,
   },
   //  sitter
-  hours_available: {
-    type: Number,
-    required: true,
-  },
+
   hourly_rate: {
     type: Number,
     required: true,
