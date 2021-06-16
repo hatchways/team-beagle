@@ -1,20 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
   root: {
-    // minHeight: '100vh',
-    // '& .MuiInput-underline:before': {
-    //   borderBottom: '1.2px solid rgba(0, 0, 0, 0.2)',
-    // },
+    backgroundColor: '#FFFFFF',
   },
-  // drawerWrapper: {
-  //   width: drawerWidth,
-  //   [theme.breakpoints.up('md')]: {
-  //     width: '300px',
-  //   },
-  // },
 
   dashboard: { backgroundColor: '#FFFFFF' },
 
@@ -41,8 +30,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   toolbarLeft: {
+    display: 'flex',
     marginLeft: 'auto',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   link: {
     fontWeight: 'bolder',

@@ -5,7 +5,6 @@ import useStyles from './useStyles';
 import { useAuth } from '../../context/useAuthContext';
 import { useSocket } from '../../context/useSocketContext';
 import { useHistory } from 'react-router-dom';
-import ChatSideBanner from '../../components/ChatSideBanner/ChatSideBanner';
 import { useEffect } from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -34,7 +33,7 @@ export default function Dashboard(): JSX.Element {
   const { loggedInUser, logout } = useAuth();
   const { initSocket } = useSocket();
   const history = useHistory();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 
   useEffect(() => {
     initSocket();
@@ -52,8 +51,7 @@ export default function Dashboard(): JSX.Element {
   const loggedIn = true;
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(e.currentTarget);
-    // setAnchorEl(e.currentTarget);
+    setAnchorEl(e.currentTarget);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -70,9 +68,7 @@ export default function Dashboard(): JSX.Element {
   return (
     <Grid container component="main" className={`${classes.root} ${classes.dashboard}`}>
       <CssBaseline />
-      {/* <Grid item className={classes.drawerWrapper}>
-        <ChatSideBanner loggedInUser={loggedInUser} />
-      </Grid> */}
+
       <AppBar position="relative" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href="/">
@@ -83,7 +79,7 @@ export default function Dashboard(): JSX.Element {
           </Link>
           <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
             {!loggedIn && (
-              <Grid container xs={12} sm={6} md={4} direction="row" alignItems="center" className={classes.toolbarLeft}>
+              <Grid item xs={12} sm={6} md={4} className={classes.toolbarLeft}>
                 <Link variant="button" underline="always" color="textPrimary" href="#" className={classes.link}>
                   BECOME A SITTER
                 </Link>
@@ -96,7 +92,7 @@ export default function Dashboard(): JSX.Element {
               </Grid>
             )}
             {loggedIn && (
-              <Grid container xs={12} sm={6} md={4} direction="row" alignItems="center" className={classes.toolbarLeft}>
+              <Grid item xs={12} sm={6} md={4} className={classes.toolbarLeft}>
                 <Link variant="button" href="#" className={classes.link}>
                   My Sitters
                 </Link>
