@@ -4,6 +4,5 @@ import useStyles from './useStyles';
 export default function ProfilePhoto(): JSX.Element {
   const classes = useStyles();
 
-  return <Grid>This is the Profile Photo section.</Grid>
-
+  return <Grid>This is the Profile Photo section.</Grid>;
 }
