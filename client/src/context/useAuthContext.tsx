@@ -28,9 +28,6 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
     },
     [history],
   );
-  const updateLogin = useCallback((data: AuthApiDataSuccess) => {
-    setLoggedInUser(data.user);
-  }, []);
 
   const logout = useCallback(async () => {
     // needed to remove token cookie
@@ -47,8 +44,8 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
     const checkLoginWithCookies = async () => {
       await loginWithCookies().then((data: AuthApiData) => {
         if (data.success) {
-          updateLogin(data.success);
-          // history.push('/dashboard');
+          updateLoginContext(data.success);
+          history.push('/dashboard');
         } else {
           // don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
           setLoggedInUser(null);
@@ -57,7 +54,7 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
       });
     };
     checkLoginWithCookies();
-  }, [updateLogin, history]);
+  }, [updateLoginContext, history]);
 
   return <AuthContext.Provider value={{ loggedInUser, updateLoginContext, logout }}>{children}</AuthContext.Provider>;
 };

@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Avatar from '@material-ui/core/Avatar';
 import PetsIcon from '@material-ui/icons/Pets';
@@ -46,7 +47,7 @@ const NavBar = (): JSX.Element => {
       <CssBaseline />
       <AppBar position="relative" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Link href="/">
+          <Link component={RouterLink} to="/">
             <Typography variant="h5" color="inherit" noWrap className={classes.toolbarTitle}>
               <PetsIcon color="primary" className={classes.toolbarIcon} />
               <Box display={{ xs: 'none', md: 'block' }}>LovingSitter.</Box>
@@ -55,7 +56,14 @@ const NavBar = (): JSX.Element => {
           <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
             {!loggedInUser && (
               <Grid item className={classes.toolbarLeft}>
-                <Link variant="button" underline="always" color="textPrimary" href="#" className={classes.link}>
+                <Link
+                  component={RouterLink}
+                  to="/"
+                  variant="button"
+                  underline="always"
+                  color="textPrimary"
+                  className={classes.link}
+                >
                   BECOME A SITTER
                 </Link>
                 <Button href="#" color="primary" variant="outlined" className={classes.button}>
@@ -68,12 +76,18 @@ const NavBar = (): JSX.Element => {
             )}
             {loggedInUser && (
               <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>
-                <Link variant="button" href="/sitters" className={classes.link}>
+                <Link component={RouterLink} variant="button" to="/sitters" className={classes.link}>
                   My Sitters
                 </Link>
 
                 <Badge color="primary" variant="dot" className={classes.link}>
-                  <Link variant="button" color="textPrimary" href="/messages" className={classes.messages}>
+                  <Link
+                    component={RouterLink}
+                    variant="button"
+                    color="textPrimary"
+                    to="/messages"
+                    className={classes.messages}
+                  >
                     Messages
                   </Link>
                 </Badge>
