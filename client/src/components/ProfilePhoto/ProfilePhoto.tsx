@@ -4,7 +4,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 
-export function InputButton(): JSX.Element {
+function InputButton(): JSX.Element {
   const classes = useStyles();
 
   return (
