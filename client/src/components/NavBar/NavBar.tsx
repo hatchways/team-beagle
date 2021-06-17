@@ -2,7 +2,6 @@ import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 import { useAuth } from '../../context/useAuthContext';
-import { useHistory } from 'react-router-dom';
 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -22,10 +21,7 @@ import Box from '@material-ui/core/Box';
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser, logout } = useAuth();
-  const history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-
-  //temp
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
@@ -37,17 +33,13 @@ const NavBar = (): JSX.Element => {
     handleMenuClose();
     logout();
   };
-  const handleProfile = () => {
-    handleMenuClose();
-    history.push('/profile');
-  };
 
   return (
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />
       <AppBar position="relative" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <Link component={RouterLink} to="/">
+          <Link href="/">
             <Typography variant="h5" color="inherit" noWrap className={classes.toolbarTitle}>
               <PetsIcon color="primary" className={classes.toolbarIcon} />
               <Box display={{ xs: 'none', md: 'block' }}>LovingSitter.</Box>
@@ -58,7 +50,7 @@ const NavBar = (): JSX.Element => {
               <Grid item className={classes.toolbarLeft}>
                 <Link
                   component={RouterLink}
-                  to="/"
+                  to="/sitters"
                   variant="button"
                   underline="always"
                   color="textPrimary"
@@ -66,10 +58,23 @@ const NavBar = (): JSX.Element => {
                 >
                   BECOME A SITTER
                 </Link>
-                <Button href="#" color="primary" variant="outlined" className={classes.button}>
+                <Button
+                  component={RouterLink}
+                  to="/login"
+                  color="primary"
+                  variant="outlined"
+                  className={classes.button}
+                >
                   LOGIN
                 </Button>
-                <Button href="#" color="primary" variant="contained" disableElevation className={classes.button}>
+                <Button
+                  component={RouterLink}
+                  to="/signup"
+                  color="primary"
+                  variant="contained"
+                  disableElevation
+                  className={classes.button}
+                >
                   SIGN UP
                 </Button>
               </Grid>
@@ -101,7 +106,9 @@ const NavBar = (): JSX.Element => {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                  <MenuItem component={RouterLink} onClick={handleMenuClose} to="/profile/editprofile">
+                    Profile
+                  </MenuItem>
                   <MenuItem onClick={handleLogOut}>Logout</MenuItem>
                 </Menu>
               </Grid>
