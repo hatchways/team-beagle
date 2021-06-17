@@ -14,7 +14,7 @@ const SignUpHeader = ({ linkTo, btnText }: Props): JSX.Element => {
   return (
     <Box p={1} className={classes.authHeader}>
       <Link to={linkTo} className={classes.link}>
-        <Button color="inherit" className={classes.accBtn} variant="contained">
+        <Button className={classes.accBtn} variant="contained">
           {btnText}
         </Button>
       </Link>

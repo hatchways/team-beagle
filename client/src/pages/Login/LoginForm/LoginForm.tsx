@@ -78,7 +78,6 @@ export default function Login({ handleSubmit }: Props): JSX.Element {
             }}
             InputProps={{
               classes: { input: classes.inputs },
-            //   endAdornment: <Link className={classes.forgot}>Forgot?</Link>,
             }}
             type="password"
             autoComplete="current-password"

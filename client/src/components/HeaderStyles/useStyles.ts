@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 54,
     borderRadius: theme.shape.borderRadius,
     filter: 'drop-shadow(0px 2px 6px rgba(74,106,149,0.2))',
-    backgroundColor: '#ffffff',
-    color: '#f04826',
-    border: '1px solid #f04826',
+    backgroundColor: '#f04826',
+    color: '#ffffff',
     boxShadow: 'none',
+    marginRight: 35,
   },
 }));
 

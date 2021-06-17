@@ -52,9 +52,6 @@ export default function Register(): JSX.Element {
           <AppBar position="static" color="primary" elevation={0} className={classes.appBar}>
             <Toolbar className={classes.toolbar}>
                <img src={LogoImage} alt="logo" className={classes.logo}/>
-              {/* <Typography variant="h2" noWrap className={classes.toolbarTitle}>
-            LovingSitter.
-              </Typography> */}
                   <Grid container direction="row" justify="flex-end" alignItems="center">
                     <Typography className={classes.toolbarLink}>
                       <Link className={classes.secondaryLink} href='#'>

@@ -1,14 +1,15 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles((theme: Theme) => ({
   form: {
     margin: 'auto',
-    width: '50%', // Fix IE 11 issue.
+    width: '50%', 
     marginTop: theme.spacing(1),
   },
   label: {
     fontSize: 19,
-    color: 'rgb(0,0,0,0.4)',
+    color: 'rgb(0,0,0,1)',
     paddingLeft: '5px',
   },
   inputs: {
@@ -18,8 +19,8 @@ const useStyles = makeStyles((theme) => ({
     height: '2rem',
     padding: '5px',
   },
-  forgot: {
-    color: '#f04826',
+  date: {
+    marginTop: '14px',
   },
   submit: {
     margin: theme.spacing(3, 2, 2),
