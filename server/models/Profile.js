@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
-  username: {
+  userCredentials: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
-  first_name: {
+  firstName: {
     type: String,
     required: true,
   },
-  last_name: {
+  lastName: {
     type: String,
     required: true,
   },
@@ -22,21 +22,23 @@ const profileSchema = new mongoose.Schema({
     required: true,
   },
   //
-  is_dog_owner: {
+  isDogOwner: {
     type: Boolean,
     required: true,
   },
-  is_dog_sitter: {
+  isDogSitter: {
     type: Boolean,
     required: true,
   },
   //  sitter
-
-  hourly_rate: {
+  rating: {
+    type: Number,
+  },
+  hourlyRate: {
     type: Number,
     required: true,
   },
-  tag_line: {
+  tagLine: {
     type: String,
     required: true,
   },
