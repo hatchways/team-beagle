@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Grid, Container, Typography, Link } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
-import ChatSideBanner from '../../components/ChatSideBanner/ChatSideBanner';
 import EditProfile from '../../components/EditProfile/EditProfile'
 import ProfilePhoto from '../../components/ProfilePhoto/ProfilePhoto'
 import Payment from '../../components/Payment/Payment'
@@ -10,69 +9,47 @@ import Security from '../../components/Security/Security'
 import Settings from '../../components/Settings/Settings'
 
 
-export default function Profile(): JSX.Element {
+export default function Profile(props: any): JSX.Element {
+
+  const MENU_LIST = [
+    "Edit Profile",
+    "Profile Photo",
+    "Availability",
+    "Payment",
+    "Security",
+    "Settings"
+  ]
+
   const classes = useStyles();
 
-  const [currentSection, setCurrentSection] = useState("EditProfile")
+  const [currentSection, setCurrentSection] = useState(props.match.params.menuitem)
 
   const handleClick = (section: string) => {
     setCurrentSection(section)
+    props.history.push(`/profile/${section}`)
   }
 
   return (
     <Grid container className={`${classes.root}`}>
       <CssBaseline />
-      {/* <ChatSideBanner /> */}
       <Grid className={`${classes.menuItems}`}>
-        <Link 
-          onClick={() => handleClick("EditProfile")} 
-          className={`${classes.menuItem} ${currentSection === "EditProfile" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Edit Profile 
-        </Link>
-        <Link 
-          onClick={() => handleClick("ProfilePhoto")} 
-          className={`${classes.menuItem} ${currentSection === "ProfilePhoto" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Profile Photo 
-        </Link>
-        <Link 
-          onClick={() => handleClick("Availability")} 
-          className={`${classes.menuItem} ${currentSection === "Availability" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Availability 
-        </Link>
-        <Link 
-          onClick={() => handleClick("Payment")} 
-          className={`${classes.menuItem} ${currentSection === "Payment" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Payment 
-        </Link>
-        <Link 
-          onClick={() => handleClick("Security")} 
-          className={`${classes.menuItem} ${currentSection === "Security" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Security 
-        </Link>
-        <Link 
-          onClick={() => handleClick("Settings")} 
-          className={`${classes.menuItem} ${currentSection === "Settings" && classes.selectedMenuItem}`} 
-          underline="none"
-        > 
-          Settings 
-        </Link>
+        {MENU_LIST.map(item => (
+          <Link
+            onClick={() => handleClick(item.replace(/\s/g, "").toLowerCase())}
+            className={`${classes.menuItem} ${currentSection === item.replace(/\s/g, "") && classes.selectedMenuItem}`} 
+            underline="none"
+            key={item}
+          >
+            {item}
+          </Link>
+        ))}
       </Grid>
-      <Container maxWidth="sm" >
-        {currentSection === "EditProfile" && <EditProfile />}
-        {currentSection === "ProfilePhoto" && <ProfilePhoto />}
-        {currentSection === "Payment" && <Payment />}
-        {currentSection === "Security" && <Security />}
-        {currentSection === "Settings" && <Settings />}
+      <Container maxWidth="sm" className={classes.menuContainer}>
+        {currentSection === "editprofile" && <EditProfile />}
+        {currentSection === "profilephoto" && <ProfilePhoto />}
+        {currentSection === "payment" && <Payment />}
+        {currentSection === "security" && <Security />}
+        {currentSection === "settings" && <Settings />}
       </Container>
     </Grid>
   );

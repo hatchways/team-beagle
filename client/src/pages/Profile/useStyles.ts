@@ -25,6 +25,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     cursor: "pointer"
   },
+  menuContainer: {
+    boxShadow: "0px 0px 8px #CACACA",
+    borderRadius: "5px",
+    height: "80vh"
+  }
 }));
 
 export default useStyles;
