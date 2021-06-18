@@ -2,7 +2,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   settingsHeading: {
     fontSize: '1.4rem',
     margin: '50px 0',
@@ -41,6 +44,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  submitBtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 }));
 
