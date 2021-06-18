@@ -4,6 +4,5 @@ import useStyles from './useStyles';
 export default function Settings(): JSX.Element {
   const classes = useStyles();
 
-  return <Grid>This is the Settings section.</Grid>
-
+  return <Grid>This is the Settings section.</Grid>;
 }

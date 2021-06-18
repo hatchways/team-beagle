@@ -18,6 +18,7 @@ function InputButton(): JSX.Element {
 export default function ProfilePhoto(): JSX.Element {
   const classes = useStyles();
 
+
   const [profilePhoto, setProfilePhoto] = useState('/assets/img/sample-profile.jpg');
 
   return (
@@ -35,4 +36,5 @@ export default function ProfilePhoto(): JSX.Element {
       </Button>
     </Grid>
   );
+
 }
