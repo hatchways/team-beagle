@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
-  user_id: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
@@ -21,16 +21,12 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  //
-  isDogOwner: {
-    type: Boolean,
-    required: true,
-  },
+  //  sitter
   isDogSitter: {
     type: Boolean,
     required: true,
   },
-  //  sitter
+
   rating: {
     type: Number,
   },
