@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
-  userCredentials: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
@@ -21,27 +21,31 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  //
-  isDogOwner: {
-    type: Boolean,
-    required: true,
-  },
+  //  sitter
   isDogSitter: {
     type: Boolean,
     required: true,
   },
-  //  sitter
+
   rating: {
     type: Number,
   },
   hourlyRate: {
+    // if sitter require
     type: Number,
-    required: true,
   },
   tagLine: {
+    // if sitter require
     type: String,
-    required: true,
   },
+});
+
+requestSchema.pre("validate", function (next) {
+  if ((this.isDogSitter && !this.hourlyRate) || !this.tagLine) {
+    next(new Error("Must include, hourly rate, tag line"));
+  } else {
+    next();
+  }
 });
 
 module.exports = Profile = mongoose.model("profile", profileSchema);

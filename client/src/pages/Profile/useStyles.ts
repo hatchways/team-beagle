@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: '#FAFAFB',
-    position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',

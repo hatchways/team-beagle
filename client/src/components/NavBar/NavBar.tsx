@@ -106,7 +106,7 @@ const NavBar = (): JSX.Element => {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem component={RouterLink} onClick={handleMenuClose} to="/profile/editprofile">
+                  <MenuItem component={RouterLink} onClick={handleMenuClose} to="/profile">
                     Profile
                   </MenuItem>
                   <MenuItem onClick={handleLogOut}>Logout</MenuItem>
