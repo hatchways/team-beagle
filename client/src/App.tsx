@@ -1,6 +1,7 @@
 import { MuiThemeProvider } from '@material-ui/core';
 import { theme } from './themes/theme';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+import Landing from './pages/Landing/Landing';
 import NavBar from './components/NavBar/NavBar';
 import Login from './pages/Login/Login';
 import Signup from './pages/SignUp/SignUp';
@@ -26,6 +27,7 @@ function App(): JSX.Element {
               <NavBar />
 
               <Switch>
+                <Route exact path="/" component={Landing}/>
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/signup" component={Signup} />
 
@@ -42,7 +44,7 @@ function App(): JSX.Element {
                   <Unauthorized />
                 </Route>
                 <Route path="*">
-                  <Redirect to="/login" />
+                  <Redirect to="/" />
                 </Route>
               </Switch>
             </SocketProvider>
