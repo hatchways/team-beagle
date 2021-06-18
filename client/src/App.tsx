@@ -32,6 +32,10 @@ function App(): JSX.Element {
                 <ProtectedRoute exact path="/sitters" component={Sitters} />
                 <ProtectedRoute exact path="/messages" component={Messages} />
                 <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
+                <Route exact path="/profile">
+                  <Redirect to="/profile/editprofile" />
+                </Route>
+
                 <ProtectedRoute exact path="/dashboard" component={Dashboard} />
 
                 <Route exact path="/unauthorized">
