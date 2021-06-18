@@ -25,7 +25,7 @@ export default function Landing(): JSX.Element {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={12} sm={12} md={12} lg={12} elevation={6} component={Paper} square>
+      <Grid item xs={12} elevation={6} component={Paper} square>
         <Box className={classes.authWrapper}>
           <AppBar position="absolute" elevation={0} className={classes.appBar}>
             <Toolbar className={classes.toolbar}>
