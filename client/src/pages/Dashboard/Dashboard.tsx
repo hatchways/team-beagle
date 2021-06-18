@@ -19,12 +19,12 @@ export default function Dashboard(): JSX.Element {
     initSocket();
   }, [initSocket]);
 
-  if (loggedInUser === undefined) return <CircularProgress />;
-  if (!loggedInUser) {
-    history.push('/login');
-    // loading for a split seconds until history.push works
-    return <CircularProgress />;
-  }
+  // if (loggedInUser === undefined) return <CircularProgress />;
+  // if (!loggedInUser) {
+  //   history.push('/login');
+  //   // loading for a split seconds until history.push works
+  //   return <CircularProgress />;
+  // }
 
   return (
     <Grid container component="main" className={`${classes.root} ${classes.dashboard}`}>

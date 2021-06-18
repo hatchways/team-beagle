@@ -11,6 +11,8 @@ import { SocketProvider } from './context/useSocketContext';
 import { SnackBarProvider } from './context/useSnackbarContext';
 import Sitters from './pages/Sitters/Sitter';
 import Messages from './pages/Messages/Messages';
+import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './pages/Unauthorize/Unauthorized';
 
 import './App.css';
 
@@ -26,11 +28,14 @@ function App(): JSX.Element {
               <Switch>
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/signup" component={Signup} />
-                <Route exact path="/sitters" component={Sitters} />
-                <Route exact path="/messages" component={Messages} />
-                <Route exact path="/profile/:menuitem" component={Profile} />
-                <Route exact path="/dashboard">
-                  <Dashboard />
+
+                <ProtectedRoute exact path="/sitters" component={Sitters} />
+                <ProtectedRoute exact path="/messages" component={Messages} />
+                <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
+                <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+
+                <Route exact path="/unauthorized">
+                  <Unauthorized />
                 </Route>
                 <Route path="*">
                   <Redirect to="/login" />
