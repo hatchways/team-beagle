@@ -44,6 +44,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 0,
+    paddingBottom: 0,
+  },
+  phoneHelperText: {
+    marginLeft: '180px',
+    padding: 0,
   },
   submitBtn: {
     display: 'flex',
