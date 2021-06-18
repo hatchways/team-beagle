@@ -1,6 +1,7 @@
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link';
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import Typography from '@material-ui/core/Typography';
@@ -48,6 +49,7 @@ export default function Login({ handleSubmit }: Props): JSX.Element {
         <form onSubmit={handleSubmit} className={classes.form} noValidate>
           <TextField
             id="email"
+            placeholder="Email"
             label={<Typography className={classes.label}>E-mail address</Typography>}
             fullWidth
             margin="normal"
@@ -67,6 +69,7 @@ export default function Login({ handleSubmit }: Props): JSX.Element {
           />
           <TextField
             id="password"
+            placeholder="Password"
             label={<Typography className={classes.label}>Password</Typography>}
             fullWidth
             margin="normal"
@@ -75,7 +78,6 @@ export default function Login({ handleSubmit }: Props): JSX.Element {
             }}
             InputProps={{
               classes: { input: classes.inputs },
-              endAdornment: <Typography className={classes.forgot}>Forgot?</Typography>,
             }}
             type="password"
             autoComplete="current-password"
@@ -86,10 +88,16 @@ export default function Login({ handleSubmit }: Props): JSX.Element {
           />
           <Box textAlign="center">
             <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
-              {isSubmitting ? <CircularProgress style={{ color: 'white' }} /> : 'Login'}
+              {isSubmitting ? <CircularProgress style={{ color: 'red' }} /> : 'Login'}
             </Button>
           </Box>
-          <div style={{ height: 95 }} />
+          <Typography className={classes.signUpText}>
+                      Not a Member? 
+                      <Link className={classes.secondaryLink} href='./signup'>
+                        Sign Up
+                      </Link>
+          </Typography>
+          <Box style={{ height: 40 }} />
         </form>
       )}
     </Formik>

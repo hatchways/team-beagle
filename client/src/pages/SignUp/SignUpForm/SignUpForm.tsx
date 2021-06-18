@@ -1,6 +1,7 @@
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link';
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import Typography from '@material-ui/core/Typography';
@@ -54,6 +55,7 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
           <TextField
             id="username"
             label={<Typography className={classes.label}>Username</Typography>}
+            placeholder="Username"
             fullWidth
             margin="normal"
             InputLabelProps={{
@@ -72,6 +74,7 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
           />
           <TextField
             id="email"
+            placeholder="Email"
             label={<Typography className={classes.label}>E-mail address</Typography>}
             fullWidth
             margin="normal"
@@ -90,6 +93,7 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
           />
           <TextField
             id="password"
+            placeholder="Password"
             label={<Typography className={classes.label}>Password</Typography>}
             fullWidth
             margin="normal"
@@ -111,6 +115,13 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
             <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
               {isSubmitting ? <CircularProgress style={{ color: 'white' }} /> : 'Create'}
             </Button>
+            <Typography className={classes.signUpText}>
+                      Already a Member? 
+                      <Link className={classes.secondaryLink} href='./signup'>
+                        Log In
+                      </Link>
+          </Typography>
+          <Box style={{ height: 40 }} />
           </Box>
         </form>
       )}
