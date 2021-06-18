@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
-  userCredentials: {
+  user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
@@ -35,13 +35,21 @@ const profileSchema = new mongoose.Schema({
     type: Number,
   },
   hourlyRate: {
+    // if sitter require
     type: Number,
-    required: true,
   },
   tagLine: {
+    // if sitter require
     type: String,
-    required: true,
   },
+});
+
+requestSchema.pre("validate", function (next) {
+  if (this.isDogSitter && !this.hourlyRate && !this.tagLine) {
+    next(new Error("Must include, hourly rate, tag line"));
+  } else {
+    next();
+  }
 });
 
 module.exports = Profile = mongoose.model("profile", profileSchema);
