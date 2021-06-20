@@ -43,27 +43,24 @@ exports.newUser = asyncHandler(async (req, res) => {
 // //update profiles 
 exports.editProfile = asyncHandler(async (req, res) => {
     const userId = req.params.id
-    
+    let profile;
     try {
-        const updateProfile = await Profile.findOne({userId: userId}, function(profile, error) {
-        if(error) { res.status(400).json({ message: "Invalid User Data"}) }
-        else {
-            for (const params of Object.params(req.body)) {
-                profile[params] = req.body[params]
+        const updateProfile = await Profile.findOneAndUpdate({userId: userId});
+            if(updateProfile) { 
+                profile.save(res.status(200).json({profile: updateProfile})
+            )} else {
+                res.status(404).json({ message: "Profile not found"})
             }
-            profile.save(res.status(200).json({profile: updateProfile}))
-        }
-    })
         } catch (error) {
-            return res.status(500).json({error: message})
-        }
+            return res.status(500).json({error: "Could not update profile"})
+        };
 });
 
 //@route GET
 //Find Specific Profile
 exports.getProfile = asyncHandler(async(req, res) => {
     const userId = req.params.id 
-
+    let profile;
     try {
         const getProfile = await Profile.findOne({id: userId})
         
@@ -84,10 +81,10 @@ exports.getProfile = asyncHandler(async(req, res) => {
 //fetch list of profiles
 exports.findProfiles = asyncHandler(async (req, res) => {
     const search = req.query.search;
-
+    let profiles;
     try {
         const profileList = await Profile.find({req: search})
-
+        
         if(profileList) {
         res.status(200).json({profiles: profileList});
         } else {
