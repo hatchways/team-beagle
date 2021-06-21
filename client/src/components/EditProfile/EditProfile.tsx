@@ -6,6 +6,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import editProfile from '../../helpers/APICalls/editProfile';
+import { useSnackBar } from '../../context/useSnackbarContext';
 
 export default function EditProfile(): JSX.Element {
   const classes = useStyles();
@@ -20,6 +22,32 @@ export default function EditProfile(): JSX.Element {
 
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+  const { updateSnackBarMessage } = useSnackBar();
+
+  const handleSubmit = ({
+    isDogSitter,
+    firstName,
+    lastName,
+    selfDescription,
+    hourlyRate,
+    tagLine,
+  }: {
+    isDogSitter: boolean;
+    firstName: string;
+    lastName: string;
+    selfDescription: string;
+    hourlyRate: number;
+    tagLine: string;
+  }) => {
+    editProfile(isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine).then((data) => {
+      if (data.error) {
+        updateSnackBarMessage(data.error.message);
+      } else {
+        updateSnackBarMessage('Your profile has been upated');
+      }
+    });
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -71,9 +99,7 @@ export default function EditProfile(): JSX.Element {
           ? Yup.string().max(50, 'Please write a tagline').required('A tagline is required')
           : Yup.string().max(0, 'You can only have a tagline if you want to dog sit'),
     }),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values));
-    },
+    onSubmit: (values) => handleSubmit(values),
   });
 
   return (
@@ -269,6 +295,7 @@ export default function EditProfile(): JSX.Element {
                 error={formik.touched.hourlyRate && formik.errors.hourlyRate !== undefined}
                 helperText={formik.touched.hourlyRate && formik.errors.hourlyRate ? formik.errors.hourlyRate : ''}
                 InputProps={{
+                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
                   endAdornment: (
                     <InputAdornment position="end">
                       {formik.touched.hourlyRate && !formik.errors.hourlyRate && <CheckCircleIcon />}
