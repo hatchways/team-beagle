@@ -28,10 +28,24 @@ const profileSchema = new mongoose.Schema({
       type: String,
     },
   ],
+
   //  sitter
   isDogSitter: {
     type: Boolean,
     required: true,
+  },
+  availabilityWeek: {
+    monday: { type: Boolean, default: false },
+    tuesday: { type: Boolean, default: false },
+    wednesday: { type: Boolean, default: false },
+    thursday: { type: Boolean, default: false },
+    friday: { type: Boolean, default: false },
+    saturday: { type: Boolean, default: false },
+    sunday: { type: Boolean, default: false },
+  },
+  availabilityDays: {
+    additionalDays: [{ type: Date }],
+    offDays: [{ type: Date }],
   },
 
   rating: {
