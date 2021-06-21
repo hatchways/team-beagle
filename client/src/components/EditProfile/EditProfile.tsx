@@ -4,105 +4,69 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 export default function EditProfile(): JSX.Element {
   const classes = useStyles();
 
   const [available, setAvailable] = useState(false);
-  const [firstName, setFirstName] = useState({ valid: false, value: '' });
-  const [lastName, setLastName] = useState({ valid: false, value: '' });
-  const [email, setEmail] = useState({ valid: false, value: '' });
-  const [address, setAddress] = useState({ valid: false, value: '' });
-  const [selfDescription, setSelfDescription] = useState({ valid: false, value: '' });
-  const [phoneNumbers, setPhoneNumbers] = useState({
-    primary: { valid: false, value: '' },
-    secondary: { valid: false, value: '' },
-  });
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSwitch = () => {
+    formik.setFieldValue('available', !available);
     setAvailable(!available);
   };
 
-  const handleChange = (e: EventTarget & (HTMLInputElement | HTMLTextAreaElement)) => {
-    if (e.name === 'firstName') setFirstName({ ...firstName, value: e.value });
-    if (e.name === 'lastName') setLastName({ ...lastName, value: e.value });
-    if (e.name === 'email') setEmail({ ...email, value: e.value });
-    if (e.name === 'primaryPhone')
-      setPhoneNumbers({ ...phoneNumbers, primary: { ...phoneNumbers.primary, value: e.value.replace(/\D/g, '') } });
-    if (e.name === 'secondaryPhone')
-      setPhoneNumbers({ ...phoneNumbers, secondary: { ...phoneNumbers.secondary, value: e.value.replace(/\D/g, '') } });
-    if (e.name === 'address') setAddress({ ...address, value: e.value });
-    if (e.name === 'selfDescription') setSelfDescription({ ...selfDescription, value: e.value });
-  };
+  const phoneRegExp =
+    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
-  const validateEmail = (email: string) => {
-    const re =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  };
-
-  const validateForm = () => {
-    if (firstName.value.length > 1 && firstName.value.length <= 20) {
-      setFirstName({ ...firstName, valid: true });
-    } else setFirstName({ ...firstName, valid: false });
-
-    if (lastName.value.length > 1 && lastName.value.length <= 20) {
-      setLastName({ ...lastName, valid: true });
-    } else setLastName({ ...lastName, valid: false });
-
-    setEmail({ ...email, valid: validateEmail(email.value) });
-
-    if (
-      phoneNumbers.primary.value.length === 10 &&
-      (phoneNumbers.secondary.value.length === 10 || phoneNumbers.secondary.value.length === 0)
-    ) {
-      setPhoneNumbers({
-        primary: { ...phoneNumbers.primary, valid: true },
-        secondary: { ...phoneNumbers.secondary, valid: true },
-      });
-    }
-
-    if (address.value.length > 1 && address.value.length <= 40) {
-      setAddress({ ...address, valid: true });
-    } else setAddress({ ...address, valid: false });
-
-    if (selfDescription.value.length > 1 && selfDescription.value.length <= 300) {
-      setSelfDescription({ ...selfDescription, valid: true });
-    } else setSelfDescription({ ...selfDescription, valid: false });
-
-    if (
-      firstName.valid &&
-      lastName.valid &&
-      email.valid &&
-      phoneNumbers.primary.valid &&
-      phoneNumbers.secondary.valid &&
-      address.valid &&
-      selfDescription.valid
-    )
-      return true;
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    validateForm();
-    setSubmitted(true);
-    if (validateForm() === true) updateProfile();
-  };
-
-  const updateProfile = () => {
-    // TODO: make API call to update profile
-    console.log('valid form');
-  };
+  const formik = useFormik({
+    initialValues: {
+      available: false,
+      firstName: '',
+      lastName: '',
+      primaryPhone: '',
+      secondaryPhone: '',
+      address: '',
+      selfDescription: '',
+    },
+    validationSchema: Yup.object({
+      available: Yup.boolean().required(),
+      firstName: Yup.string()
+        .max(20, 'Please enter a first name that is 20 characters or less')
+        .required('Your first name is required'),
+      lastName: Yup.string()
+        .max(20, 'Please enter a last name that is 20 characters or less')
+        .required('Your last name is required'),
+      primaryPhone: Yup.string()
+        .matches(phoneRegExp, 'Phone number is not valid')
+        .max(14, 'You must enter a ten-digit phone number with the area code')
+        .min(10, 'You must enter a ten-digit phone number with the area code')
+        .required('Your primary phone is required'),
+      secondaryPhone: Yup.string()
+        .matches(phoneRegExp, 'Phone number is not valid')
+        .max(14, 'You must enter a ten-digit phone number with the area code')
+        .min(10, 'You must enter a ten-digit phone number with the area code'),
+      address: Yup.string()
+        .max(40, 'Please enter your address in 40 characters or less')
+        .required('Your address is required'),
+      selfDescription: Yup.string()
+        .max(300, 'Please describe yourself in 300 characters or less')
+        .required('Your self description is required'),
+    }),
+    onSubmit: (values) => {
+      alert(JSON.stringify(values));
+    },
+  });
 
   return (
     <Grid className={classes.root}>
       <CssBaseline />
-      <form onSubmit={(e) => handleSubmit(e)}>
+      <form onSubmit={formik.handleSubmit}>
         <Typography className={classes.settingsHeading}>Edit Profile</Typography>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>I&apos;M AVAILABLE</Typography>
-          <Switch checked={available} onChange={handleSwitch} name="available" />
+          <Switch id="available" checked={available} onChange={handleSwitch} name="available" />
         </Grid>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>AVAILABILITY</Typography>
@@ -115,16 +79,15 @@ export default function EditProfile(): JSX.Element {
             variant="outlined"
             placeholder="John"
             type="string"
-            onChange={(e) => handleChange(e.target)}
-            name="firstName"
-            value={firstName.value}
-            error={!firstName.valid && submitted === true}
-            helperText={!firstName.valid && submitted === true && 'Please provide a first name'}
+            id="firstName"
+            error={formik.touched.firstName && formik.errors.firstName !== undefined}
+            helperText={formik.touched.firstName && formik.errors.firstName ? formik.errors.firstName : ''}
+            {...formik.getFieldProps('firstName')}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {submitted === true && firstName.valid && <CheckCircleIcon />}
-                  {submitted === true && firstName.valid === false && <ErrorIcon />}
+                  {formik.touched.firstName && !formik.errors.firstName && <CheckCircleIcon />}
+                  {formik.touched.firstName && formik.errors.firstName && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}
@@ -139,43 +102,19 @@ export default function EditProfile(): JSX.Element {
             variant="outlined"
             placeholder="Doe"
             type="string"
-            onChange={(e) => handleChange(e.target)}
-            name="lastName"
-            value={lastName.value}
-            error={!lastName.valid && submitted === true}
-            helperText={!lastName.valid && submitted === true && 'Please provide a last name'}
+            id="lastName"
+            {...formik.getFieldProps('lastName')}
+            error={formik.touched.lastName && formik.errors.lastName !== undefined}
+            helperText={formik.touched.lastName && formik.errors.lastName ? formik.errors.lastName : ''}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {submitted === true && lastName.valid && <CheckCircleIcon />}
-                  {submitted === true && lastName.valid === false && <ErrorIcon />}
+                  {formik.touched.lastName && !formik.errors.lastName && <CheckCircleIcon />}
+                  {formik.touched.lastName && formik.errors.lastName && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}
             inputProps={{ maxLength: 20 }}
-          />
-        </Grid>
-        <Grid className={classes.formItem}>
-          <Typography className={classes.formLabel}>EMAIL ADDRESS</Typography>
-          <TextField
-            className={`${classes.formInput}`}
-            size="small"
-            variant="outlined"
-            placeholder="john-doe@gmail.com"
-            onChange={(e) => handleChange(e.target)}
-            name="email"
-            value={email.value}
-            error={!email.valid && submitted === true}
-            helperText={!email.valid && submitted === true && 'Please provide a valid email address'}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  {submitted === true && email.valid && <CheckCircleIcon />}
-                  {submitted === true && email.valid === false && <ErrorIcon />}
-                </InputAdornment>
-              ),
-            }}
-            inputProps={{ maxLength: 50 }}
           />
         </Grid>
         <Grid className={classes.formItem}>
@@ -184,44 +123,51 @@ export default function EditProfile(): JSX.Element {
             <TextField
               className={`${classes.formInput}`}
               size="small"
-              name="primaryPhone"
-              value={phoneNumbers.primary.value}
-              onChange={(e) => handleChange(e.target)}
+              type="string"
               variant="outlined"
               placeholder="Example: 1234567890"
-              error={!phoneNumbers.primary.valid && submitted === true}
+              {...formik.getFieldProps('primaryPhone')}
+              error={formik.touched.primaryPhone && formik.errors.primaryPhone !== undefined}
               label="Primary"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {submitted === true && phoneNumbers.primary.valid && <CheckCircleIcon />}
-                    {submitted === true && phoneNumbers.primary.valid === false && <ErrorIcon />}
+                    {formik.touched.primaryPhone && !formik.errors.primaryPhone && <CheckCircleIcon />}
+                    {formik.touched.primaryPhone && formik.errors.primaryPhone && <ErrorIcon />}
                   </InputAdornment>
                 ),
               }}
-              inputProps={{ maxLength: 10 }}
+              inputProps={{ maxLength: 14 }}
             />
             <TextField
               className={`${classes.formInput}`}
               size="small"
-              name="secondaryPhone"
+              type="string"
               variant="outlined"
               placeholder="Example: 1234567890"
-              label="Secondary (optional)"
-              error={!phoneNumbers.secondary.valid && submitted === true}
+              {...formik.getFieldProps('secondaryPhone')}
+              error={formik.touched.secondaryPhone && formik.errors.secondaryPhone !== undefined}
+              label="Secondary"
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {submitted === true && phoneNumbers.secondary.valid && <CheckCircleIcon />}
-                    {submitted === true && phoneNumbers.secondary.valid === false && <ErrorIcon />}
+                    {formik.touched.secondaryPhone && !formik.errors.secondaryPhone && <CheckCircleIcon />}
+                    {formik.touched.secondaryPhone && formik.errors.secondaryPhone && <ErrorIcon />}
                   </InputAdornment>
                 ),
               }}
-              inputProps={{ maxLength: 10 }}
+              inputProps={{ maxLength: 14 }}
             />
           </Grid>
         </Grid>
-        <FormHelperText error={!phoneNumbers.primary.valid && submitted === true} className={classes.phoneHelperText}>
+        <FormHelperText
+          error={
+            formik.touched.primaryPhone &&
+            formik.touched.secondaryPhone &&
+            (formik.errors.primaryPhone !== undefined || formik.errors.secondaryPhone !== undefined)
+          }
+          className={classes.phoneHelperText}
+        >
           Include the digits only with no spaces
         </FormHelperText>
         <Grid className={classes.formItem}>
@@ -231,16 +177,14 @@ export default function EditProfile(): JSX.Element {
             size="small"
             variant="outlined"
             placeholder="Address"
-            onChange={(e) => handleChange(e.target)}
-            name="address"
-            value={address.value}
-            error={!address.valid && submitted === true}
-            helperText={!address.valid && submitted === true && 'Please provide your address'}
+            {...formik.getFieldProps('address')}
+            error={formik.touched.address && formik.errors.address !== undefined}
+            helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ''}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {submitted === true && address.valid && <CheckCircleIcon />}
-                  {submitted === true && address.valid === false && <ErrorIcon />}
+                  {formik.touched.address && !formik.errors.address && <CheckCircleIcon />}
+                  {formik.touched.address && formik.errors.address && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}
@@ -257,16 +201,16 @@ export default function EditProfile(): JSX.Element {
             type="string"
             multiline={true}
             rows={4}
-            onChange={(e) => handleChange(e.target)}
-            name="selfDescription"
-            value={selfDescription.value}
-            error={!selfDescription.valid && submitted === true}
-            helperText={!selfDescription.valid && 'Please describe yourself in 300 characters or less'}
+            {...formik.getFieldProps('selfDescription')}
+            error={formik.touched.selfDescription && formik.errors.selfDescription !== undefined}
+            helperText={
+              formik.touched.selfDescription && formik.errors.selfDescription ? formik.errors.selfDescription : ''
+            }
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {submitted === true && selfDescription.valid && <CheckCircleIcon />}
-                  {submitted === true && selfDescription.valid === false && <ErrorIcon />}
+                  {formik.touched.selfDescription && !formik.errors.selfDescription && <CheckCircleIcon />}
+                  {formik.touched.selfDescription && formik.errors.selfDescription && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}

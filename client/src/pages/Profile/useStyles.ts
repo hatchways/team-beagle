@@ -28,8 +28,8 @@ const useStyles = makeStyles((theme) => ({
   menuContainer: {
     boxShadow: '0px 0px 8px #CACACA',
     borderRadius: '5px',
-    height: '90vh',
     overflow: 'scroll',
+    height: '80vh',
   },
 }));
 
