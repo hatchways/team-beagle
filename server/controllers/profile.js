@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 
 // @route POST /profile/new
 // Create New User Profile
-exports.newUser = asyncHandler(async (req, res) => {
+exports.newProfile = asyncHandler(async (req, res) => {
   const {
     userId,
     firstName,
@@ -36,7 +36,7 @@ exports.newUser = asyncHandler(async (req, res) => {
   if (profile) {
     res.status(201).json({
       userId: profile.userId,
-      firstName: profile.FirstName,
+      firstName: profile.firstName,
       lastName: profile.lastName,
       description: profile.description,
       location: profile.location,
@@ -78,7 +78,6 @@ exports.editProfile = asyncHandler(async (req, res) => {
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
-  let profile;
   try {
     const getProfile = await Profile.findOne({ userId: userId });
 
@@ -95,7 +94,6 @@ exports.getProfile = asyncHandler(async (req, res) => {
 //@route GET /profile/sitters
 //fetch list of isDogSitter profiles
 exports.findSitters = asyncHandler(async (req, res) => {
-  let profiles;
   try {
     const profileList = await Profile.find({ isDogSitter: true });
 
