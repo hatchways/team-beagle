@@ -3,45 +3,17 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 85px)',
     '& .MuiInput-underline:before': {
       borderBottom: '1.2px solid rgba(0, 0, 0, 0.2)',
     },
-  },
-  appBar: {
-     backgroundColor: '#ffffff',
-    boxShadow: '0 4px 8px -2px rgba(0,0,0,.2)',
-    
-  },
-    logo: {
-    width: 225,
-    marginLeft: 24,
-  },
-  toolbar: {
-    marginTop: '20px',
-    marginBottom: '20px',
-  },
-  toolbarTitle: {
-      marginLeft: 48, 
-      width: 200,
-     color: '#000000',
-     fontWeight: 800,
-     fontSize: 24,
-     fontFamily: '"Open Sans", "sans-serif", "Roboto"',
-  },
-  toolbarLink: {
-     color: '#000000',
-     fontWeight: 800,
-     fontSize: 12,
-     fontFamily: '"Open Sans", "sans-serif", "Roboto"',
-     marginRight: 24,
   },
   authWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     flexDirection: 'column',
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 85px)',
     backgroundColor: '#F8F8F8',
   },
   link: {
@@ -66,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: '5px',
     boxShadow: '5px 5px 15px 5px rgba(0,0,0,0.2)',
     backgroundColor: '#fff',
+    marginTop: 155,
   },
   welcome: {
     marginTop: 45,

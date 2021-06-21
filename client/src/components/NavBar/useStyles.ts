@@ -1,17 +1,20 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
     height: 85,
   },
 
   appBar: {
     backgroundColor: '#FFFFFF',
+    
   },
   toolbar: {
-    flexWrap: 'wrap',
     margin: `auto 0`,
+    marginTop: '10px',
+    marginBottom: '10px',
+    marginLeft: 34,
   },
 
   toolbarTitle: {
@@ -19,10 +22,24 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+   toolbarLink: {
+     color: '#000000',
+     fontWeight: 800,
+     fontSize: 12,
+     fontFamily: '"Open Sans", "sans-serif", "Roboto"',
+    marginRight: 24,
+  },
+  secondaryLink: {
+    color: '#000',
+    fontWeight: 800,
+    textDecoration: 'none',
+    marginLeft: '8px',
+  },
   toolbarIcon: {
-    marginRight: theme.spacing(2),
-    fontSize: '2rem',
+
+    fontSize: '2.8rem',
     color: theme.palette.primary.main,
+    margin: '0.5rem'
   },
   toolbarLeftContainer: {
     width: 'auto',
@@ -51,6 +68,16 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bolder',
     margin: theme.spacing(-0.8, 1.1),
   },
+  logo: {
+    width: 225,
+    marginLeft: 24,
+  },
+  menuIcon: {
+    marginTop: 10,
+    marginRight: 20,
+    height: 40,
+    width: 'auto',
+  }
 }));
 
 export default useStyles;
