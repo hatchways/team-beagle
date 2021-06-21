@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { findByLabelText } from '@testing-library/react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,15 @@ const useStyles = makeStyles((theme) => ({
     color: '#8D8D8D',
     marginLeft: '10px',
   },
+  photoContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoBtn: {
+    margin: '10px 0'
+  }
 }));
 
 export default useStyles;
