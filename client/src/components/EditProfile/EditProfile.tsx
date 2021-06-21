@@ -10,11 +10,12 @@ import * as Yup from 'yup';
 export default function EditProfile(): JSX.Element {
   const classes = useStyles();
 
-  const [available, setAvailable] = useState(false);
+  const [isDogSitter, setIsDogSitter] = useState(false);
 
   const handleSwitch = () => {
-    formik.setFieldValue('available', !available);
-    setAvailable(!available);
+    formik.setFieldValue('isDogSitter', !isDogSitter);
+    formik.setFieldValue('tagLine', '');
+    setIsDogSitter(!isDogSitter);
   };
 
   const phoneRegExp =
@@ -22,16 +23,18 @@ export default function EditProfile(): JSX.Element {
 
   const formik = useFormik({
     initialValues: {
-      available: false,
+      isDogSitter: false,
       firstName: '',
       lastName: '',
       primaryPhone: '',
       secondaryPhone: '',
       address: '',
       selfDescription: '',
+      hourlyRate: 1,
+      tagLine: '',
     },
     validationSchema: Yup.object({
-      available: Yup.boolean().required(),
+      isDogSitter: Yup.boolean().required(),
       firstName: Yup.string()
         .max(20, 'Please enter a first name that is 20 characters or less')
         .required('Your first name is required'),
@@ -53,6 +56,20 @@ export default function EditProfile(): JSX.Element {
       selfDescription: Yup.string()
         .max(300, 'Please describe yourself in 300 characters or less')
         .required('Your self description is required'),
+      hourlyRate:
+        isDogSitter === true
+          ? Yup.number()
+              .test('This is a valid rate', 'This is not a valid rate', (value) =>
+                value !== undefined ? /^\d+(?:\.\d{1,2})?$/.test(value.toString()) : false,
+              )
+              .max(200, 'The maximum you can charge is $200/hour')
+              .min(1, 'The minimum you can charge is $1/hour')
+              .required()
+          : Yup.number(),
+      tagLine:
+        isDogSitter === true
+          ? Yup.string().max(50, 'Please write a tagline').required('A tagline is required')
+          : Yup.string().max(0, 'You can only have a tagline if you want to dog sit'),
     }),
     onSubmit: (values) => {
       alert(JSON.stringify(values));
@@ -65,8 +82,8 @@ export default function EditProfile(): JSX.Element {
       <form onSubmit={formik.handleSubmit}>
         <Typography className={classes.settingsHeading}>Edit Profile</Typography>
         <Grid className={classes.formItem}>
-          <Typography className={classes.formLabel}>I&apos;M AVAILABLE</Typography>
-          <Switch id="available" checked={available} onChange={handleSwitch} name="available" />
+          <Typography className={classes.formLabel}>I WANT TO DOG SIT</Typography>
+          <Switch id="isDogSitter" checked={isDogSitter} onChange={handleSwitch} name="isDogSitter" />
         </Grid>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>AVAILABILITY</Typography>
@@ -217,6 +234,53 @@ export default function EditProfile(): JSX.Element {
             inputProps={{ maxLength: 300 }}
           />
         </Grid>
+        {isDogSitter === true && (
+          <Grid>
+            <Grid className={classes.formItem}>
+              <Typography className={classes.formLabel}>TAGLINE</Typography>
+              <TextField
+                className={`${classes.formInput}`}
+                size="small"
+                variant="outlined"
+                placeholder="Write a short tagline here in 50 characters or less"
+                {...formik.getFieldProps('tagLine')}
+                error={formik.touched.tagLine && formik.errors.tagLine !== undefined}
+                helperText={formik.touched.tagLine && formik.errors.tagLine ? formik.errors.tagLine : ''}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {formik.touched.tagLine && !formik.errors.tagLine && <CheckCircleIcon />}
+                      {formik.touched.tagLine && formik.errors.tagLine && <ErrorIcon />}
+                    </InputAdornment>
+                  ),
+                }}
+                inputProps={{ maxLength: 40 }}
+              />
+            </Grid>
+            <Grid className={classes.formItem}>
+              <Typography className={classes.formLabel}>HOURLY RATE</Typography>
+              <TextField
+                className={`${classes.formInput}`}
+                size="small"
+                type="number"
+                variant="outlined"
+                placeholder="Set an hourly rate (maximum $200/hour)"
+                {...formik.getFieldProps('hourlyRate')}
+                error={formik.touched.hourlyRate && formik.errors.hourlyRate !== undefined}
+                helperText={formik.touched.hourlyRate && formik.errors.hourlyRate ? formik.errors.hourlyRate : ''}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {formik.touched.hourlyRate && !formik.errors.hourlyRate && <CheckCircleIcon />}
+                      {formik.touched.hourlyRate && formik.errors.hourlyRate && <ErrorIcon />}
+                    </InputAdornment>
+                  ),
+                }}
+                inputProps={{ maxLength: 40 }}
+              />
+            </Grid>
+          </Grid>
+        )}
         <Grid className={classes.submitBtn}>
           <Button type="submit" variant="contained" color="primary" size="large">
             Submit
