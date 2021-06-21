@@ -43,11 +43,11 @@ exports.addRequest = asyncHandler(async (req, res, next) => {
   }
 });
 
-// @route get /request/user
+// @route get /request/user/:id
 // @desc all requests made by user
 // @access Private
 exports.requestsByUser = asyncHandler(async (req, res, next) => {
-  const idString = req.query.id;
+  const idString = req.params.id;
 
   console.log(idString);
   let requests;
@@ -65,8 +65,11 @@ exports.requestsByUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ requests: requests });
 });
 
+// @route get /request/sitter/:id
+// @desc all requests made for sitter
+// @access Private
 exports.requestsforSitter = asyncHandler(async (req, res, next) => {
-  const idString = req.query.id;
+  const idString = req.params.id;
 
   let requests;
   if (idString) {

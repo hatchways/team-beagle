@@ -7,7 +7,7 @@ const {
   requestsforSitter,
 } = require("../controllers/request");
 
-router.route("/").post(addRequest);
-router.route("/user").get(protect, requestsByUser);
-router.route("/sitter").get(protect, requestsforSitter);
+router.route("/new").post(addRequest);
+router.route("/user/:id").get(protect, requestsByUser);
+router.route("/sitter/:id").get(protect, requestsforSitter);
 module.exports = router;
