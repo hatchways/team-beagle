@@ -4,7 +4,7 @@ const Profile = require("../models/Profile");
 
 const asyncHandler = require("express-async-handler");
 
-// @route POST /profile
+// @route POST /profile/new
 // Create New User Profile
 exports.newUser = asyncHandler(async (req, res) => {
   const {
@@ -51,7 +51,7 @@ exports.newUser = asyncHandler(async (req, res) => {
   }
 });
 
-// //@route Patch /profile
+// //@route Patch /profile/editprofile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
@@ -74,7 +74,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
   }
 });
 
-//@route GET /profile
+//@route GET /profile/getprofile/:id
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;

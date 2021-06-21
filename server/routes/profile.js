@@ -8,9 +8,9 @@ const {
   findSitters,
 } = require("../controllers/profile");
 
-router.route("/").post(protect, newUser);
-router.route("/:id").patch(protect, editProfile);
-router.route("/:id").get(protect, getProfile);
+router.route("/new").post(protect, newUser);
+router.route("/editprofile/:id").patch(protect, editProfile);
+router.route("/getprofile/:id").get(protect, getProfile);
 router.route("/sitters").get(protect, findSitters);
 
 module.exports = router;
