@@ -62,7 +62,7 @@ const profileSchema = new mongoose.Schema({
 });
 
 profileSchema.pre("validate", function (next) {
-  if (this.isDogSitter && !this.tagLine) {
+  if (this.isDogSitter && !this.hourlyRate) {
     next(new Error("Must include hourly rate"));
   } else if (this.isDogSitter && !this.tagLine) {
     next(new Error("Must include tag line"));

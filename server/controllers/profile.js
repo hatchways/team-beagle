@@ -6,7 +6,7 @@ const asyncHandler = require("express-async-handler");
 
 // @route POST /profile/new
 // Create New User Profile
-exports.newUser = asyncHandler(async (req, res) => {
+exports.newProfile = asyncHandler(async (req, res) => {
   const {
     userId,
     firstName,
@@ -41,7 +41,7 @@ exports.newUser = asyncHandler(async (req, res) => {
   if (profile) {
     res.status(201).json({
       userId: profile.userId,
-      firstName: profile.FirstName,
+      firstName: profile.firstName,
       lastName: profile.lastName,
       description: profile.description,
       location: profile.location,
