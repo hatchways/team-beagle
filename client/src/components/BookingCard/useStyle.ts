@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.4,
     marginLeft: 'auto',
   },
-
 }));
 
 export default useStyles;

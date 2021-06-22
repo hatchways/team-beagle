@@ -17,7 +17,6 @@ import Messages from './pages/Messages/Messages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
 import Booking from './pages/Bookings/Bookings';
-import DateFnsUtils from '@date-io/date-fns';
 
 import './App.css';
 

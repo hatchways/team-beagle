@@ -4,12 +4,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     paddingTop: theme.spacing(3.2),
   },
-  innerContainer:{
+  innerContainer: {
     maxWidth: 1000,
-    margin:'auto'
+    margin: 'auto',
   },
-  innerContainerItem:{
-    flexGrow:1
+  innerContainerItem: {
+    flexGrow: 1,
   },
   cardTop: {
     padding: theme.spacing(0.8),
@@ -33,25 +33,24 @@ const useStyles = makeStyles((theme) => ({
   cardName: {
     fontWeight: 'bolder',
   },
-  cardActions:{
-    justifyContent: 'flex-end'
+  cardActions: {
+    justifyContent: 'flex-end',
   },
-  cardCalander:{
-    '& .MuiToolbar-root':{
-      display: "none"
+  cardCalander: {
+    '& .MuiToolbar-root': {
+      display: 'none',
     },
-    '& .MuiPickersDatePickerRoot-toolbarLandscape':{
-      display: "none"
+    '& .MuiPickersDatePickerRoot-toolbarLandscape': {
+      display: 'none',
     },
-    '& .MuiPickersBasePicker-pickerView':{
-      margin: 'auto'
+    '& .MuiPickersBasePicker-pickerView': {
+      margin: 'auto',
     },
-    '& .MuiTypography-body1':{
-      color:theme.palette.primary.main,
-    fontWeight: 'bolder',
-
-    }
-  }
+    '& .MuiTypography-body1': {
+      color: theme.palette.primary.main,
+      fontWeight: 'bolder',
+    },
+  },
 }));
 
 export default useStyles;
