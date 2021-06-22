@@ -132,7 +132,7 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
             </Button>
             <Typography className={classes.signUpText}>
                       Already a Member? 
-                      <Link className={classes.secondaryLink} href='./signup'>
+                      <Link className={classes.secondaryLink} href='./login'>
                         Log In
                       </Link>
           </Typography>
