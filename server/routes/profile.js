@@ -1,20 +1,17 @@
-const express = require("express")
-const router = express.Router()
-const protect = require("../middleware/auth")
+
+const express = require("express");
+const router = express.Router();
+const protect = require("../middleware/auth");
 const {
-  newUser,
+  newProfile,
   editProfile,
   getProfile,
-  findProfiles,
-} = require("../controllers/profile")
+  findSitters,
+} = require("../controllers/profile");
 
-router.route('/newuser').post(protect, newUser)
+router.route("/new-profile").post(protect, newProfile);
+router.route("/edit-profile/:id").patch(protect, editProfile);
+router.route("/get-profile/:id").get(protect, getProfile);
+router.route("/sitters").get(protect, findSitters);
 
-router.route('/editprofile').patch(protect, editProfile)
-
-router.route('/getprofile').get(protect, getProfile)
-
-router.route('/findprofiles').get(protect ,findProfiles)
-
-
-module.exports = router
+module.exports = router;
