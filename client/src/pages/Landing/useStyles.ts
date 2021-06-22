@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 85px)',
     boxSizing: 'border-box',
     '& .MuiInput-underline:before': {
       borderBottom: '1.2px solid rgba(0, 0, 0, 0.2)',
@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 800,
     textDecoration: 'none',
     marginLeft: '8px',
+    cursor: 'pointer',
   },
   contentArea: {
     height: '100%',

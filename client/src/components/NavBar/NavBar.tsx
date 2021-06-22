@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import Hidden from '@material-ui/core/Hidden';
 import { Link as RouterLink } from 'react-router-dom';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -17,6 +18,12 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Box from '@material-ui/core/Box';
+
+import MenuIcon from '@material-ui/icons/Menu';
+import Drawer from '@material-ui/core/Drawer';
+
+import LoginHeader from '../LoginHeader/LoginHeader';
+import SignupHeader from '../SignUpHeader/SignUpHeader';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
@@ -37,47 +44,39 @@ const NavBar = (): JSX.Element => {
   return (
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />
-      <AppBar position="relative" color="default" className={classes.appBar}>
+      <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Link href="/">
-            <Typography variant="h5" color="inherit" noWrap className={classes.toolbarTitle}>
+            <Typography variant="h5" color="textPrimary" noWrap className={classes.toolbarTitle}>
               <PetsIcon color="primary" className={classes.toolbarIcon} />
               <Box display={{ xs: 'none', md: 'block' }}>LovingSitter.</Box>
             </Typography>
           </Link>
           <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
             {!loggedInUser && (
-              <Grid item className={classes.toolbarLeft}>
-                <Link
-                  component={RouterLink}
-                  to="/sitters"
-                  variant="button"
-                  underline="always"
-                  color="textPrimary"
-                  className={classes.link}
-                >
-                  BECOME A SITTER
-                </Link>
-                <Button
-                  component={RouterLink}
-                  to="/login"
-                  color="primary"
-                  variant="outlined"
-                  className={classes.button}
-                >
-                  LOGIN
-                </Button>
-                <Button
-                  component={RouterLink}
-                  to="/signup"
-                  color="primary"
-                  variant="contained"
-                  disableElevation
-                  className={classes.button}
-                >
-                  SIGN UP
-                </Button>
-              </Grid>
+          <AppBar position="relative" elevation={0} className={classes.appBar}>
+            <Toolbar className={classes.toolbar}>
+                  <Grid container direction="row" justify="flex-end" alignItems="center">
+                    <Hidden only={["sm", "md", "lg", "xl"]}>
+                      <MenuIcon color="primary" className={classes.menuIcon}/>
+                    </Hidden>
+                    <Hidden only={['xs']}>
+                      <Hidden only={['xs', "sm"]}>
+                        <Typography className={classes.toolbarLink}>
+                          <Link 
+                          className={classes.secondaryLink} 
+                          href='/sitters'>
+                            Become a Sitter 
+                          </Link>
+                        </Typography>
+                      </Hidden>
+                      <LoginHeader linkTo="/login" btnText="Log In" />
+                      <SignupHeader linkTo="/signup" btnText="Sign Up" />
+                    </Hidden>
+                  </Grid>
+                
+            </Toolbar>
+          </AppBar> 
             )}
             {loggedInUser && (
               <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>
