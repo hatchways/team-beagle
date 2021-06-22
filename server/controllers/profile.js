@@ -97,16 +97,6 @@ exports.findSitters = asyncHandler(async (req, res) => {
   try {
     const profileList = await Profile.find({ isDogSitter: true });
 
-
-//@route GET 
-//fetch list of profiles
-exports.findProfiles = asyncHandler(async (req, res) => {
-    const search = req.query.search;
-    let profiles;
-    try {
-        // should search for isDogSitter: true
-        const profileList = await Profile.find({req: search})
-        
     if (profileList) {
       res.status(200).json({ profiles: profileList });
     } else {
