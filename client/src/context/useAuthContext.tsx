@@ -21,13 +21,9 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   // default undefined before loading, once loaded provide user or null if logged out
   const [loggedInUser, setLoggedInUser] = useState<User | null | undefined>();
   const history = useHistory();
-  const updateLoginContext = useCallback(
-    (data: AuthApiDataSuccess) => {
-      setLoggedInUser(data.user);
-      history.push('/dashboard');
-    },
-    [history],
-  );
+  const updateLoginContext = useCallback((data: AuthApiDataSuccess) => {
+    setLoggedInUser(data.user);
+  }, []);
 
   const logout = useCallback(async () => {
     // needed to remove token cookie

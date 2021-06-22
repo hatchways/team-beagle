@@ -4,6 +4,8 @@ const profileSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
+    unique: true,
+    required: true,
   },
   firstName: {
     type: String,
@@ -21,6 +23,11 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  images: [
+    {
+      type: String,
+    },
+  ],
   //  sitter
   isDogSitter: {
     type: Boolean,
@@ -40,9 +47,11 @@ const profileSchema = new mongoose.Schema({
   },
 });
 
-requestSchema.pre("validate", function (next) {
-  if ((this.isDogSitter && !this.hourlyRate) || !this.tagLine) {
-    next(new Error("Must include, hourly rate, tag line"));
+profileSchema.pre("validate", function (next) {
+  if (this.isDogSitter && !this.hourlyRate) {
+    next(new Error("Must include hourly rate"));
+  } else if (this.isDogSitter && !this.tagLine) {
+    next(new Error("Must include tag line"));
   } else {
     next();
   }
