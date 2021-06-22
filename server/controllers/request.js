@@ -4,9 +4,8 @@ const asyncHandler = require("express-async-handler");
 // @route POST /request
 // @desc add request
 // @access Public
-exports.addRequest = asyncHandler(async (req, res, next) => {
-  const { userID, sitterID, startDate, endDate, accept, decline, paid } =
-    req.body;
+exports.newRequest = asyncHandler(async (req, res, next) => {
+  const { userID, sitterID, startDate, endDate } = req.body;
 
   if (startDate > endDate) {
     res.status(400);
@@ -18,9 +17,6 @@ exports.addRequest = asyncHandler(async (req, res, next) => {
     sitterID,
     startDate,
     endDate,
-    accept,
-    decline,
-    paid,
   });
 
   if (request) {
@@ -49,7 +45,6 @@ exports.addRequest = asyncHandler(async (req, res, next) => {
 exports.requestsByUser = asyncHandler(async (req, res, next) => {
   const idString = req.params.id;
 
-  console.log(idString);
   let requests;
   if (idString) {
     requests = await Request.find({
