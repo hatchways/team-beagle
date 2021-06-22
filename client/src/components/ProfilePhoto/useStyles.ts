@@ -46,7 +46,10 @@ const useStyles = makeStyles((theme) => ({
   },
   photoBtn: {
     margin: '10px 0'
-  }
+  },
+  mainPhotoMsg: {
+    fontSize: '1.1rem',
+  },
 }));
 
 export default useStyles;

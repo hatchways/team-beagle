@@ -4,6 +4,10 @@ const Profile = require("../models/Profile");
 
 const asyncHandler = require("express-async-handler");
 
+const { storage } = require("../cloudinary")
+const upload = multer({ storage })
+
+
 // @route POST /profile/new
 // Create New User Profile
 exports.newProfile = asyncHandler(async (req, res) => {
@@ -91,28 +95,41 @@ exports.getProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @route POST /profile/uploadphoto/:id
+// Upload photo
+exports.uploadphoto = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  try {
+    
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+})
+
+
+
+// //@route GET 
+// //fetch list of profiles
+// exports.findProfiles = asyncHandler(async (req, res) => {
+//     const search = req.query.search;
+//     let profiles;
+//     try {
+//         // should search for isDogSitter: true
+//         const profileList = await Profile.find({req: search})
+
+
 //@route GET /profile/sitters
 //fetch list of isDogSitter profiles
 exports.findSitters = asyncHandler(async (req, res) => {
   try {
     const profileList = await Profile.find({ isDogSitter: true });
-
-
-//@route GET 
-//fetch list of profiles
-exports.findProfiles = asyncHandler(async (req, res) => {
-    const search = req.query.search;
-    let profiles;
-    try {
-        // should search for isDogSitter: true
-        const profileList = await Profile.find({req: search})
-        
-    if (profileList) {
-      res.status(200).json({ profiles: profileList });
-    } else {
-      res.status(404).json({ message: "Profiles Not Found" });
-    }
+      
+  if (profileList) {
+    res.status(200).json({ profiles: profileList });
+  } else {
+    res.status(404).json({ message: "Profiles Not Found" });
+  }
   } catch (error) {
     return res.status(500).json({ message: error });
   }
-});
+})
