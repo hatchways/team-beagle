@@ -5,43 +5,33 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import { FormikHelpers } from 'formik';
 import useStyles from './useStyles';
 
-import SignUpHeader from '../../components/SignUpHeader/SignUpHeader';
-import LoginHeader from '../../components/LoginHeader/LoginHeader';
+import {useAuth} from '../../context/useAuthContext';
+import login from '../../helpers/APICalls/login';
 
-
-import LogoImage from "../../mocks/logo.png";
 import DogsImage from "../../Images/dogs.jpeg"
 
 export default function Landing(): JSX.Element {
   const classes = useStyles();
+  const { updateLoginContext } = useAuth()
+
+    const demoUserSubmit = () => {
+      login("demo@hatchways.com", "demo123").then((data) => {
+        if (data.success) {
+          updateLoginContext(data.success);
+        }
+      });
+  };
 
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={12} elevation={6} component={Paper} square>
         <Box className={classes.authWrapper}>
-          <AppBar position="absolute" elevation={0} className={classes.appBar}>
-            <Toolbar className={classes.toolbar}>
-              <img src={LogoImage} alt="logo" className={classes.logo}/>
-
-                  <Grid container direction="row" justify="flex-end" alignItems="center">
-                    <Typography className={classes.toolbarLink}>
-                      <Link className={classes.secondaryLink} href='#'>
-                        Become a Sitter 
-                      </Link>
-                    </Typography>
-                    <LoginHeader linkTo="/login" btnText="Log In" />
-                    <SignUpHeader linkTo="/signup" btnText="Sign Up" />
-                  </Grid>  
-            </Toolbar>
-          </AppBar>
             <Box width="100%">
                 <Grid container
                     direction="row"
@@ -98,7 +88,7 @@ export default function Landing(): JSX.Element {
                                     </Box>
                                 <Typography>
                                     Not a Member? 
-                                    <Link className={classes.secondaryLink} href='./signup'>
+                                    <Link className={classes.secondaryLink} onClick={demoUserSubmit}>
                                         Demo User
                                     </Link>
                                 </Typography>
