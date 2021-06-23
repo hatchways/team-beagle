@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    margin: '15px 0',
   },
 }));
 
