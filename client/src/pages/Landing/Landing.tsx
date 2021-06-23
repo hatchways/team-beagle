@@ -13,6 +13,7 @@ import useStyles from './useStyles';
 import {useAuth} from '../../context/useAuthContext';
 import login from '../../helpers/APICalls/login';
 
+
 import DogsImage from "../../Images/dogs.jpeg"
 
 export default function Landing(): JSX.Element {

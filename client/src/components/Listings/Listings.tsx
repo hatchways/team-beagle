@@ -13,10 +13,42 @@ import RoomIcon from '@material-ui/icons/Room';
 import Rating from '@material-ui/lab/Rating';
 import Paper from '@material-ui/core/Paper';
 
-import React from 'react';
+import React, {useState, useEffect } from 'react';
+import searchSitters from "../../helpers/APICalls/searchSitters";
+
+import { User } from '../../interface/User';
+import { Profile } from '../../interface/Profile';
 
 const Listings = (): JSX.Element => {
   const classes = useStyles();
+  // const [sitters, setSitters] = useState<Profile[]>([]);
+  const [searchProfiles, setSearchProfiles] = useState<string>("");
+  
+
+  const updateProfiles = async () => {
+    const sitterList: Profile[] = [];
+    const data = await searchSitters(searchProfiles);
+    const users: any = data.users;
+    if (users) {
+      users.map((user: User) => {
+        if(user.profile) {
+          sitterList.push(user.profile);
+        }
+      });
+      console.log(sitterList)
+    }
+  };
+
+  const handleChange = (e: any) => {
+    e.preventDefault()
+    setSearchProfiles(e.target.value)
+    console.log(searchProfiles);
+  }
+
+  useEffect(() => {
+    updateProfiles();
+  });
+
 
   //temp
   const cards = [1, 2, 3, 4, 5, 6];
@@ -34,6 +66,7 @@ const Listings = (): JSX.Element => {
             defaultValue="Toronto"
             variant="outlined"
             className={`${classes.textField} ${classes.textFieldLocation}`}
+            onChange={handleChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
