@@ -27,9 +27,9 @@ import SignupHeader from '../SignUpHeader/SignUpHeader';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
-  const { loggedInUser, logout } = useAuth();
+  const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-
+  console.log(userProfile);
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
   };
@@ -54,19 +54,17 @@ const NavBar = (): JSX.Element => {
           </Link>
           <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
             {!loggedInUser && (
-          <AppBar position="relative" elevation={0} className={classes.appBar}>
-            <Toolbar className={classes.toolbar}>
+              <AppBar position="relative" elevation={0} className={classes.appBar}>
+                <Toolbar className={classes.toolbar}>
                   <Grid container direction="row" justify="flex-end" alignItems="center">
-                    <Hidden only={["sm", "md", "lg", "xl"]}>
-                      <MenuIcon color="primary" className={classes.menuIcon}/>
+                    <Hidden only={['sm', 'md', 'lg', 'xl']}>
+                      <MenuIcon color="primary" className={classes.menuIcon} />
                     </Hidden>
                     <Hidden only={['xs']}>
-                      <Hidden only={['xs', "sm"]}>
+                      <Hidden only={['xs', 'sm']}>
                         <Typography className={classes.toolbarLink}>
-                          <Link 
-                          className={classes.secondaryLink} 
-                          href='/sitters'>
-                            Become a Sitter 
+                          <Link className={classes.secondaryLink} href="/sitters">
+                            Become a Sitter
                           </Link>
                         </Typography>
                       </Hidden>
@@ -74,9 +72,8 @@ const NavBar = (): JSX.Element => {
                       <SignupHeader linkTo="/signup" btnText="Sign Up" />
                     </Hidden>
                   </Grid>
-                
-            </Toolbar>
-          </AppBar> 
+                </Toolbar>
+              </AppBar>
             )}
             {loggedInUser && (
               <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>

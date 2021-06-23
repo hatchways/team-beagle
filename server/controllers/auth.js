@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken");
+const Profile = require("../models/Profile");
 
 // @route POST /auth/register
 // @desc Register user
@@ -68,7 +69,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
       httpOnly: true,
       maxAge: secondsInWeek * 1000,
     });
-
+    const profile = await Profile.findOne({ userId: user._id });
     res.status(200).json({
       success: {
         user: {
@@ -76,6 +77,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
           username: user.username,
           email: user.email,
         },
+        profile: profile,
       },
     });
   } else {
@@ -94,6 +96,7 @@ exports.loadUser = asyncHandler(async (req, res, next) => {
     res.status(401);
     throw new Error("Not authorized");
   }
+  const profile = await Profile.findOne({ userId: user._id });
 
   res.status(200).json({
     success: {
@@ -102,6 +105,7 @@ exports.loadUser = asyncHandler(async (req, res, next) => {
         username: user.username,
         email: user.email,
       },
+      profile: profile,
     },
   });
 });
