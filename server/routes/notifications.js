@@ -14,6 +14,6 @@ router.route('/unread').get(protect, getUnreadNotifications);
 
 router.route('/new').post(protect, newNotification);
 
-router.route('read/:id').patch(protect, readNotification);
+router.route('/read/:id').patch(protect, readNotification);
 
 module.exports = router;

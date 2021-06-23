@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const asyncHandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler")
 const decodeToken = require("../utils/decodeToken")
 const jwt = require("jsonwebtoken")
 
@@ -48,12 +48,13 @@ exports.getUnreadNotifications = asyncHandler(async (req, res) => {
 // @route POST /notifications/new
 // Create new notification
 exports.newNotification = asyncHandler(async (req, res) => {
-  const notification = req.body
+  const { type, title, content, recipient } = req.body
   let decoded = decodeToken(req.cookies.token)
   const userId = decoded.id
+  console.log("attempting to post a new notification...")
   try {
-    const newNotification = await new Notification({
-      sender: notification.type === "message" ? userId : "",
+    const notification = await Notification.create({
+      sender: type === "message" ? userId : "",
       recipient,
       type,
       title,
@@ -61,7 +62,16 @@ exports.newNotification = asyncHandler(async (req, res) => {
       content,
       date: Date.now(),
     })
-    await newNotification.save()
+    console.log("notification created")
+    res.status(201).json({
+      success: {
+        notification: {
+          id: notification._id,
+          type: notification.type,
+          content: notification.content,
+        },
+      },
+    })
   } catch (error) {
     return res.status(500).json({ error: "Could not post notification" })
   }
@@ -73,6 +83,14 @@ exports.readNotification = asyncHandler(async (req, res) => {
   const notificationId = req.params.id
   try {
     await Notification.findOneAndUpdate({ _id: notificationId }, { read: true })
+    res.status(201).json({
+      success: {
+        notification: {
+          id: notificationId,
+          read: true,
+        },
+      },
+    })
   } catch (error) {
     return res
       .status(500)
