@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const decodeToken = require("../utils/decodeToken");
+const jwt = require("jsonwebtoken");
 
 const Profile = require("../models/Profile");
 
@@ -62,9 +63,9 @@ exports.newProfile = asyncHandler(async (req, res) => {
 // //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
   const update = req.body;
-
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
   try {
     const updateProfile = await Profile.findOneAndUpdate(
       { userId: userId },
