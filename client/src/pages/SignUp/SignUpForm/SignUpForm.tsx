@@ -8,8 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import useStyles from './useStyles';
 import { CircularProgress } from '@material-ui/core';
 
-import {useAuth} from '../../../context/useAuthContext';
+import { useAuth } from '../../../context/useAuthContext';
 import login from '../../../helpers/APICalls/login';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   handleSubmit: (
@@ -35,14 +36,16 @@ interface Props {
 
 const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
   const classes = useStyles();
-  const { updateLoginContext } = useAuth()
+  const { updateLoginContext } = useAuth();
+  const history = useHistory();
 
-    const demoUserSubmit = () => {
-      login("demo@hatchways.com", "demo123").then((data) => {
-        if (data.success) {
-          updateLoginContext(data.success);
-        }
-      });
+  const demoUserSubmit = () => {
+    login('demo@hatchways.com', 'demo123').then((data) => {
+      if (data.success) {
+        updateLoginContext(data.success);
+        history.push('/dashboard');
+      }
+    });
   };
 
   return (
@@ -127,16 +130,23 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
             <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
               {isSubmitting ? <CircularProgress style={{ color: 'white' }} /> : 'Create'}
             </Button>
-               <Button type="submit" size="small" variant="contained" color="secondary" className={classes.submit} onClick={demoUserSubmit}>
+            <Button
+              type="submit"
+              size="small"
+              variant="contained"
+              color="secondary"
+              className={classes.submit}
+              onClick={demoUserSubmit}
+            >
               {isSubmitting ? <CircularProgress style={{ color: 'red' }} /> : 'Demo User'}
             </Button>
             <Typography className={classes.signUpText}>
-                      Already a Member? 
-                      <Link className={classes.secondaryLink} href='./login'>
-                        Log In
-                      </Link>
-          </Typography>
-          <Box style={{ height: 40 }} />
+              Already a Member?
+              <Link className={classes.secondaryLink} href="./login">
+                Log In
+              </Link>
+            </Typography>
+            <Box style={{ height: 40 }} />
           </Box>
         </form>
       )}
