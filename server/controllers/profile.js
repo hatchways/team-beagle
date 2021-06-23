@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const decodeToken = require("../utils/decodeToken");
 
 const Profile = require("../models/Profile");
 
@@ -58,7 +59,7 @@ exports.newProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// //@route Patch /profile/editprofile/:id
+// //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
@@ -76,16 +77,14 @@ exports.editProfile = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Profile not found" });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: "Could not update profile" });
   }
 });
 
-//@route GET /profile/getprofile/:id
+//@route GET /profile/get-profile/:id
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
-  let profile;
   try {
     const getProfile = await Profile.findOne({ userId: userId });
 
@@ -102,7 +101,6 @@ exports.getProfile = asyncHandler(async (req, res) => {
 //@route GET /profile/sitters
 //fetch list of isDogSitter profiles
 exports.findSitters = asyncHandler(async (req, res) => {
-  let profiles;
   try {
     const profileList = await Profile.find({ isDogSitter: true });
 
