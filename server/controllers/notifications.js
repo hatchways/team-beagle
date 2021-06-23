@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const asyncHandler = require("express-async-handler");
 const decodeToken = require("../utils/decodeToken")
 const jwt = require("jsonwebtoken")
 
@@ -6,7 +7,7 @@ const Notification = require("../models/Notifications")
 
 // @route GET /notifications/all
 // Get all notifications
-exports.getAllNotifications = aysncHandler(async (req, res) => {
+exports.getAllNotifications = asyncHandler(async (req, res) => {
   let decoded = decodeToken(req.cookies.token)
   const userId = decoded.id
   try {

@@ -4,6 +4,7 @@ const NotificationSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
+    required: this.type === "message",
   },
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
@@ -32,9 +33,9 @@ const NotificationSchema = new mongoose.Schema({
   },
 })
 
-mongoose.Schema.path("sender").required(() => {
-  return this.type === "message"
-})
+// mongoose.Schema.path("sender").required(() => {
+//   return this.type === "message"
+// })
 
 module.exports = Notification = mongoose.model(
   "notification",
