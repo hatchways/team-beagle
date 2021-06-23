@@ -29,7 +29,7 @@ const NavBar = (): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
-  console.log(userProfile);
+
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
   };
