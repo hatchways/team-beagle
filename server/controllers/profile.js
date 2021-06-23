@@ -57,6 +57,7 @@ exports.editProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const update = req.body;
 
+  console.log('attempting to update profile...')
   try {
     const updateProfile = await Profile.findOneAndUpdate(
       { userId: userId },
@@ -100,12 +101,12 @@ exports.findSitters = asyncHandler(async (req, res) => {
 
 //@route GET 
 //fetch list of profiles
-exports.findProfiles = asyncHandler(async (req, res) => {
-    const search = req.query.search;
-    let profiles;
-    try {
-        // should search for isDogSitter: true
-        const profileList = await Profile.find({req: search})
+// exports.findProfiles = asyncHandler(async (req, res) => {
+//     const search = req.query.search;
+//     let profiles;
+    // try {
+    //     // should search for isDogSitter: true
+    //     const profileList = await Profile.find({req: search})
         
     if (profileList) {
       res.status(200).json({ profiles: profileList });
