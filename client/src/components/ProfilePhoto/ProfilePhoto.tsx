@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Grid, Typography, Avatar, Button, Icon, InputBase } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 import Carousel from 'react-material-ui-carousel';
 import uploadPhoto from '../../helpers/APICalls/uploadPhoto';
+import changeMainPhoto from '../../helpers/APICalls/changeMainPhoto';
+import getProfile from '../../helpers/APICalls/getProfile';
+import { AuthContext } from '../../context/useAuthContext'
 
-
-function InputButton(): JSX.Element {
+function InputButton({...props}): JSX.Element {
   const classes = useStyles();
-
-  useEffect(() =>{
-    // get profile data
-  },[])
 
   interface HTMLInputEvent extends Event {
     target: HTMLInputElement & EventTarget;
   }
 
+  console.log(props)
+  
   const validateAndUploadFile = (e: HTMLInputEvent | React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/x-icon'];
@@ -27,7 +27,12 @@ function InputButton(): JSX.Element {
       } else if (file.size > 2000000) {
         console.error('File size is too large. The maximum size is 2MB');
       } else {
-        uploadPhoto('profilePhoto', file);
+        const addPhoto = async () => {
+          const data = await uploadPhoto('profilePhoto', file);
+          const images = data.profile.images
+          props.setPhotos(images)
+        }
+        addPhoto()
       }
     }
   };
@@ -43,11 +48,27 @@ function InputButton(): JSX.Element {
 export default function ProfilePhoto(): JSX.Element {
   const classes = useStyles();
 
-  const [photos, setPhotos] = useState(['photo1', 'photo2', 'photo3', 'photo4', 'photo5']);
-  // const [fileSelected, setFileSelected] = useState<File>();
+  const { loggedInUser } = useContext(AuthContext);
+  const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
 
-  const updateMainPhoto = () => {
-    console.log('changing your main photo...');
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await getProfile(loggedInUserId)();
+      setPhotos(data.profile.images);
+    };
+    fetchProfile();
+  }, [loggedInUserId]);
+
+  const [photos, setPhotos] = useState([]);
+
+  const updateMainPhoto = (idx: number) => {
+    const setNewMainPhoto = async () => {
+      const data = await changeMainPhoto(idx)
+      console.log(data)
+      const images = data.profile.images
+      setPhotos(images)
+    }
+    setNewMainPhoto()
   };
 
   return (
@@ -63,7 +84,7 @@ export default function ProfilePhoto(): JSX.Element {
                 This is your main photo
               </Button>
             ) : (
-              <Button className={classes.photoBtn} variant="contained" onClick={() => updateMainPhoto()}>
+              <Button className={classes.photoBtn} variant="contained" onClick={() => updateMainPhoto(idx)}>
                 Set as my main photo
               </Button>
             )}
@@ -73,7 +94,7 @@ export default function ProfilePhoto(): JSX.Element {
       <Typography className={classes.settingsSubheading}>
         Be sure to use a photo that clearly shows your face.
       </Typography>
-      <InputBase classes={{ input: classes.inputBase }} name="profilePhoto" inputComponent={InputButton} type="file" />
+      <InputBase classes={{ input: classes.inputBase }} name="profilePhoto" inputComponent={InputButton} inputProps={{setPhotos}} type="file" />
       <Button>
         <Icon component={DeleteForeverIcon} />
         <Typography className={classes.deletePhotoText}>Delete Photo</Typography>

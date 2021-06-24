@@ -1,15 +1,12 @@
-import { AuthApiData } from '../../interface/AuthApiData';
 
-const uploadPhoto = async (name: string, file: string | Blob): Promise<AuthApiData> => {
-  console.log(name)
-  console.log(file)
+const uploadPhoto = async (name: string, file: string | Blob): Promise<any> => {
   const data = new FormData();
-  data.append('name', name);
   data.append('file', file);
-  return await fetch('/profile/upload-photo', {
+  data.append('name', name);
+  return await fetch('http://localhost:3001/profile/upload-photo', {
     method: 'POST',
     headers: {
-      'Content-Type': 'multipart/form-data',
+      // 'Content-Type': 'multipart/form-data',
     },
     credentials: 'include',
     body: data,

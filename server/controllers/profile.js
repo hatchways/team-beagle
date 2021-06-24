@@ -132,3 +132,27 @@ exports.uploadPhoto = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: error })
   }
 })
+
+// @route PATCH /profile/change-main-photo
+// Change main photo (largest photo in profile details)
+exports.changeMainPhoto = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
+  const index = req.params.id
+  const profile = await Profile.findOne({ userId })
+  console.log(index)
+  try {
+    if (profile) {
+      const temp = profile.images[0]
+      profile.images[0] = profile.images[index]
+      profile.images[index] = temp
+      await profile.save()
+      console.log('profile updated...')
+      res.status(200).json({ profile })
+    } else {
+      res.status(404).json({ message: "Profile Not Found" })
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})
