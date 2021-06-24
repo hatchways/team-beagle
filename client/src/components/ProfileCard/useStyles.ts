@@ -23,6 +23,7 @@ card: {
   },
   cardDescription: {
     paddingBottom: theme.spacing(3),
+    height: "80%",
   },
   cardFooter: {
     fontSize: '.8rem',

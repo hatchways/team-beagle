@@ -5,6 +5,7 @@ import RoomIcon from '@material-ui/icons/Room';
 import Rating from '@material-ui/lab/Rating';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
 
 import React, {useState, useEffect } from 'react';
 import useStyles from './useStyles';
@@ -22,6 +23,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
 
 
     return (
+    // <Link to={{}}>
         <Paper className={classes.card} elevation={3}>
             <Avatar alt="Remy Sharp" src={profile.images} className={classes.cardAvatar} />
                 <Typography variant="h6" component="h2" className={classes.cardName}>
@@ -31,7 +33,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
                   {profile.tagLine}
                 </Typography>
                 <Rating
-                //   value={profile.rating}
+                  value={profile.rating}
                   size="small"
                   readOnly
                   style={{
@@ -66,7 +68,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
                   <Typography className={classes.cardFooterHr}>${profile.hourlyRate}/hr</Typography>
                 </Grid>
               </Paper>
-        
+            // </Link>
                 );
             };
 

@@ -7,14 +7,15 @@ export interface Profile {
     description: string;
     location: string;
     images: string;
-    isDogSitter: Boolean;
-    rating: Number;
-    hourlyRate: Number;
-    tagLine: String,
+    isDogSitter: boolean;
+    rating: number;
+    hourlyRate: number;
+    tagLine: string,
   };
 
 export interface SearchProfileApiData {
   users?: User[];
   profile?: Profile[];
+  profiles?: Profile[];
   error?: { message: string };
 }
