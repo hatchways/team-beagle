@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const decodeToken = require("../utils/decodeToken");
+const jwt = require("jsonwebtoken");
 
 const Profile = require("../models/Profile");
 
@@ -15,6 +17,9 @@ exports.newProfile = asyncHandler(async (req, res) => {
     location,
     images,
     isDogSitter,
+    availabilityWeek,
+    availabilityDays,
+
     rating,
     hourlyRate,
     tagLine,
@@ -28,6 +33,8 @@ exports.newProfile = asyncHandler(async (req, res) => {
     location,
     images,
     isDogSitter,
+    availabilityWeek,
+    availabilityDays,
     rating,
     hourlyRate,
     tagLine,
@@ -42,6 +49,8 @@ exports.newProfile = asyncHandler(async (req, res) => {
       location: profile.location,
       images: profile.images,
       isDogSitter: profile.isDogSitter,
+      availabilityWeek: profile.availabilityWeek,
+      availabilityDays: profile.availabilityDays,
       rating: profile.rating,
       hourlyRate: profile.hourlyRate,
       tagLine: profile.tagLine,
@@ -51,12 +60,12 @@ exports.newProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// //@route Patch /profile/editprofile/:id
+// //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
   const update = req.body;
-
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
   try {
     const updateProfile = await Profile.findOneAndUpdate(
       { userId: userId },
@@ -69,12 +78,11 @@ exports.editProfile = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Profile not found" });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ error: "Could not update profile" });
   }
 });
 
-//@route GET /profile/getprofile/:id
+//@route GET /profile/get-profile/:id
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
@@ -107,24 +115,23 @@ exports.findSitters = asyncHandler(async (req, res) => {
   }
 });
 
-//@route Get /profile/search/location/
+//@route Get /profile/location/:search
 //return list of profiles who match users search 
 exports.findSittersByLocation = asyncHandler(async (req, res) => {
   const search = req.params.search;
-
+  
   try {
-    const profileList = await Profile.find({ isDogSitter: true })
-    const users = [];
+    
+    const profileList = await Profile.find({ 
+      location: { $regex: search, $options: "i" },
+      isDogSitter: true });
 
-    profileList.map((match) => {
-      if(match.profile) {
-        const location = match.profile.location.toLowerCase();
-        if(location.includes(search)) {
-          users.push(match)
-        }
+      if(profileList) {
+        return res.status(200).json({profiles: profileList})
+      } else {
+        return res.status(404).json({message: "No Profiles Found"})
+        
       }
-    });
-    return res.status(200).json({profiles: users})
   } catch(error) {
     return res.status(500).json({message: error});
   }
