@@ -36,19 +36,21 @@ const useStyles = makeStyles((theme) => ({
   cardActions: {
     justifyContent: 'flex-end',
   },
+  cardStatus: {
+    fontWeight: 'bolder',
+    opacity: 0.4,
+    marginLeft: 'auto',
+  },
   cardCalander: {
-    '& .MuiToolbar-root': {
-      display: 'none',
-    },
-    '& .MuiPickersDatePickerRoot-toolbarLandscape': {
-      display: 'none',
-    },
-    '& .MuiPickersBasePicker-pickerView': {
-      margin: 'auto',
-    },
-    '& .MuiTypography-body1': {
-      color: theme.palette.primary.main,
-      fontWeight: 'bolder',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayPicker: {
+    '& .DayPicker-Day--selected': {
+      backgroundColor: `${theme.palette.primary.main} !important`,
+      color: 'white !important',
+      padding: `.4em .6em !important `,
     },
   },
 }));

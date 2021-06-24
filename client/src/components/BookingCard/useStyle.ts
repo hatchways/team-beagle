@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.4,
     marginLeft: 'auto',
   },
+  cardActions: {
+    justifyContent: 'flex-end',
+  },
 }));
 
 export default useStyles;
