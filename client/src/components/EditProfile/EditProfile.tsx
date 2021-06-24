@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../context/useAuthContext'
 import {
   Grid,
   Typography,
@@ -23,18 +24,18 @@ import * as Yup from 'yup';
 import editProfile from '../../helpers/APICalls/editProfile';
 import getProfile from '../../helpers/APICalls/getProfile';
 import { useSnackBar } from '../../context/useSnackbarContext';
-import { CurrentUser } from '../../interface/AuthApiData'
+import { CurrentProfile } from '../../interface/AuthApiData'
 
 export default function EditProfile(): JSX.Element {
   const classes = useStyles();
 
   const [isDogSitter, setIsDogSitter] = useState(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>({
+  const [CurrentProfile, setCurrentProfile] = useState<CurrentProfile>({
     profile: {
       isDogSitter: false,
       firstName: '',
       lastName: '',
-      address: '',
+      location: '',
       description: '',
       hourlyRate: 1,
       tagLine: '',
@@ -70,6 +71,15 @@ export default function EditProfile(): JSX.Element {
       },
     },
   });
+
+  interface loggedInUser {
+    email: string,
+    id: string,
+    username: string
+  }
+
+  const { loggedInUser } = useContext(AuthContext)
+  const loggedInUserId: string = (loggedInUser !== null && loggedInUser !== undefined) ? loggedInUser.id : ""
 
   const handleSwitch = () => {
     formik.setFieldValue('isDogSitter', !isDogSitter);
@@ -129,7 +139,7 @@ export default function EditProfile(): JSX.Element {
       };
     };
   }) => {
-    editProfile(isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine, availability).then((data) => {
+    editProfile(loggedInUserId, isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine, availability).then((data) => {
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
@@ -141,15 +151,15 @@ export default function EditProfile(): JSX.Element {
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      isDogSitter: currentUser.profile.isDogSitter,
-      firstName: currentUser.profile.firstName,
-      lastName: currentUser.profile.lastName,
+      isDogSitter: CurrentProfile.profile.isDogSitter,
+      firstName: CurrentProfile.profile.firstName,
+      lastName: CurrentProfile.profile.lastName,
       primaryPhone: '',
       secondaryPhone: '',
-      address: currentUser.profile.address,
-      selfDescription: currentUser.profile.description,
-      hourlyRate: currentUser.profile.hourlyRate,
-      tagLine: currentUser.profile.tagLine,
+      location: CurrentProfile.profile.location,
+      selfDescription: CurrentProfile.profile.description,
+      hourlyRate: CurrentProfile.profile.hourlyRate,
+      tagLine: CurrentProfile.profile.tagLine,
       availability: {
         Sunday: {
           am: false,
@@ -198,7 +208,7 @@ export default function EditProfile(): JSX.Element {
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')
         .min(10, 'You must enter a ten-digit phone number with the area code'),
-      address: Yup.string()
+      location: Yup.string()
         .max(40, 'Please enter your address in 40 characters or less')
         .required('Your address is required'),
       selfDescription: Yup.string()
@@ -216,8 +226,8 @@ export default function EditProfile(): JSX.Element {
           : Yup.number(),
       tagLine:
         isDogSitter === true
-          ? Yup.string().max(50, 'Please write a tagline').required('A tagline is required')
-          : Yup.string().max(0, 'You can only have a tagline if you want to dog sit'),
+          ? Yup.string().max(50, 'Please write a tagline in 50 characters or less').required('A tagline is required')
+          : Yup.string().max(50, 'Please write a tagline in 50 characters or less'),
       availability:
         isDogSitter === true
           ? Yup.object({
@@ -257,11 +267,12 @@ export default function EditProfile(): JSX.Element {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const data = await getProfile('60d27c100d56505dc08f0bdb')();
-      setCurrentUser(data);
+      const data = await getProfile(loggedInUserId)();
+      setCurrentProfile(data);
+      setIsDogSitter(data.profile.isDogSitter)
     };
     fetchProfile();
-  }, []);
+  }, [loggedInUserId]);
 
   return (
     <Grid className={classes.root}>
@@ -379,14 +390,14 @@ export default function EditProfile(): JSX.Element {
             size="small"
             variant="outlined"
             placeholder="Address"
-            {...formik.getFieldProps('address')}
-            error={formik.touched.address && formik.errors.address !== undefined}
-            helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ''}
+            {...formik.getFieldProps('location')}
+            error={formik.touched.location && formik.errors.location !== undefined}
+            helperText={formik.touched.location && formik.errors.location ? formik.errors.location : ''}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {formik.touched.address && !formik.errors.address && <CheckCircleIcon />}
-                  {formik.touched.address && formik.errors.address && <ErrorIcon />}
+                  {formik.touched.location && !formik.errors.location && <CheckCircleIcon />}
+                  {formik.touched.location && formik.errors.location && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}

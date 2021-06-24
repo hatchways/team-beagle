@@ -2,6 +2,7 @@ import { AuthApiData } from '../../interface/AuthApiData';
 import { FetchOptions } from '../../interface/FetchOptions';
 
 const editProfile = async (
+  id: string,
   isDogSitter: boolean,
   firstName: string,
   lastName: string,
@@ -45,7 +46,7 @@ const editProfile = async (
     body: JSON.stringify({ isDogSitter, firstName, lastName, description: selfDescription, hourlyRate, tagLine }),
     credentials: 'include',
   };
-  return await fetch(`http://localhost:3001/profile/edit-profile/60d27c100d56505dc08f0bdb`, fetchOptions)
+  return await fetch(`http://localhost:3001/profile/edit-profile/${id}`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
