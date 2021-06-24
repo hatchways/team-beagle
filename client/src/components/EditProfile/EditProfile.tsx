@@ -1,5 +1,20 @@
-import { useState } from 'react';
-import { Grid, Typography, TextField, Button, Switch, InputAdornment, FormHelperText } from '@material-ui/core';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../context/useAuthContext'
+import {
+  Grid,
+  Typography,
+  TextField,
+  Button,
+  Switch,
+  InputAdornment,
+  FormHelperText,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Checkbox,
+} from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,21 +22,74 @@ import useStyles from './useStyles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import editProfile from '../../helpers/APICalls/editProfile';
+import getProfile from '../../helpers/APICalls/getProfile';
 import { useSnackBar } from '../../context/useSnackbarContext';
+import { CurrentProfile } from '../../interface/AuthApiData'
 
 export default function EditProfile(): JSX.Element {
   const classes = useStyles();
 
   const [isDogSitter, setIsDogSitter] = useState(false);
+  const [CurrentProfile, setCurrentProfile] = useState<CurrentProfile>({
+    profile: {
+      isDogSitter: false,
+      firstName: '',
+      lastName: '',
+      location: '',
+      description: '',
+      hourlyRate: 1,
+      tagLine: '',
+      availability: {
+        Sunday: {
+          am: false,
+          pm: false,
+        },
+        Monday: {
+          am: false,
+          pm: false,
+        },
+        Tuesday: {
+          am: false,
+          pm: false,
+        },
+        Wednesday: {
+          am: false,
+          pm: false,
+        },
+        Thursday: {
+          am: false,
+          pm: false,
+        },
+        Friday: {
+          am: false,
+          pm: false,
+        },
+        Saturday: {
+          am: false,
+          pm: false,
+        },
+      },
+    },
+  });
+
+  interface loggedInUser {
+    email: string,
+    id: string,
+    username: string
+  }
+
+  const { loggedInUser } = useContext(AuthContext)
+  const loggedInUserId: string = (loggedInUser !== null && loggedInUser !== undefined) ? loggedInUser.id : ""
 
   const handleSwitch = () => {
     formik.setFieldValue('isDogSitter', !isDogSitter);
-    formik.setFieldValue('tagLine', '');
     setIsDogSitter(!isDogSitter);
   };
 
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+  const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const { updateSnackBarMessage } = useSnackBar();
 
@@ -32,6 +100,7 @@ export default function EditProfile(): JSX.Element {
     selfDescription,
     hourlyRate,
     tagLine,
+    availability,
   }: {
     isDogSitter: boolean;
     firstName: string;
@@ -39,8 +108,38 @@ export default function EditProfile(): JSX.Element {
     selfDescription: string;
     hourlyRate: number;
     tagLine: string;
+    availability: {
+      Sunday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Monday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Tuesday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Wednesday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Thursday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Friday: {
+        am: boolean;
+        pm: boolean;
+      };
+      Saturday: {
+        am: boolean;
+        pm: boolean;
+      };
+    };
   }) => {
-    editProfile(isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine).then((data) => {
+    editProfile(loggedInUserId, isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine, availability).then((data) => {
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
@@ -50,16 +149,47 @@ export default function EditProfile(): JSX.Element {
   };
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      isDogSitter: false,
-      firstName: '',
-      lastName: '',
+      isDogSitter: CurrentProfile.profile.isDogSitter,
+      firstName: CurrentProfile.profile.firstName,
+      lastName: CurrentProfile.profile.lastName,
       primaryPhone: '',
       secondaryPhone: '',
-      address: '',
-      selfDescription: '',
-      hourlyRate: 1,
-      tagLine: '',
+      location: CurrentProfile.profile.location,
+      selfDescription: CurrentProfile.profile.description,
+      hourlyRate: CurrentProfile.profile.hourlyRate,
+      tagLine: CurrentProfile.profile.tagLine,
+      availability: {
+        Sunday: {
+          am: false,
+          pm: false,
+        },
+        Monday: {
+          am: false,
+          pm: false,
+        },
+        Tuesday: {
+          am: false,
+          pm: false,
+        },
+        Wednesday: {
+          am: false,
+          pm: false,
+        },
+        Thursday: {
+          am: false,
+          pm: false,
+        },
+        Friday: {
+          am: false,
+          pm: false,
+        },
+        Saturday: {
+          am: false,
+          pm: false,
+        },
+      },
     },
     validationSchema: Yup.object({
       isDogSitter: Yup.boolean().required(),
@@ -78,7 +208,7 @@ export default function EditProfile(): JSX.Element {
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')
         .min(10, 'You must enter a ten-digit phone number with the area code'),
-      address: Yup.string()
+      location: Yup.string()
         .max(40, 'Please enter your address in 40 characters or less')
         .required('Your address is required'),
       selfDescription: Yup.string()
@@ -96,11 +226,53 @@ export default function EditProfile(): JSX.Element {
           : Yup.number(),
       tagLine:
         isDogSitter === true
-          ? Yup.string().max(50, 'Please write a tagline').required('A tagline is required')
-          : Yup.string().max(0, 'You can only have a tagline if you want to dog sit'),
+          ? Yup.string().max(50, 'Please write a tagline in 50 characters or less').required('A tagline is required')
+          : Yup.string().max(50, 'Please write a tagline in 50 characters or less'),
+      availability:
+        isDogSitter === true
+          ? Yup.object({
+              Sunday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Monday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Tuesday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Wednesday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Thursday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Friday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+              Saturday: Yup.object({
+                am: Yup.boolean(),
+                pm: Yup.boolean(),
+              }),
+            }).required()
+          : Yup.object(),
     }),
     onSubmit: (values) => handleSubmit(values),
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await getProfile(loggedInUserId)();
+      setCurrentProfile(data);
+      setIsDogSitter(data.profile.isDogSitter)
+    };
+    fetchProfile();
+  }, [loggedInUserId]);
 
   return (
     <Grid className={classes.root}>
@@ -111,9 +283,7 @@ export default function EditProfile(): JSX.Element {
           <Typography className={classes.formLabel}>I WANT TO DOG SIT</Typography>
           <Switch id="isDogSitter" checked={isDogSitter} onChange={handleSwitch} name="isDogSitter" />
         </Grid>
-        <Grid className={classes.formItem}>
-          <Typography className={classes.formLabel}>AVAILABILITY</Typography>
-        </Grid>
+
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>FIRST NAME</Typography>
           <TextField
@@ -220,14 +390,14 @@ export default function EditProfile(): JSX.Element {
             size="small"
             variant="outlined"
             placeholder="Address"
-            {...formik.getFieldProps('address')}
-            error={formik.touched.address && formik.errors.address !== undefined}
-            helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ''}
+            {...formik.getFieldProps('location')}
+            error={formik.touched.location && formik.errors.location !== undefined}
+            helperText={formik.touched.location && formik.errors.location ? formik.errors.location : ''}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  {formik.touched.address && !formik.errors.address && <CheckCircleIcon />}
-                  {formik.touched.address && formik.errors.address && <ErrorIcon />}
+                  {formik.touched.location && !formik.errors.location && <CheckCircleIcon />}
+                  {formik.touched.location && formik.errors.location && <ErrorIcon />}
                 </InputAdornment>
               ),
             }}
@@ -305,6 +475,50 @@ export default function EditProfile(): JSX.Element {
                 }}
                 inputProps={{ maxLength: 40 }}
               />
+            </Grid>
+
+            <Grid className={classes.formItem}>
+              <Typography className={classes.formLabel}>AVAILABILITY</Typography>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>AM/PM</TableCell>
+                    {DAYS_OF_THE_WEEK.map((day) => (
+                      <TableCell key={day} padding="none">
+                        {`${day.slice(0, 3)}.`}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>AM</TableCell>
+                    {DAYS_OF_THE_WEEK.map((day) => (
+                      <TableCell padding="none" key={`${day}-am`}>
+                        <Checkbox
+                          id={`availability.${day}.am`}
+                          name={`availability.${day}.am`}
+                          value={`formik.values.availability.${day}.am`}
+                          onChange={formik.handleChange}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>PM</TableCell>
+                    {DAYS_OF_THE_WEEK.map((day) => (
+                      <TableCell padding="none" key={`${day}-pm`}>
+                        <Checkbox
+                          id={`availability.${day}.pm`}
+                          name={`availability.${day}.pm`}
+                          value={`formik.values.availability.${day}.pm`}
+                          onChange={formik.handleChange}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableBody>
+              </Table>
             </Grid>
           </Grid>
         )}
