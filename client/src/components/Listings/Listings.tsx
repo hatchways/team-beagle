@@ -21,7 +21,7 @@ import { Profile } from '../../interface/Profile';
 
 const Listings = (): JSX.Element => {
   const classes = useStyles();
-  // const [sitters, setSitters] = useState<Profile[]>([]);
+  const [sitters, setSitters] = useState<Profile[]>([]);
   const [searchProfiles, setSearchProfiles] = useState<string>("");
   
 
@@ -35,7 +35,8 @@ const Listings = (): JSX.Element => {
           sitterList.push(user.profile);
         }
       });
-      console.log(sitterList)
+      setSitters(sitterList);
+      console.log(sitters)
     }
   };
 
