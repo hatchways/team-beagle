@@ -6,18 +6,16 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Container from '@material-ui/core/Container';
-import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
-import RoomIcon from '@material-ui/icons/Room';
-import Rating from '@material-ui/lab/Rating';
-import Paper from '@material-ui/core/Paper';
 
-import React, {useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback } from 'react';
 import searchSitters from "../../helpers/APICalls/searchSitters";
 
 import { User } from '../../interface/User';
 import { Profile } from '../../interface/Profile';
+
+import ProfileCard from '../ProfileCard/ProfileCard';
+
 
 const Listings = (): JSX.Element => {
   const classes = useStyles();
@@ -25,34 +23,36 @@ const Listings = (): JSX.Element => {
   const [searchProfiles, setSearchProfiles] = useState<string>("");
   
 
-  const updateProfiles = async () => {
-    const sitterList: Profile[] = [];
+  const updateProfiles = useCallback((): => async => {
+
+    const searchList: Profile[] = [];
     const data = await searchSitters(searchProfiles);
-    const users: any = data.users;
-    if (users) {
-      users.map((user: User) => {
+    console.log(data)
+    const profile: any = data.profiles
+    console.log(profile)
+    if (profile) {
+      
+      profile.map((user: User) => {
         if(user.profile) {
-          sitterList.push(user.profile);
+          searchList.push(user.profile);
         }
       });
-      setSitters(sitterList);
-      console.log(sitters)
+      setSitters(searchList);
     }
-  };
+
+  });
 
   const handleChange = (e: any) => {
     e.preventDefault()
     setSearchProfiles(e.target.value)
-    console.log(searchProfiles);
+    
   }
 
   useEffect(() => {
-    updateProfiles();
-  });
+      updateProfiles();
+  
+  }, [searchProfiles, setSearchProfiles]);
 
-
-  //temp
-  const cards = [1, 2, 3, 4, 5, 6];
 
   return (
     <Grid container component="main" direction="column" className={`${classes.root} ${classes.listings}`}>
@@ -92,52 +92,9 @@ const Listings = (): JSX.Element => {
 
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {cards.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
-              <Paper className={classes.card} elevation={3}>
-                <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" className={classes.cardAvatar} />
-                <Typography variant="h6" component="h2" className={classes.cardName}>
-                  Norma Byers
-                </Typography>
-                <Typography gutterBottom variant="subtitle2" component="p">
-                  loving pet sitter
-                </Typography>
-                <Rating
-                  value={2}
-                  size="small"
-                  readOnly
-                  style={{
-                    marginTop: '.4rem',
-                    marginBottom: '.4rem',
-                  }}
-                />
-
-                <Typography gutterBottom variant="button" component="p" className={classes.cardDescription}>
-                  Dog sitting ,cat sitting, pocket pet and bird care
-                </Typography>
-
-                <Divider
-                  style={{
-                    width: '100%',
-                  }}
-                />
-                <Grid container direction="row" justify="space-between" className={classes.cardFooter}>
-                  <Grid
-                    container
-                    style={{
-                      width: 'auto',
-                    }}
-                    direction="row"
-                  >
-                    <RoomIcon color="primary" />
-                    <Typography className={classes.cardFooterLocation} variant="subtitle2" component="p">
-                      Toronto
-                    </Typography>
-                  </Grid>
-
-                  <Typography className={classes.cardFooterHr}>$14/hr</Typography>
-                </Grid>
-              </Paper>
+          {sitters.map((profile) => (
+            <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+              <ProfileCard profile={profile}/>
             </Grid>
           ))}
         </Grid>
