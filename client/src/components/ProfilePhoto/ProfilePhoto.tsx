@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Typography, Avatar, Button, Icon, InputBase } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -6,8 +6,13 @@ import useStyles from './useStyles';
 import Carousel from 'react-material-ui-carousel';
 import uploadPhoto from '../../helpers/APICalls/uploadPhoto';
 
+
 function InputButton(): JSX.Element {
   const classes = useStyles();
+
+  useEffect(() =>{
+    // get profile data
+  },[])
 
   interface HTMLInputEvent extends Event {
     target: HTMLInputElement & EventTarget;

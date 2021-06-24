@@ -6,8 +6,7 @@ const uploadPhoto = async (name: string, file: string | Blob): Promise<AuthApiDa
   const data = new FormData();
   data.append('name', name);
   data.append('file', file);
-  console.log(data)
-  return await fetch('/profile/upload-photo/60cf929344f9e43ab8da85b9', {
+  return await fetch('/profile/upload-photo', {
     method: 'POST',
     headers: {
       'Content-Type': 'multipart/form-data',
