@@ -4,7 +4,7 @@ export interface AuthApiDataSuccess {
   message: string;
   user: User;
   token: string;
-  data: CurrentUser;
+  data: CurrentProfile;
 }
 
 export interface AuthApiData {
@@ -12,12 +12,12 @@ export interface AuthApiData {
   success?: AuthApiDataSuccess;
 }
 
-export interface CurrentUser {
+export interface CurrentProfile {
   profile: {
     isDogSitter: boolean;
     firstName: string;
     lastName: string;
-    address: string;
+    location: string;
     description: string;
     hourlyRate: number;
     tagLine: string;
