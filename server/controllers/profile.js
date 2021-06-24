@@ -1,9 +1,10 @@
 const mongoose = require("mongoose")
+const decodeToken = require("../utils/decodeToken")
+const jwt = require("jsonwebtoken")
 
 const Profile = require("../models/Profile")
 
 const asyncHandler = require("express-async-handler")
-
 
 // @route POST /profile/new
 // Create New User Profile
@@ -16,6 +17,9 @@ exports.newProfile = asyncHandler(async (req, res) => {
     location,
     images,
     isDogSitter,
+    availabilityWeek,
+    availabilityDays,
+
     rating,
     hourlyRate,
     tagLine,
@@ -29,6 +33,8 @@ exports.newProfile = asyncHandler(async (req, res) => {
     location,
     images,
     isDogSitter,
+    availabilityWeek,
+    availabilityDays,
     rating,
     hourlyRate,
     tagLine,
@@ -43,6 +49,8 @@ exports.newProfile = asyncHandler(async (req, res) => {
       location: profile.location,
       images: profile.images,
       isDogSitter: profile.isDogSitter,
+      availabilityWeek: profile.availabilityWeek,
+      availabilityDays: profile.availabilityDays,
       rating: profile.rating,
       hourlyRate: profile.hourlyRate,
       tagLine: profile.tagLine,
@@ -52,12 +60,12 @@ exports.newProfile = asyncHandler(async (req, res) => {
   }
 })
 
-// //@route Patch /profile/editprofile/:id
+// //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
-  const userId = req.params.id
   const update = req.body
-
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
   try {
     const updateProfile = await Profile.findOneAndUpdate(
       { userId: userId },
@@ -70,12 +78,11 @@ exports.editProfile = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Profile not found" })
     }
   } catch (error) {
-    console.log(error)
     return res.status(500).json({ error: "Could not update profile" })
   }
 })
 
-//@route GET /profile/getprofile/:id
+//@route GET /profile/get-profile/:id
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id
@@ -92,42 +99,34 @@ exports.getProfile = asyncHandler(async (req, res) => {
   }
 })
 
-// @route POST /profile/uploadphoto/:id
-// Upload photo
-exports.uploadPhoto = asyncHandler(async (req, res) => {
-  const userId = req.params.id
+//@route GET /profile/sitters
+//fetch list of isDogSitter profiles
+exports.findSitters = asyncHandler(async (req, res) => {
   try {
-    const profile = await Profile.findOne({ userId: userId })
-    console.log("updating profile")
-    if (profile) {
-      await Profile.updateOne({ _id: userId }, { image: req.file.path })
+    const profileList = await Profile.find({ isDogSitter: true })
+    if (profileList) {
+      res.status(200).json({ profiles: profileList })
     } else {
-      res.status(404).json({ message: "Profile Not Found" })
+      res.status(404).json({ message: "Profiles Not Found" })
     }
   } catch (error) {
     return res.status(500).json({ message: error })
   }
 })
 
-// //@route GET
-// //fetch list of profiles
-// exports.findProfiles = asyncHandler(async (req, res) => {
-//     const search = req.query.search;
-//     let profiles;
-//     try {
-//         // should search for isDogSitter: true
-//         const profileList = await Profile.find({req: search})
-
-//@route GET /profile/sitters
-//fetch list of isDogSitter profiles
-exports.findSitters = asyncHandler(async (req, res) => {
+// @route POST /profile/uploadphoto/
+// Upload photo
+exports.uploadPhoto = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
+  const profile = await Profile.findOne({ userId })
   try {
-    const profileList = await Profile.find({ isDogSitter: true })
-
-    if (profileList) {
-      res.status(200).json({ profiles: profileList })
+    if (profile) {
+      profile.images.push(req.file.path)
+      await profile.save()
+      res.status(200).json({ profile })
     } else {
-      res.status(404).json({ message: "Profiles Not Found" })
+      res.status(404).json({ message: "Profile Not Found" })
     }
   } catch (error) {
     return res.status(500).json({ message: error })
