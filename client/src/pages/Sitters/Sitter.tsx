@@ -43,7 +43,9 @@ export default function Sitters(): JSX.Element {
         } else curr[req._id] = req;
 
         if (req.accept) {
+          dates.push(new Date(req.startDate));
           dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
+          dates.push(new Date(req.endDate));
         }
       });
 
