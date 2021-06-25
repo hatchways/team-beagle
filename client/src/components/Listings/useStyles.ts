@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   listings: { backgroundColor: '#FFFFFF' },
 
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(12),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

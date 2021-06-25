@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 85px)',
     backgroundColor: '#FFFFFF',
     alignContent: 'start',
   },
