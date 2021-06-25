@@ -7,17 +7,18 @@ import Carousel from 'react-material-ui-carousel';
 import uploadPhoto from '../../helpers/APICalls/uploadPhoto';
 import changeMainPhoto from '../../helpers/APICalls/changeMainPhoto';
 import getProfile from '../../helpers/APICalls/getProfile';
-import { AuthContext } from '../../context/useAuthContext'
+import deletePhoto from '../../helpers/APICalls/deletePhoto';
+import { AuthContext } from '../../context/useAuthContext';
 
-function InputButton({...props}): JSX.Element {
+function InputButton({ ...props }): JSX.Element {
   const classes = useStyles();
 
   interface HTMLInputEvent extends Event {
     target: HTMLInputElement & EventTarget;
   }
 
-  console.log(props)
-  
+  console.log(props);
+
   const validateAndUploadFile = (e: HTMLInputEvent | React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/x-icon'];
@@ -29,10 +30,10 @@ function InputButton({...props}): JSX.Element {
       } else {
         const addPhoto = async () => {
           const data = await uploadPhoto('profilePhoto', file);
-          const images = data.profile.images
-          props.setPhotos(images)
-        }
-        addPhoto()
+          const images = data.profile.images;
+          props.setPhotos(images);
+        };
+        addPhoto();
       }
     }
   };
@@ -63,12 +64,20 @@ export default function ProfilePhoto(): JSX.Element {
 
   const updateMainPhoto = (idx: number) => {
     const setNewMainPhoto = async () => {
-      const data = await changeMainPhoto(idx)
-      console.log(data)
-      const images = data.profile.images
-      setPhotos(images)
-    }
-    setNewMainPhoto()
+      const data = await changeMainPhoto(idx);
+      const images = data.profile.images;
+      setPhotos(images);
+    };
+    setNewMainPhoto();
+  };
+
+  const handleDelete = (photo: string, index: number) => {
+    const deleteCurrentPhoto = async () => {
+      const data = await deletePhoto(photo, index);
+      const images = data.profile.images;
+      setPhotos(images);
+    };
+    deleteCurrentPhoto();
   };
 
   return (
@@ -88,17 +97,23 @@ export default function ProfilePhoto(): JSX.Element {
                 Set as my main photo
               </Button>
             )}
+            <Button onClick={() => handleDelete(item, idx)}>
+              <Icon component={DeleteForeverIcon} />
+              <Typography className={classes.deletePhotoText}>Delete Photo</Typography>
+            </Button>
           </Grid>
         ))}
       </Carousel>
       <Typography className={classes.settingsSubheading}>
         Be sure to use a photo that clearly shows your face.
       </Typography>
-      <InputBase classes={{ input: classes.inputBase }} name="profilePhoto" inputComponent={InputButton} inputProps={{setPhotos}} type="file" />
-      <Button>
-        <Icon component={DeleteForeverIcon} />
-        <Typography className={classes.deletePhotoText}>Delete Photo</Typography>
-      </Button>
+      <InputBase
+        classes={{ input: classes.inputBase }}
+        name="profilePhoto"
+        inputComponent={InputButton}
+        inputProps={{ setPhotos }}
+        type="file"
+      />
     </Grid>
   );
 }
