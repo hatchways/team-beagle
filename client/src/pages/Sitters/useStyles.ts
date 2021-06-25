@@ -41,6 +41,21 @@ const useStyles = makeStyles((theme) => ({
       color: 'white !important',
       padding: `.4em .6em !important `,
     },
+    '& .DayPicker-Month': {
+      borderCollapse: 'separate',
+      borderSpacing: '15px 5px',
+      tableLayout: 'fixed',
+      width: 400,
+    },
+    '& .DayPicker-Day': {
+      width: `calc(100%/7)`,
+    },
+    '& .DayPicker-Day--today': {
+      color: `${theme.palette.primary.main} !important`,
+    },
+    '& .DayPicker-Caption div': {
+      color: `${theme.palette.primary.main} !important`,
+    },
   },
 }));
 
