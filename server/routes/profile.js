@@ -12,6 +12,7 @@ const {
   uploadPhoto,
   changeMainPhoto,
   deletePhoto
+  findSittersByLocation,
 } = require("../controllers/profile");
 
 router.route("/new-profile").post(protect, newProfile);
@@ -21,5 +22,6 @@ router.route("/sitters").get(protect, findSitters);
 router.route("/upload-photo").post(upload.single("file"), uploadPhoto)
 router.route("/change-main-photo/:id").patch(protect, changeMainPhoto)
 router.route("/delete-photo").delete(protect, deletePhoto)
+router.route("/location/:search").get(protect, findSittersByLocation);
 
 module.exports = router;

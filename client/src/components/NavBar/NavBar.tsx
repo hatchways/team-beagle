@@ -18,10 +18,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Box from '@material-ui/core/Box';
-
 import MenuIcon from '@material-ui/icons/Menu';
-import Drawer from '@material-ui/core/Drawer';
-
 import LoginHeader from '../LoginHeader/LoginHeader';
 import SignupHeader from '../SignUpHeader/SignUpHeader';
 
@@ -93,7 +90,11 @@ const NavBar = (): JSX.Element => {
                   </Link>
                 </Badge>
                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick}>
-                  <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" className={classes.link} />
+                  <Avatar
+                    alt={userProfile ? userProfile.firstName : ''}
+                    src={userProfile ? userProfile.images[0] : ''}
+                    className={classes.link}
+                  />
                 </Button>
                 <Menu
                   id="simple-menu"

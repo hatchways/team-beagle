@@ -11,7 +11,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 })
 
-
 // @route POST /profile/new
 // Create New User Profile
 exports.newProfile = asyncHandler(async (req, res) => {
@@ -29,7 +28,6 @@ exports.newProfile = asyncHandler(async (req, res) => {
     rating,
     hourlyRate,
     tagLine,
-
   } = req.body;
 
   const profile = await Profile.create({
@@ -70,8 +68,7 @@ exports.newProfile = asyncHandler(async (req, res) => {
 // //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
-
-  const update = eq.body;
+  const update = req.body;
   let decoded = decodeToken(req.cookies.token);
   const userId = decoded.id;
   try {
@@ -79,7 +76,6 @@ exports.editProfile = asyncHandler(async (req, res) => {
       { userId: userId },
       update,
       { new: true }
-
     );
     if (updateProfile) {
       res.status(200).json({ profile: updateProfile });
@@ -112,16 +108,38 @@ exports.getProfile = asyncHandler(async (req, res) => {
 //fetch list of isDogSitter profiles
 exports.findSitters = asyncHandler(async (req, res) => {
   try {
-    const profileList = await Profile.find({ isDogSitter: true })
+    const profileList = await Profile.find({ isDogSitter: true });
+
     if (profileList) {
-      res.status(200).json({ profiles: profileList })
+      res.status(200).json({ profiles: profileList });
     } else {
-      res.status(404).json({ message: "Profiles Not Found" })
+      res.status(404).json({ message: "Profiles Not Found" });
     }
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ message: error });
   }
-})
+});
+
+//@route Get /profile/location/:search
+//return list of profiles who match users search
+exports.findSittersByLocation = asyncHandler(async (req, res) => {
+  const search = req.params.search;
+
+  try {
+    const profileList = await Profile.find({
+      location: { $regex: search, $options: "i" },
+      isDogSitter: true,
+    });
+
+    if (profileList) {
+      return res.status(200).json({ profiles: profileList });
+    } else {
+      return res.status(404).json({ message: "No Profiles Found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});
 
 // @route POST /profile/uploadphoto/
 // Upload photo
