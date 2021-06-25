@@ -3,11 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: '#FAFAFB',
+    position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
     height: '100%',
-    marginTop: '50px',
+    marginTop: '120px',
   },
   menuItem: {
     fontSize: '1.1rem',
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   menuContainer: {
     boxShadow: '0px 0px 8px #CACACA',
     borderRadius: '5px',
+    overflow: 'scroll',
     height: '80vh',
   },
 }));

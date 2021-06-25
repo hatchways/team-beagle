@@ -1,9 +1,9 @@
-import { Profile } from "./Profile";
+import { Profile } from './Profile';
 
 export interface User {
   email: string;
-  username: string; 
-  profile?: Profile;
+  username: string;
+  id: string;
 }
 
 export interface SearchUsersApiData {

@@ -11,8 +11,8 @@ const logger = require("morgan");
 
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
+const requestRouter = require("./routes/request");
 const profileRouter = require("./routes/profile");
-
 const { json, urlencoded } = express;
 
 connectDB();
@@ -38,12 +38,24 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
 app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  )
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
+  res.setHeader("Access-Control-Allow-Credentials", "true")
+  next()
+})
+
+app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/request", requestRouter);
 app.use("/profile", profileRouter);
 
 if (process.env.NODE_ENV === "production") {

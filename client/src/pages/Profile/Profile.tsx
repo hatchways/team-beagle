@@ -9,7 +9,7 @@ import Security from '../../components/Security/Security';
 import Settings from '../../components/Settings/Settings';
 
 export default function Profile(props: any): JSX.Element {
-  const MENU_LIST = ['Edit Profile', 'Profile Photo', 'Availability', 'Payment', 'Security', 'Settings'];
+  const MENU_LIST = ['Edit Profile', 'Profile Photo', 'Payment', 'Security', 'Settings'];
 
   const classes = useStyles();
 

@@ -1,6 +1,8 @@
 import { MuiThemeProvider } from '@material-ui/core';
 import { theme } from './themes/theme';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 import Landing from './pages/Landing/Landing';
 import NavBar from './components/NavBar/NavBar';
 import Login from './pages/Login/Login';
@@ -24,29 +26,31 @@ function App(): JSX.Element {
         <SnackBarProvider>
           <AuthProvider>
             <SocketProvider>
-              <NavBar />
+              <MuiPickersUtilsProvider utils={MomentUtils}>
+                <NavBar />
 
-              <Switch>
-                <Route exact path="/" component={Landing}/>
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/signup" component={Signup} />
+                <Switch>
+                  <Route exact path="/" component={Landing} />
+                  <Route exact path="/login" component={Login} />
+                  <Route exact path="/signup" component={Signup} />
 
-                <ProtectedRoute exact path="/sitters" component={Sitters} />
-                <ProtectedRoute exact path="/messages" component={Messages} />
-                <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
-                <Route exact path="/profile">
-                  <Redirect to="/profile/editprofile" />
-                </Route>
+                  <ProtectedRoute exact path="/sitters" component={Sitters} />
+                  <ProtectedRoute exact path="/messages" component={Messages} />
+                  <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
+                  <Route exact path="/profile">
+                    <Redirect to="/profile/editprofile" />
+                  </Route>
 
-                <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+                  <ProtectedRoute exact path="/dashboard" component={Dashboard} />
 
-                <Route exact path="/unauthorized">
-                  <Unauthorized />
-                </Route>
-                <Route path="*">
-                  <Redirect to="/" />
-                </Route>
-              </Switch>
+                  <Route exact path="/unauthorized">
+                    <Unauthorized />
+                  </Route>
+                  <Route path="*">
+                    <Redirect to="/" />
+                  </Route>
+                </Switch>
+              </MuiPickersUtilsProvider>
             </SocketProvider>
           </AuthProvider>
         </SnackBarProvider>
