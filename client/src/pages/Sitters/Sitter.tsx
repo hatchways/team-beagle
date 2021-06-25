@@ -19,8 +19,9 @@ import 'react-day-picker/lib/style.css';
 import { Request } from '../../interface/Request';
 interface Props {
   apiCall: any;
+  isDogStitter: boolean;
 }
-export default function Sitters({ apiCall }: Props): JSX.Element {
+export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
   const classes = useStyles();
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -44,19 +45,24 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
           if (Object.keys(next).length === 0) next[req._id] = req;
           else curr[req._id] = req;
         }
-        if (req.accept) {
+        if (isDogStitter) {
+          if (req.accept) {
+            dates.push(new Date(req.startDate));
+            dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
+            dates.push(new Date(req.endDate));
+          }
+        } else {
           dates.push(new Date(req.startDate));
           dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
           dates.push(new Date(req.endDate));
         }
       });
-
       setNextBooking(next);
       setCurrBooking(curr);
       setPastBooking(past);
       setDates(dates);
     });
-  }, [apiCall]);
+  }, [apiCall, isDogStitter]);
 
   useEffect(() => {
     const dates: any[] = [];
@@ -65,14 +71,20 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
     if (currBooking) request.push(...Object.values(currBooking));
     if (pastBooking) request.push(...Object.values(pastBooking));
     request.forEach((req: Request) => {
-      if (req.accept) {
+      if (isDogStitter) {
+        if (req.accept) {
+          dates.push(new Date(req.startDate));
+          dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
+          dates.push(new Date(req.endDate));
+        }
+      } else {
         dates.push(new Date(req.startDate));
         dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
         dates.push(new Date(req.endDate));
       }
     });
     setDates(dates);
-  }, [nextBooking, currBooking, pastBooking]);
+  }, [nextBooking, currBooking, pastBooking, isDogStitter]);
 
   const handleChange = (panel: string) => (event: React.ChangeEvent<any>, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
@@ -90,13 +102,24 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
     });
   };
 
+  const handleCancelBooking = (setState: React.Dispatch<any>, id: string) => {
+    setState((prevState: any) => {
+      const { [id]: value, ...newState } = prevState;
+      return newState;
+    });
+
+    // updateAccept(id, false, true).then(() => {
+    //   setState((prevState: any) => ({ ...prevState, [id]: undefined }));
+    // });
+  };
+
   return (
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />
 
       <Grid container spacing={5} className={classes.innerContainer}>
         <Grid item className={classes.innerContainerItem}>
-          {nextBooking && (
+          {nextBooking && Object.keys(nextBooking).length > 0 && (
             <Card className={classes.cardTop}>
               {Object.values(nextBooking).map((request: any) => (
                 <BookingCard
@@ -106,13 +129,15 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
                   handleDecline={handleDecline}
                   setState={setNextBooking}
                   showActions={true}
-                  text="test"
+                  text="YOUR NEXT BOOKING:"
+                  isDogStitter={isDogStitter}
+                  handleCancelBooking={handleCancelBooking}
                 />
               ))}
             </Card>
           )}
           <Card className={classes.cardBottom}>
-            {currBooking && (
+            {currBooking && Object.keys(currBooking).length > 0 && (
               <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1bh-content" id="panel1bh-header">
                   <Typography className={classes.sectionTitle}>CURRENT BOOKINGS: </Typography>
@@ -129,6 +154,8 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
                           setState={setCurrBooking}
                           showActions={true}
                           text=""
+                          isDogStitter={isDogStitter}
+                          handleCancelBooking={handleCancelBooking}
                         />
                       </Card>
                     ))}
@@ -136,7 +163,7 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
                 </AccordionDetails>
               </Accordion>
             )}
-            {pastBooking && (
+            {pastBooking && Object.keys(pastBooking).length > 0 && (
               <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2bh-content" id="panel2bh-header">
                   <Typography className={classes.sectionTitle}>PAST BOOKINGS:</Typography>
@@ -153,6 +180,8 @@ export default function Sitters({ apiCall }: Props): JSX.Element {
                           setState={setPastBooking}
                           showActions={false}
                           text=""
+                          isDogStitter={isDogStitter}
+                          handleCancelBooking={handleCancelBooking}
                         />
                       </Card>
                     ))}

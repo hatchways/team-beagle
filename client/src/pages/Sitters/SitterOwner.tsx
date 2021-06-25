@@ -76,10 +76,10 @@ export default function FullWidthTabs() {
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <Sitters apiCall={getBookingsOwner}></Sitters>
+        <Sitters apiCall={getBookingsOwner} isDogStitter={false}></Sitters>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        <Sitters apiCall={getBookingsSitter}></Sitters>
+        <Sitters apiCall={getBookingsSitter} isDogStitter={true}></Sitters>
       </TabPanel>
     </div>
   );

@@ -164,7 +164,7 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
   }
   let requestsProfile = await Promise.all(
     requests.map(async (request) => {
-      let profile = await Profile.findOne({ userId: request.userId });
+      let profile = await Profile.findOne({ userId: request.sitterId });
       return {
         userId: userId,
         sitterId: request.sitterId,

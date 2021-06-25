@@ -17,6 +17,8 @@ interface Props {
   setState: React.Dispatch<any>;
   showActions: boolean;
   text: string;
+  isDogStitter: boolean;
+  handleCancelBooking: any;
 }
 
 export default function BookingCard({
@@ -26,6 +28,8 @@ export default function BookingCard({
   setState,
   showActions,
   text = '',
+  isDogStitter,
+  handleCancelBooking,
 }: Props): JSX.Element {
   const classes = useStyles();
 
@@ -43,7 +47,7 @@ export default function BookingCard({
       <CardContent>
         {text && (
           <Typography variant="subtitle2" className={classes.sectionTitle}>
-            YOUR NEXT BOOKING:
+            {text}
           </Typography>
         )}
         <Typography variant="h6" className={classes.cardDate}>
@@ -53,18 +57,29 @@ export default function BookingCard({
           <Avatar alt={profile.firstName} src={`${profile.images[0]}`} className={classes.cardAvatar} />
           <Typography variant="h6">{`${profile.firstName} ${profile.lastName}`}</Typography>
 
-          <Typography variant="body2" className={classes.cardStatus}>
-            {statusSetter(booking.accept, booking.decline)}
-          </Typography>
+          {isDogStitter && (
+            <Typography variant="body2" className={classes.cardStatus}>
+              {statusSetter(booking.accept, booking.decline)}
+            </Typography>
+          )}
         </Grid>
       </CardContent>
-      {showActions && (
+
+      {isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
           <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
             Accept
           </Button>
           <Button size="small" color="primary" onClick={() => handleDecline(setState, booking._id)}>
             Decline
+          </Button>
+        </CardActions>
+      )}
+
+      {!isDogStitter && showActions && (
+        <CardActions className={classes.cardActions}>
+          <Button size="small" color="primary" onClick={() => handleCancelBooking(setState, booking._id)}>
+            Cancel Booking
           </Button>
         </CardActions>
       )}
