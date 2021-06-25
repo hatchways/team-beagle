@@ -1,15 +1,14 @@
 const mongoose = require("mongoose")
 const asyncHandler = require("express-async-handler")
-const decodeToken = require("../utils/decodeToken")
-const jwt = require("jsonwebtoken")
+// const decodeToken = require("../utils/decodeToken")
+// const jwt = require("jsonwebtoken")
 
 const Notification = require("../models/Notifications")
 
 // @route GET /notifications/all
 // Get all notifications
 exports.getAllNotifications = asyncHandler(async (req, res) => {
-  let decoded = decodeToken(req.cookies.token)
-  const userId = decoded.id
+  const userId = req.user.id
   try {
     const allNotifications = await Notification.find({ recipient: userId })
     if (allNotifications) {
@@ -27,8 +26,7 @@ exports.getAllNotifications = asyncHandler(async (req, res) => {
 // @route GET /notifications/unread
 // Get all unread notifications
 exports.getUnreadNotifications = asyncHandler(async (req, res) => {
-  let decoded = decodeToken(req.cookies.token)
-  const userId = decoded.id
+  const userId = req.user.id
   try {
     const unreadNotifications = await Notification.find({
       $and: [{ recipient: userId }, { read: false }],
@@ -49,12 +47,10 @@ exports.getUnreadNotifications = asyncHandler(async (req, res) => {
 // Create new notification
 exports.newNotification = asyncHandler(async (req, res) => {
   const { type, title, content, recipient } = req.body
-  let decoded = decodeToken(req.cookies.token)
-  const userId = decoded.id
-  console.log("attempting to post a new notification...")
+  const userId = req.user.id
   try {
     const notification = await Notification.create({
-      sender: type === "message" ? userId : "",
+      sender: userId,
       recipient,
       type,
       title,
@@ -62,13 +58,14 @@ exports.newNotification = asyncHandler(async (req, res) => {
       content,
       date: Date.now(),
     })
-    console.log("notification created")
     res.status(201).json({
       success: {
         notification: {
           id: notification._id,
           type: notification.type,
+          title: notification.title,
           content: notification.content,
+          date: notification.date,
         },
       },
     })
@@ -83,7 +80,7 @@ exports.readNotification = asyncHandler(async (req, res) => {
   const notificationId = req.params.id
   try {
     await Notification.findOneAndUpdate({ _id: notificationId }, { read: true })
-    res.status(201).json({
+    res.status(200).json({
       success: {
         notification: {
           id: notificationId,

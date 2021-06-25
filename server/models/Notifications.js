@@ -4,7 +4,7 @@ const NotificationSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
-    required: this.type === "message",
+    required: true,
   },
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,7 +13,7 @@ const NotificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["bookingConfirmed", "bookingCancelled", "message", "reminder"],
+    enum: ["bookingRequested", "bookingConfirmed", "bookingCancelled", "message", "reminder"],
     required: true,
   },
   title: {
@@ -22,6 +22,7 @@ const NotificationSchema = new mongoose.Schema({
   read: {
     type: Boolean,
     required: true,
+    default: false,
   },
   content: {
     type: String,
@@ -32,10 +33,6 @@ const NotificationSchema = new mongoose.Schema({
     required: true,
   },
 })
-
-// mongoose.Schema.path("sender").required(() => {
-//   return this.type === "message"
-// })
 
 module.exports = Notification = mongoose.model(
   "notification",

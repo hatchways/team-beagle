@@ -11,7 +11,7 @@ const {
   findSitters,
   uploadPhoto,
   changeMainPhoto,
-  deletePhoto
+  deletePhoto,
   findSittersByLocation,
 } = require("../controllers/profile");
 
