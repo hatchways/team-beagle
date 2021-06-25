@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
@@ -21,22 +22,42 @@ import Box from '@material-ui/core/Box';
 import MenuIcon from '@material-ui/icons/Menu';
 import LoginHeader from '../LoginHeader/LoginHeader';
 import SignupHeader from '../SignUpHeader/SignUpHeader';
+import Popover from '@material-ui/core/Popover';
+import getUnreadNotifications from '../../helpers/APICalls/getUnreadNotifications';
+import Notification from '../Notification/Notification';
+import List from '@material-ui/core/List';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
+  const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState<Element | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = React.useState<any[]>([]);
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
   };
+
+  const handleNotificationsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setNotificationsAnchorEl(e.currentTarget);
+  };
+
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setNotificationsAnchorEl(null);
   };
   const handleLogOut = () => {
     handleMenuClose();
     logout();
   };
+
+  useEffect(() => {
+    const fetchUnreadNotifications = async () => {
+      const data = await getUnreadNotifications()();
+      setUnreadNotifications(data.notifications);
+    };
+    fetchUnreadNotifications();
+  }, []);
 
   return (
     <Grid container component="main" className={`${classes.root}`}>
@@ -80,10 +101,49 @@ const NavBar = (): JSX.Element => {
                 <Link component={RouterLink} variant="button" to="/sitters" className={classes.link}>
                   Bookings
                 </Link>
-                <Link component={RouterLink} variant="button" to="#" className={classes.link}>
-                  Notifications
-                </Link>
-                <Badge color="primary" variant="dot" className={classes.link}>
+                <Badge
+                  color="secondary"
+                  badgeContent={unreadNotifications.length}
+                  max={99}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  <Link
+                    aria-controls="notifications-menu"
+                    aria-haspopup="true"
+                    component={RouterLink}
+                    variant="button"
+                    to="#"
+                    className={classes.link}
+                    onClick={handleNotificationsClick}
+                  >
+                    Notifications
+                  </Link>
+                </Badge>
+                <Popover
+                  id={'notifications-list'}
+                  open={Boolean(notificationsAnchorEl)}
+                  anchorEl={notificationsAnchorEl}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                  }}
+                >
+                  <List>
+                    {unreadNotifications.length > 0 ? (
+                      unreadNotifications.map((notification) => (
+                        <Notification key={notification._id} title={notification.title} content={notification.content} />
+                      ))
+                    ) : (
+                      <MenuItem>You have no unread notifications</MenuItem>
+                    )}
+                  </List>
+                </Popover>
+                <Badge color="primary" variant="dot">
                   <Link
                     component={RouterLink}
                     variant="button"
@@ -122,4 +182,3 @@ const NavBar = (): JSX.Element => {
   );
 };
 export default NavBar;
-

@@ -9,6 +9,7 @@ import changeMainPhoto from '../../helpers/APICalls/changeMainPhoto';
 import getProfile from '../../helpers/APICalls/getProfile';
 import deletePhoto from '../../helpers/APICalls/deletePhoto';
 import { AuthContext } from '../../context/useAuthContext';
+import { useSnackBar } from '../../context/useSnackbarContext';
 
 function InputButton({ ...props }): JSX.Element {
   const classes = useStyles();
@@ -17,7 +18,7 @@ function InputButton({ ...props }): JSX.Element {
     target: HTMLInputElement & EventTarget;
   }
 
-  console.log(props);
+  const { updateSnackBarMessage } = useSnackBar();
 
   const validateAndUploadFile = (e: HTMLInputEvent | React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -32,6 +33,11 @@ function InputButton({ ...props }): JSX.Element {
           const data = await uploadPhoto('profilePhoto', file);
           const images = data.profile.images;
           props.setPhotos(images);
+          if (data.error) {
+            updateSnackBarMessage(data.error.message);
+          } else {
+            updateSnackBarMessage('You have successfully uploaded a new photo');
+          }
         };
         addPhoto();
       }
@@ -48,6 +54,8 @@ function InputButton({ ...props }): JSX.Element {
 
 export default function ProfilePhoto(): JSX.Element {
   const classes = useStyles();
+
+  const { updateSnackBarMessage } = useSnackBar();
 
   const { loggedInUser } = useContext(AuthContext);
   const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
@@ -67,6 +75,11 @@ export default function ProfilePhoto(): JSX.Element {
       const data = await changeMainPhoto(idx);
       const images = data.profile.images;
       setPhotos(images);
+      if (data.error) {
+        updateSnackBarMessage(data.error.message);
+      } else {
+        updateSnackBarMessage('You have successfully updated your main photo');
+      }
     };
     setNewMainPhoto();
   };
@@ -76,6 +89,11 @@ export default function ProfilePhoto(): JSX.Element {
       const data = await deletePhoto(photo, index);
       const images = data.profile.images;
       setPhotos(images);
+      if (data.error) {
+        updateSnackBarMessage(data.error.message);
+      } else {
+        updateSnackBarMessage('You have successfully deleted a photo');
+      }
     };
     deleteCurrentPhoto();
   };
