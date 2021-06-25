@@ -11,14 +11,16 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { getBookings, updateAccept } from '../../helpers/APICalls/request';
+import { updateAccept } from '../../helpers/APICalls/request';
 import moment from 'moment';
 
 import DayPicker, { DateUtils } from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
 import { Request } from '../../interface/Request';
-
-export default function Sitters(): JSX.Element {
+interface Props {
+  apiCall: any;
+}
+export default function Sitters({ apiCall }: Props): JSX.Element {
   const classes = useStyles();
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -28,7 +30,7 @@ export default function Sitters(): JSX.Element {
   const [dates, setDates] = useState<any>([]);
 
   useEffect(() => {
-    getBookings().then((res: any) => {
+    apiCall().then((res: any) => {
       const request = res.requests;
       const next: any = {};
       const past: any = {};
@@ -54,7 +56,7 @@ export default function Sitters(): JSX.Element {
       setPastBooking(past);
       setDates(dates);
     });
-  }, []);
+  }, [apiCall]);
 
   useEffect(() => {
     const dates: any[] = [];
