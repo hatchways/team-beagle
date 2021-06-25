@@ -8,19 +8,37 @@ import Container from '@material-ui/core/Container';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState, useEffect, useCallback } from 'react';
 import searchSitters from '../../helpers/APICalls/searchSitters';
+import getProfiles from '../../helpers/APICalls/getProfiles';
 import { User } from '../../interface/User';
 import { Profile } from '../../interface/Profile';
 import ProfileCard from '../ProfileCard/ProfileCard';
 const Listings = (): JSX.Element => {
   const classes = useStyles();
 
+  const date = new Date();
   const [sitters, setSitters] = useState<Profile[]>([]);
   const [searchProfiles, setSearchProfiles] = useState<string>('');
+
+  const profilesOnLoad = () => {
+    const profileList: Profile[] = [];
+    getProfiles().then((data) => {
+    const profile: any = data.profiles;
+    if (profile) {
+      profile.map((user: Profile) => {
+        if (profile) {
+          profileList.push(user)
+        }
+      });
+        setSitters(profileList);
+    }
+    })
+  
+    }
+
 
   const updateProfiles = useCallback(async () => {
     const searchList: Profile[] = [];
     const data = await searchSitters(searchProfiles);
-    console.log(data);
     const profile: any = data.profiles;
     console.log(profile);
     if (profile) {
@@ -41,6 +59,10 @@ const Listings = (): JSX.Element => {
     updateProfiles();
   }, [setSearchProfiles, updateProfiles]);
 
+  useEffect(() => {
+    profilesOnLoad();
+  }, []);
+
   return (
     <Grid container component="main" direction="column" className={`${classes.root} ${classes.listings}`}>
       <CssBaseline />
@@ -51,7 +73,7 @@ const Listings = (): JSX.Element => {
         <Grid>
           <TextField
             id="outlined-basic"
-            defaultValue="Toronto"
+            label="Find Sitters In Your Location"
             variant="outlined"
             className={`${classes.textField} ${classes.textFieldLocation}`}
             onChange={handleChange}
@@ -66,7 +88,7 @@ const Listings = (): JSX.Element => {
           <TextField
             id="date"
             type="date"
-            defaultValue="2017-05-24"
+            defaultValue={date}
             variant="outlined"
             className={classes.textField}
             InputLabelProps={{
