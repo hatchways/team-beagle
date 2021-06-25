@@ -74,10 +74,15 @@ const NavBar = (): JSX.Element => {
             )}
             {loggedInUser && (
               <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>
-                <Link component={RouterLink} variant="button" to="/sitters" className={classes.link}>
-                  My Sitters
+                <Link component={RouterLink} variant="button" to="/dashboard" className={classes.link}>
+                  Dashboard
                 </Link>
-
+                <Link component={RouterLink} variant="button" to="/sitters" className={classes.link}>
+                  Bookings
+                </Link>
+                <Link component={RouterLink} variant="button" to="#" className={classes.link}>
+                  Notifications
+                </Link>
                 <Badge color="primary" variant="dot" className={classes.link}>
                   <Link
                     component={RouterLink}
@@ -93,7 +98,7 @@ const NavBar = (): JSX.Element => {
                   <Avatar
                     alt={userProfile ? userProfile.firstName : ''}
                     src={userProfile ? userProfile.images[0] : ''}
-                    className={classes.link}
+                    className={classes.avatarLink}
                   />
                 </Button>
                 <Menu
@@ -117,3 +122,4 @@ const NavBar = (): JSX.Element => {
   );
 };
 export default NavBar;
+
