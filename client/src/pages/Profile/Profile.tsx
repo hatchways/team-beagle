@@ -9,7 +9,7 @@ import Security from '../../components/Security/Security';
 import Settings from '../../components/Settings/Settings';
 
 export default function Profile(props: any): JSX.Element {
-  const MENU_LIST = ['Edit Profile', 'Profile Photo', 'Availability', 'Payment', 'Security', 'Settings'];
+  const MENU_LIST = ['Edit Profile', 'Profile Photo', 'Payment', 'Security', 'Settings'];
 
   const classes = useStyles();
 
@@ -27,7 +27,7 @@ export default function Profile(props: any): JSX.Element {
         {MENU_LIST.map((item) => (
           <Link
             onClick={() => handleClick(item.replace(/\s/g, '').toLowerCase())}
-            className={`${classes.menuItem} ${currentSection === item.replace(/\s/g, '') && classes.selectedMenuItem}`}
+            className={`${classes.menuItem} ${currentSection === item.replace(/\s/g, '').toLowerCase() && classes.selectedMenuItem}`}
             underline="none"
             key={item}
           >
@@ -35,7 +35,7 @@ export default function Profile(props: any): JSX.Element {
           </Link>
         ))}
       </Grid>
-      <Container maxWidth="sm" className={classes.menuContainer}>
+      <Container maxWidth="md" className={classes.menuContainer}>
         {currentSection === 'editprofile' && <EditProfile />}
         {currentSection === 'profilephoto' && <ProfilePhoto />}
         {currentSection === 'payment' && <Payment />}

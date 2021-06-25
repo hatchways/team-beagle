@@ -18,16 +18,13 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import React from 'react';
 import Box from '@material-ui/core/Box';
-
 import MenuIcon from '@material-ui/icons/Menu';
-import Drawer from '@material-ui/core/Drawer';
-
 import LoginHeader from '../LoginHeader/LoginHeader';
 import SignupHeader from '../SignUpHeader/SignUpHeader';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
-  const { loggedInUser, logout } = useAuth();
+  const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,19 +51,17 @@ const NavBar = (): JSX.Element => {
           </Link>
           <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
             {!loggedInUser && (
-          <AppBar position="relative" elevation={0} className={classes.appBar}>
-            <Toolbar className={classes.toolbar}>
+              <AppBar position="relative" elevation={0} className={classes.appBar}>
+                <Toolbar className={classes.toolbar}>
                   <Grid container direction="row" justify="flex-end" alignItems="center">
-                    <Hidden only={["sm", "md", "lg", "xl"]}>
-                      <MenuIcon color="primary" className={classes.menuIcon}/>
+                    <Hidden only={['sm', 'md', 'lg', 'xl']}>
+                      <MenuIcon color="primary" className={classes.menuIcon} />
                     </Hidden>
                     <Hidden only={['xs']}>
-                      <Hidden only={['xs', "sm"]}>
+                      <Hidden only={['xs', 'sm']}>
                         <Typography className={classes.toolbarLink}>
-                          <Link 
-                          className={classes.secondaryLink} 
-                          href='/sitters'>
-                            Become a Sitter 
+                          <Link className={classes.secondaryLink} href="/sitters">
+                            Become a Sitter
                           </Link>
                         </Typography>
                       </Hidden>
@@ -74,9 +69,8 @@ const NavBar = (): JSX.Element => {
                       <SignupHeader linkTo="/signup" btnText="Sign Up" />
                     </Hidden>
                   </Grid>
-                
-            </Toolbar>
-          </AppBar> 
+                </Toolbar>
+              </AppBar>
             )}
             {loggedInUser && (
               <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>
@@ -96,7 +90,11 @@ const NavBar = (): JSX.Element => {
                   </Link>
                 </Badge>
                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick}>
-                  <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" className={classes.link} />
+                  <Avatar
+                    alt={userProfile ? userProfile.firstName : ''}
+                    src={userProfile ? userProfile.images[0] : ''}
+                    className={classes.link}
+                  />
                 </Button>
                 <Menu
                   id="simple-menu"

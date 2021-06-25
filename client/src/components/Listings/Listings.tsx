@@ -1,25 +1,67 @@
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
-
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Container from '@material-ui/core/Container';
-import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
 import SearchIcon from '@material-ui/icons/Search';
-import RoomIcon from '@material-ui/icons/Room';
-import Rating from '@material-ui/lab/Rating';
-import Paper from '@material-ui/core/Paper';
-
-import React from 'react';
-
+import React, { useState, useEffect, useCallback } from 'react';
+import searchSitters from '../../helpers/APICalls/searchSitters';
+import getProfiles from '../../helpers/APICalls/getProfiles';
+import { User } from '../../interface/User';
+import { Profile } from '../../interface/Profile';
+import ProfileCard from '../ProfileCard/ProfileCard';
 const Listings = (): JSX.Element => {
   const classes = useStyles();
 
-  //temp
-  const cards = [1, 2, 3, 4, 5, 6];
+  const date = new Date();
+  const [sitters, setSitters] = useState<Profile[]>([]);
+  const [searchProfiles, setSearchProfiles] = useState<string>('');
+
+  const profilesOnLoad = () => {
+    const profileList: Profile[] = [];
+    getProfiles().then((data) => {
+    const profile: any = data.profiles;
+    if (profile) {
+      profile.map((user: Profile) => {
+        if (profile) {
+          profileList.push(user)
+        }
+      });
+        setSitters(profileList);
+    }
+    })
+  
+    }
+
+
+  const updateProfiles = useCallback(async () => {
+    const searchList: Profile[] = [];
+    const data = await searchSitters(searchProfiles);
+    const profile: any = data.profiles;
+    console.log(profile);
+    if (profile) {
+      profile.map((user: Profile) => {
+        if (profile) {
+          searchList.push(user);
+        }
+      });
+      setSitters(searchList);
+    }
+  }, [searchProfiles]);
+
+  const handleChange = (e: any) => {
+    e.preventDefault();
+    setSearchProfiles(e.target.value);
+  };
+  useEffect(() => {
+    updateProfiles();
+  }, [setSearchProfiles, updateProfiles]);
+
+  useEffect(() => {
+    profilesOnLoad();
+  }, []);
 
   return (
     <Grid container component="main" direction="column" className={`${classes.root} ${classes.listings}`}>
@@ -31,9 +73,10 @@ const Listings = (): JSX.Element => {
         <Grid>
           <TextField
             id="outlined-basic"
-            defaultValue="Toronto"
+            label="Find Sitters In Your Location"
             variant="outlined"
             className={`${classes.textField} ${classes.textFieldLocation}`}
+            onChange={handleChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -45,7 +88,7 @@ const Listings = (): JSX.Element => {
           <TextField
             id="date"
             type="date"
-            defaultValue="2017-05-24"
+            defaultValue={date}
             variant="outlined"
             className={classes.textField}
             InputLabelProps={{
@@ -55,55 +98,11 @@ const Listings = (): JSX.Element => {
         </Grid>
       </Container>
       {/* End search */}
-
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {cards.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
-              <Paper className={classes.card} elevation={3}>
-                <Avatar alt="Remy Sharp" src="https://source.unsplash.com/random" className={classes.cardAvatar} />
-                <Typography variant="h6" component="h2" className={classes.cardName}>
-                  Norma Byers
-                </Typography>
-                <Typography gutterBottom variant="subtitle2" component="p">
-                  loving pet sitter
-                </Typography>
-                <Rating
-                  value={2}
-                  size="small"
-                  readOnly
-                  style={{
-                    marginTop: '.4rem',
-                    marginBottom: '.4rem',
-                  }}
-                />
-
-                <Typography gutterBottom variant="button" component="p" className={classes.cardDescription}>
-                  Dog sitting ,cat sitting, pocket pet and bird care
-                </Typography>
-
-                <Divider
-                  style={{
-                    width: '100%',
-                  }}
-                />
-                <Grid container direction="row" justify="space-between" className={classes.cardFooter}>
-                  <Grid
-                    container
-                    style={{
-                      width: 'auto',
-                    }}
-                    direction="row"
-                  >
-                    <RoomIcon color="primary" />
-                    <Typography className={classes.cardFooterLocation} variant="subtitle2" component="p">
-                      Toronto
-                    </Typography>
-                  </Grid>
-
-                  <Typography className={classes.cardFooterHr}>$14/hr</Typography>
-                </Grid>
-              </Paper>
+          {sitters.slice(0,6).map((profile) => (
+            <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+              <ProfileCard profile={profile} />
             </Grid>
           ))}
         </Grid>

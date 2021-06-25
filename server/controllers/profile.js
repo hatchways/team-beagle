@@ -1,10 +1,15 @@
-const mongoose = require("mongoose");
-const decodeToken = require("../utils/decodeToken");
-const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose")
+const decodeToken = require("../utils/decodeToken")
+const jwt = require("jsonwebtoken")
+const cloudinary = require("cloudinary")
+const Profile = require("../models/Profile")
+const asyncHandler = require("express-async-handler")
 
-const Profile = require("../models/Profile");
-
-const asyncHandler = require("express-async-handler");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+})
 
 // @route POST /profile/new
 // Create New User Profile
@@ -114,3 +119,96 @@ exports.findSitters = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: error });
   }
 });
+
+//@route Get /profile/location/:search
+//return list of profiles who match users search
+exports.findSittersByLocation = asyncHandler(async (req, res) => {
+  const search = req.params.search;
+
+  try {
+    const profileList = await Profile.find({
+      location: { $regex: search, $options: "i" },
+      isDogSitter: true,
+    });
+
+    if (profileList) {
+      return res.status(200).json({ profiles: profileList });
+    } else {
+      return res.status(404).json({ message: "No Profiles Found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});
+
+// @route POST /profile/uploadphoto/
+// Upload photo
+exports.uploadPhoto = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
+  const profile = await Profile.findOne({ userId })
+  try {
+    if (profile) {
+      profile.images.push(req.file.path)
+      await profile.save()
+      res.status(200).json({ profile })
+    } else {
+      res.status(404).json({ message: "Profile Not Found" })
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})
+
+// @route PATCH /profile/change-main-photo
+// Change main photo (largest photo in profile details page)
+exports.changeMainPhoto = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
+  const index = req.params.id
+  const profile = await Profile.findOne({ userId })
+  try {
+    if (profile) {
+      const temp = profile.images[0]
+      profile.images[0] = profile.images[index]
+      profile.images[index] = temp
+      await profile.save()
+      res.status(200).json({ profile })
+    } else {
+      res.status(404).json({ message: "Profile Not Found" })
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})
+
+// @route PATCH /profile/delete-photo
+// delete a photo
+exports.deletePhoto = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token)
+  const userId = decoded.id
+  const { imageUrl, index } = req.body
+  const profile = await Profile.findOne({ userId })
+  try {
+    if (profile) {
+      const filteredImages = profile.images.filter(item => item !== imageUrl)
+      profile.images = filteredImages
+      await profile.save()
+      const filename = imageUrl.split("/")
+      const imageKey = filename[filename.length - 1].split(".")[0]
+      console.log(imageKey)
+      await cloudinary.v2.uploader.destroy(
+        `lovingsitter/${imageKey}`,
+        { invalidate: true },
+        (err, res) => {
+          console.log(res, err)
+        }
+      )
+      res.status(200).json({ profile })
+    } else {
+      res.status(404).json({ message: "Profile Not Found" })
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error })
+  }
+})

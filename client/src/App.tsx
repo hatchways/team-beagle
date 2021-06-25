@@ -16,7 +16,6 @@ import Sitters from './pages/Sitters/Sitter';
 import Messages from './pages/Messages/Messages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
-import Booking from './pages/Bookings/Bookings';
 
 import './App.css';
 
@@ -43,9 +42,7 @@ function App(): JSX.Element {
                   </Route>
 
                   <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <Route exact path="/bookings">
-                    <Booking />
-                  </Route>
+
                   <Route exact path="/unauthorized">
                     <Unauthorized />
                   </Route>

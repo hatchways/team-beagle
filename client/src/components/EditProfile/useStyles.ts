@@ -1,16 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-  },
-  settingsHeading: {
-    fontSize: '1.4rem',
-    margin: '50px 0',
-    fontWeight: 800,
-    textAlign: 'center',
+    marginTop: '20px',
   },
   formItem: {
     display: 'flex',
@@ -55,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    margin: '15px 0',
   },
 }));
 
