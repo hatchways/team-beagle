@@ -1,14 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    alignContent: 'start',
-    margin: theme.spacing(1, 0),
-  },
-  card: {
-    flexGrow: 1,
-    padding: theme.spacing(0.8),
-  },
   cardDate: {
     marginBottom: theme.spacing(1.8),
   },
@@ -25,6 +17,12 @@ const useStyles = makeStyles((theme) => ({
   },
   cardActions: {
     justifyContent: 'flex-end',
+  },
+  sectionTitle: {
+    fontWeight: 'bolder',
+    fontSize: theme.typography.pxToRem(13),
+    marginTop: theme.spacing(1.2),
+    marginBottom: theme.spacing(1.2),
   },
 }));
 

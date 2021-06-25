@@ -38,7 +38,6 @@ const NavBar = (): JSX.Element => {
     logout();
   };
 
-  console.log(userProfile);
   return (
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />

@@ -24,27 +24,16 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1.2),
     marginBottom: theme.spacing(1.2),
   },
-  cardDate: {
-    marginBottom: theme.spacing(1.8),
-  },
-  cardAvatar: {
-    marginRight: theme.spacing(1.2),
-  },
-  cardName: {
-    fontWeight: 'bolder',
-  },
-  cardActions: {
-    justifyContent: 'flex-end',
-  },
-  cardStatus: {
-    fontWeight: 'bolder',
-    opacity: 0.4,
-    marginLeft: 'auto',
-  },
+
   cardCalander: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  card: {
+    flexGrow: 1,
+    padding: theme.spacing(0.8),
+    margin: theme.spacing(1, 0),
   },
   dayPicker: {
     '& .DayPicker-Day--selected': {
