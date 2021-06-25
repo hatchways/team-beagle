@@ -1,3 +1,5 @@
+import { Profile } from './Profile';
+
 export interface User {
   email: string;
   username: string;

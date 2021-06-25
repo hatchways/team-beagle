@@ -1,3 +1,5 @@
+import { User } from './User';
+
 export interface Profile {
   userId: string;
   firstName: string;
@@ -22,4 +24,11 @@ export interface Profile {
   rating: number;
   hourlyRate: number;
   tagLine: string;
+}
+
+export interface SearchProfileApiData {
+  users?: User[];
+  profile?: Profile[];
+  profiles?: Profile[];
+  error?: { message: string };
 }

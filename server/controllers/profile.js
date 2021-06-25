@@ -114,3 +114,24 @@ exports.findSitters = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: error });
   }
 });
+
+//@route Get /profile/location/:search
+//return list of profiles who match users search
+exports.findSittersByLocation = asyncHandler(async (req, res) => {
+  const search = req.params.search;
+
+  try {
+    const profileList = await Profile.find({
+      location: { $regex: search, $options: "i" },
+      isDogSitter: true,
+    });
+
+    if (profileList) {
+      return res.status(200).json({ profiles: profileList });
+    } else {
+      return res.status(404).json({ message: "No Profiles Found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+});

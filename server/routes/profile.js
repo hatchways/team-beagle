@@ -6,11 +6,13 @@ const {
   editProfile,
   getProfile,
   findSitters,
+  findSittersByLocation,
 } = require("../controllers/profile");
 
 router.route("/new-profile").post(protect, newProfile);
 router.route("/edit-profile/:id").patch(protect, editProfile);
 router.route("/get-profile/:id").get(protect, getProfile);
 router.route("/sitters").get(protect, findSitters);
+router.route("/location/:search").get(protect, findSittersByLocation);
 
 module.exports = router;

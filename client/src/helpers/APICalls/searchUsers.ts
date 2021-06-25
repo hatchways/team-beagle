@@ -16,3 +16,5 @@ export async function searchUsers({ search }: Props): Promise<SearchUsersApiData
       error: { message: 'Unable to connect to server. Please try again' },
     }));
 }
+
+export default searchUsers;
