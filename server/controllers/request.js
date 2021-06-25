@@ -106,26 +106,18 @@ exports.requestsforSitter = asyncHandler(async (req, res, next) => {
   res.status(200).json({ requests: requests });
 });
 
-// @route get /request/bookings
+// @route get /request/bookings/sitter
 // @desc all requests made for current user
 // @access Private
-exports.requestsforCurrentUser = asyncHandler(async (req, res, next) => {
+exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
   let decoded = decodeToken(req.cookies.token);
   const userId = decoded.id;
   let requests;
 
   if (userId) {
-    // let profile = await Profile.findOne({ userId: userId });
-
-    // if (profile.isDogSitter) {
     requests = await Request.find({
       sitterId: userId,
     });
-    // } else {
-    //   requests = await Request.find({
-    //     userId: userId,
-    //   });
-    // }
   }
 
   if (!requests) {
@@ -135,6 +127,44 @@ exports.requestsforCurrentUser = asyncHandler(async (req, res, next) => {
   let requestsProfile = await Promise.all(
     requests.map(async (request) => {
       let profile = await Profile.findOne({ userId: request.userId });
+      return {
+        userId: userId,
+        sitterId: request.sitterId,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        accept: request.accept,
+        decline: request.decline,
+        paid: request.paid,
+        profile: profile,
+        _id: request._id,
+      };
+    })
+  );
+
+  res.status(200).json({ requests: requestsProfile });
+});
+
+// @route get /request/bookings/owner
+// @desc all requests made for current user
+// @access Private
+exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
+  let requests;
+
+  if (userId) {
+    requests = await Request.find({
+      userId: userId,
+    });
+  }
+
+  if (!requests) {
+    res.status(404);
+    throw new Error("No requests for sitter");
+  }
+  let requestsProfile = await Promise.all(
+    requests.map(async (request) => {
+      let profile = await Profile.findOne({ userId: request.sitterId });
       return {
         userId: userId,
         sitterId: request.sitterId,

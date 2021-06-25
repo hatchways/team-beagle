@@ -6,14 +6,15 @@ const {
   editRequest,
   requestsByUser,
   requestsforSitter,
-  requestsforCurrentUser,
+  requestsforCurrentUserSitter,
+  requestsforCurrentUserOwner,
 } = require("../controllers/request");
 
 router.route("/new-request").post(newRequest);
 router.route("/edit-request/:id").patch(protect, editRequest);
-
 router.route("/user/:id").get(protect, requestsByUser);
 router.route("/sitter/:id").get(protect, requestsforSitter);
-router.route("/bookings").get(protect, requestsforCurrentUser);
+router.route("/bookings/sitter").get(protect, requestsforCurrentUserSitter);
+router.route("/bookings/owner").get(protect, requestsforCurrentUserOwner);
 
 module.exports = router;

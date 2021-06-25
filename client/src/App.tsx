@@ -16,6 +16,7 @@ import Sitters from './pages/Sitters/Sitter';
 import Messages from './pages/Messages/Messages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
+import SitterOwner from './pages/Sitters/SitterOwner';
 
 import './App.css';
 
@@ -34,7 +35,7 @@ function App(): JSX.Element {
                   <Route exact path="/login" component={Login} />
                   <Route exact path="/signup" component={Signup} />
 
-                  <ProtectedRoute exact path="/sitters" component={Sitters} />
+                  <ProtectedRoute exact path="/sitters" component={SitterOwner} />
                   <ProtectedRoute exact path="/messages" component={Messages} />
                   <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
                   <Route exact path="/profile">
