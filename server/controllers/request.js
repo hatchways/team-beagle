@@ -115,9 +115,17 @@ exports.requestsforCurrentUser = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
+    // let profile = await Profile.findOne({ userId: userId });
+
+    // if (profile.isDogSitter) {
     requests = await Request.find({
       sitterId: userId,
     });
+    // } else {
+    //   requests = await Request.find({
+    //     userId: userId,
+    //   });
+    // }
   }
 
   if (!requests) {
@@ -127,7 +135,6 @@ exports.requestsforCurrentUser = asyncHandler(async (req, res, next) => {
   let requestsProfile = await Promise.all(
     requests.map(async (request) => {
       let profile = await Profile.findOne({ userId: request.userId });
-      request.profile = profile;
       return {
         userId: userId,
         sitterId: request.sitterId,

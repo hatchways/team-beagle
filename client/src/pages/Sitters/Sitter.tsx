@@ -37,11 +37,11 @@ export default function Sitters(): JSX.Element {
       const now = moment().toISOString();
 
       request.forEach((req: Request) => {
-        if (moment(now).isAfter(req.endDate)) {
+        if (moment(now).isAfter(req.endDate)) past[req._id] = req;
+        else {
           if (Object.keys(next).length === 0) next[req._id] = req;
-          else past[req._id] = req;
-        } else curr[req._id] = req;
-
+          else curr[req._id] = req;
+        }
         if (req.accept) {
           dates.push(new Date(req.startDate));
           dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
@@ -54,7 +54,23 @@ export default function Sitters(): JSX.Element {
       setPastBooking(past);
       setDates(dates);
     });
-  }, [nextBooking, currBooking]);
+  }, []);
+
+  useEffect(() => {
+    const dates: any[] = [];
+    const request: any[] = [];
+    if (nextBooking) request.push(...Object.values(nextBooking));
+    if (currBooking) request.push(...Object.values(currBooking));
+    if (pastBooking) request.push(...Object.values(pastBooking));
+    request.forEach((req: Request) => {
+      if (req.accept) {
+        dates.push(new Date(req.startDate));
+        dates.push({ after: new Date(req.startDate), before: new Date(req.endDate) });
+        dates.push(new Date(req.endDate));
+      }
+    });
+    setDates(dates);
+  }, [nextBooking, currBooking, pastBooking]);
 
   const handleChange = (panel: string) => (event: React.ChangeEvent<any>, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
