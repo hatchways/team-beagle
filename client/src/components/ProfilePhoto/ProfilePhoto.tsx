@@ -83,7 +83,6 @@ export default function ProfilePhoto(): JSX.Element {
   return (
     <Grid className={classes.root}>
       <CssBaseline />
-      <Typography className={classes.settingsHeading}>Profile Photo</Typography>
       <Carousel autoPlay={false}>
         {photos.map((item, idx) => (
           <Grid key={idx} className={classes.photoContainer}>
