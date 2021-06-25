@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   appBar: {
     backgroundColor: '#FFFFFF',
-    
+  
   },
   toolbar: {
     margin: `auto 0`,
@@ -43,21 +43,37 @@ const useStyles = makeStyles((theme: Theme) => ({
   toolbarLeftContainer: {
     width: 'auto',
     flexGrow: 1,
+    marginRight: '40px',
   },
   toolbarLeft: {
     display: 'flex',
     marginLeft: 'auto',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     maxWidth: 400,
     flexGrow: 1,
   },
   link: {
     fontWeight: 'bolder',
-    margin: theme.spacing(0, 0.5),
+    // margin: theme.spacing(10, 20),
+    fontSize: 18,
+    marginLeft: '10px',
+    marginRight: '20px',
+    marginTop: '10px',
+    marginBottom: '10px',
+  },
+  avatarLink: {
+    fontWeight: 'bolder',
+    // margin: theme.spacing(10, 20),
+    width: '60px',
+    height: '60px',
+    marginLeft: '25px',
+    marginRight: '25px',
+    marginTop: '10px',
+    marginBottom: '10px',
   },
   button: {
-    margin: theme.spacing(2.5, 0.5),
+    // margin: theme.spacing(2.5, 0.5),
     padding: theme.spacing(1.4, 5),
     fontSize: '.7rem',
     fontWeight: 500,
@@ -66,6 +82,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   messages: {
     fontWeight: 'bolder',
     margin: theme.spacing(-0.8, 1.1),
+    fontSize: 18,
   },
   logo: {
     width: 225,
