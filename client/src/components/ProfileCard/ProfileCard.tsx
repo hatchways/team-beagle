@@ -10,11 +10,12 @@ import Link from '@material-ui/core/Link';
 import React, {useState, useEffect } from 'react';
 import useStyles from './useStyles';
 
+import { Link as RouterLink } from 'react-router-dom';
+
 import {Profile} from "../../interface/Profile";
 
 interface CardProps {
     profile: Profile;
-    key?: string
 }
 
 
@@ -23,7 +24,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
 
 
     return (
-    // <Link to={{}}>
+    <Link component={RouterLink} to="/sitter">
         <Paper className={classes.card} elevation={3}>
             <Avatar alt="Remy Sharp" src={profile.images} className={classes.cardAvatar} />
                 <Typography variant="h6" component="h2" className={classes.cardName}>
@@ -68,7 +69,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
                   <Typography className={classes.cardFooterHr}>${profile.hourlyRate}/hr</Typography>
                 </Grid>
               </Paper>
-            // </Link>
+         </Link>
                 );
             };
 
