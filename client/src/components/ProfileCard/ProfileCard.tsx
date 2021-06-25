@@ -26,7 +26,7 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
     return (
     <Link component={RouterLink} to="/sitter">
         <Paper className={classes.card} elevation={3}>
-            <Avatar alt="Remy Sharp" src={profile.images} className={classes.cardAvatar} />
+            <Avatar alt="Remy Sharp" src={profile.images[0]} className={classes.cardAvatar} />
                 <Typography variant="h6" component="h2" className={classes.cardName}>
                   {profile.firstName} {profile.lastName}
                 </Typography>
