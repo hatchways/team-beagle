@@ -7,11 +7,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  settingsHeading: {
-    fontSize: '1.4rem',
-    margin: '50px 0',
-    fontWeight: 800,
+    marginTop: '30px',
   },
   settingsSubheading: {
     fontSize: '1.2rem',
@@ -45,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
   photoBtn: {
-    margin: '10px 0'
+    margin: '10px 0',
   },
   mainPhotoMsg: {
     fontSize: '1.1rem',

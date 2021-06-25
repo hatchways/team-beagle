@@ -278,7 +278,6 @@ export default function EditProfile(): JSX.Element {
     <Grid className={classes.root}>
       <CssBaseline />
       <form onSubmit={formik.handleSubmit}>
-        <Typography className={classes.settingsHeading}>Edit Profile</Typography>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>I WANT TO DOG SIT</Typography>
           <Switch id="isDogSitter" checked={isDogSitter} onChange={handleSwitch} name="isDogSitter" />
