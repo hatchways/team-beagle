@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
       borderCollapse: 'separate',
       borderSpacing: '15px 5px',
       tableLayout: 'fixed',
-      width: 400,
+      // width: 400,
     },
     '& .DayPicker-Day': {
       width: `calc(100%/7)`,

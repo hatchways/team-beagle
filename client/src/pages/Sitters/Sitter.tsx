@@ -52,7 +52,7 @@ export default function Sitters(): JSX.Element {
       setPastBooking(past);
       setDates(dates);
     });
-  }, []);
+  }, [nextBooking, currBooking]);
 
   const handleChange = (panel: string) => (event: React.ChangeEvent<any>, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
