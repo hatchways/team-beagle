@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     width: '100%',
     height: '100%',
-    marginTop: '50px',
+    marginTop: '120px',
   },
   menuItem: {
     fontSize: '1.1rem',

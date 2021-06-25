@@ -11,6 +11,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 })
 
+
 // @route POST /profile/new
 // Create New User Profile
 exports.newProfile = asyncHandler(async (req, res) => {
@@ -28,7 +29,8 @@ exports.newProfile = asyncHandler(async (req, res) => {
     rating,
     hourlyRate,
     tagLine,
-  } = req.body
+
+  } = req.body;
 
   const profile = await Profile.create({
     userId,
@@ -43,7 +45,7 @@ exports.newProfile = asyncHandler(async (req, res) => {
     rating,
     hourlyRate,
     tagLine,
-  })
+  });
 
   if (profile) {
     res.status(201).json({
@@ -59,50 +61,52 @@ exports.newProfile = asyncHandler(async (req, res) => {
       rating: profile.rating,
       hourlyRate: profile.hourlyRate,
       tagLine: profile.tagLine,
-    })
+    });
   } else {
-    res.status(400).json({ message: "Invalid User Data" })
+    res.status(400).json({ message: "Invalid User Data" });
   }
-})
+});
 
 // //@route Patch /profile/edit-profile/:id
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
-  const update = req.body
-  let decoded = decodeToken(req.cookies.token)
-  const userId = decoded.id
+
+  const update = eq.body;
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
   try {
     const updateProfile = await Profile.findOneAndUpdate(
       { userId: userId },
       update,
       { new: true }
-    )
+
+    );
     if (updateProfile) {
-      res.status(200).json({ profile: updateProfile })
+      res.status(200).json({ profile: updateProfile });
     } else {
-      res.status(404).json({ message: "Profile not found" })
+      res.status(404).json({ message: "Profile not found" });
     }
   } catch (error) {
-    return res.status(500).json({ error: "Could not update profile" })
+    return res.status(500).json({ error: "Could not update profile" });
   }
-})
+});
 
 //@route GET /profile/get-profile/:id
 //Find Specific Profile
 exports.getProfile = asyncHandler(async (req, res) => {
-  const userId = req.params.id
+  const userId = req.params.id;
   try {
-    const getProfile = await Profile.findOne({ userId: userId })
+    const getProfile = await Profile.findOne({ userId: userId });
 
     if (getProfile) {
-      res.status(200).json({ profile: getProfile })
+      res.status(200).json({ profile: getProfile });
     } else {
-      res.status(404).json({ message: "Profile Not Found" })
+      res.status(404).json({ message: "Profile Not Found" });
     }
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ message: error });
   }
-})
+});
 
 //@route GET /profile/sitters
 //fetch list of isDogSitter profiles
