@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const requestSchema = new mongoose.Schema({
-  userID: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: true,
   },
-  sitterID: {
+  sitterId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: true,
@@ -23,11 +23,11 @@ const requestSchema = new mongoose.Schema({
   },
   accept: {
     type: Boolean,
-    default: false,
+    default: null,
   },
   decline: {
     type: Boolean,
-    default: false,
+    default: null,
   },
   paid: {
     type: Boolean,
