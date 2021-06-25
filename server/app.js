@@ -14,6 +14,7 @@ const userRouter = require("./routes/user");
 const requestRouter = require("./routes/request");
 const profileRouter = require("./routes/profile");
 const { json, urlencoded } = express;
+const cors = require('cors')
 
 connectDB();
 const app = express();
