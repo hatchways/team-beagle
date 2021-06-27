@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   appBar: {
     backgroundColor: '#FFFFFF',
-  
   },
   toolbar: {
     margin: `auto 0`,
@@ -21,11 +20,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
-   toolbarLink: {
-     color: '#000000',
-     fontWeight: 800,
-     fontSize: 12,
-     fontFamily: '"Open Sans", "sans-serif", "Roboto"',
+  toolbarLink: {
+    color: '#000000',
+    fontWeight: 800,
+    fontSize: 12,
+    fontFamily: '"Open Sans", "sans-serif", "Roboto"',
     marginRight: 24,
   },
   secondaryLink: {
@@ -35,10 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: '8px',
   },
   toolbarIcon: {
-
     fontSize: '2.8rem',
     color: theme.palette.primary.main,
-    margin: '0.5rem'
+    margin: '0.5rem',
   },
   toolbarLeftContainer: {
     width: 'auto',
@@ -93,7 +91,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: 20,
     height: 40,
     width: 'auto',
-  }
+  },
+  notificationsLink: {
+    textAlign: 'center',
+  },
 }));
 
 export default useStyles;
