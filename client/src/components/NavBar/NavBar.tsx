@@ -68,7 +68,7 @@ const NavBar = (): JSX.Element => {
       setUnreadNotifications(data.notifications.sort((a: Notification, b: Notification) => new Date(b.date).valueOf() - new Date(a.date).valueOf() ));
     };
     fetchUnreadNotifications();
-  }, []);
+  }, [loggedInUser]);
 
   return (
     <Grid container component="main" className={`${classes.root}`}>
