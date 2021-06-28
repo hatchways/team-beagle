@@ -181,3 +181,23 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({ requests: requestsProfile });
 });
+
+// @route get /request/delete/:id
+// @desc deletes request using id
+// @access Private
+exports.requestsDelete = asyncHandler(async (req, res, next) => {
+  let decoded = decodeToken(req.cookies.token);
+  const requestId = req.params.id;
+  let requests;
+
+  if (requestId) {
+    requests = await Request.findByIdAndDelete(requestId);
+  }
+
+  if (!requests) {
+    res.status(404);
+    throw new Error("No requests for sitter");
+  }
+
+  res.status(200).json({ requests: requests });
+});

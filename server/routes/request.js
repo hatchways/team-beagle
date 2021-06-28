@@ -8,6 +8,7 @@ const {
   requestsforSitter,
   requestsforCurrentUserSitter,
   requestsforCurrentUserOwner,
+  requestsDelete,
 } = require("../controllers/request");
 
 router.route("/new-request").post(newRequest);
@@ -16,5 +17,6 @@ router.route("/user/:id").get(protect, requestsByUser);
 router.route("/sitter/:id").get(protect, requestsforSitter);
 router.route("/bookings/sitter").get(protect, requestsforCurrentUserSitter);
 router.route("/bookings/owner").get(protect, requestsforCurrentUserOwner);
+router.route("/delete/:id").delete(protect, requestsDelete);
 
 module.exports = router;
