@@ -19,7 +19,7 @@ export default function Notification({ title, content, date }: Notification): JS
   return (
     <ListItem>
       {console.log(date)}
-      <ListItemText primary={title} secondary={content.length > 40 ? `${notificationDate(date)} - ${content.slice(0, 37)}...` : content} />
+      <ListItemText primary={title} secondary={content.length > 40 ? `${notificationDate(date)} - ${content.slice(0, 30)}...` : content} />
     </ListItem>
   );
 }

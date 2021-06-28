@@ -65,7 +65,13 @@ const NavBar = (): JSX.Element => {
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
       const data = await getUnreadNotifications()();
-      setUnreadNotifications(data.notifications.sort((a: Notification, b: Notification) => new Date(b.date).valueOf() - new Date(a.date).valueOf() ));
+      if (data.notifications) {
+        setUnreadNotifications(
+          data.notifications.sort(
+            (a: Notification, b: Notification) => new Date(b.date).valueOf() - new Date(a.date).valueOf(),
+          ),
+        );
+      }
     };
     fetchUnreadNotifications();
   }, [loggedInUser]);

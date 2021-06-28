@@ -26,7 +26,12 @@ import getProfile from '../../helpers/APICalls/getProfile';
 import { useSnackBar } from '../../context/useSnackbarContext';
 import { CurrentProfile } from '../../interface/AuthApiData'
 
-export default function EditProfile(): JSX.Element {
+
+interface Props {
+  newUser: boolean
+}
+
+export default function EditProfile({newUser}: Props): JSX.Element {
   const classes = useStyles();
 
   const [isDogSitter, setIsDogSitter] = useState(false);
@@ -148,16 +153,27 @@ export default function EditProfile(): JSX.Element {
     });
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await getProfile(loggedInUserId)();
+      if (data.profile) {
+      setCurrentProfile(data);
+      setIsDogSitter(data.profile.isDogSitter)
+      }
+    };
+    fetchProfile();
+  }, [loggedInUserId]);
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       isDogSitter: CurrentProfile.profile.isDogSitter,
       firstName: CurrentProfile.profile.firstName,
-      lastName: CurrentProfile.profile.lastName,
+      lastName: CurrentProfile.profile.lastName === '(n/a)' ? '' : CurrentProfile.profile.lastName,
       primaryPhone: '',
       secondaryPhone: '',
-      location: CurrentProfile.profile.location,
-      selfDescription: CurrentProfile.profile.description,
+      location: CurrentProfile.profile.location === '(this user has not set a location yet)' ? '' : CurrentProfile.profile.location,
+      selfDescription: CurrentProfile.profile.description === '(this user has not written a description yet)' ? '' : CurrentProfile.profile.description,
       hourlyRate: CurrentProfile.profile.hourlyRate,
       tagLine: CurrentProfile.profile.tagLine,
       availability: {
@@ -265,18 +281,10 @@ export default function EditProfile(): JSX.Element {
     onSubmit: (values) => handleSubmit(values),
   });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await getProfile(loggedInUserId)();
-      setCurrentProfile(data);
-      setIsDogSitter(data.profile.isDogSitter)
-    };
-    fetchProfile();
-  }, [loggedInUserId]);
-
   return (
     <Grid className={classes.root}>
       <CssBaseline />
+      {newUser === true && <Typography className={classes.newUserHeading}>Welcome to Loving Sitter! To begin, let&apos;s start with setting up your profile. </Typography>}
       <form onSubmit={formik.handleSubmit}>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>I WANT TO DOG SIT</Typography>
