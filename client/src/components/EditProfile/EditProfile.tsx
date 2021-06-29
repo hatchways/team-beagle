@@ -25,7 +25,7 @@ import editProfile from '../../helpers/APICalls/editProfile';
 import getProfile from '../../helpers/APICalls/getProfile';
 import { useSnackBar } from '../../context/useSnackbarContext';
 import { CurrentProfile } from '../../interface/AuthApiData'
-
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   newUser: boolean
@@ -97,6 +97,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
   const DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const { updateSnackBarMessage } = useSnackBar();
+  const history = useHistory();
 
   const handleSubmit = ({
     isDogSitter,
@@ -149,6 +150,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('Your profile has been upated');
+        if (newUser === true) history.push({pathname: '/dashboard'})
       }
     });
   };
@@ -284,6 +286,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
   return (
     <Grid className={classes.root}>
       <CssBaseline />
+      {/* Replace the line below when using Reactour */}
       {newUser === true && <Typography className={classes.newUserHeading}>Welcome to Loving Sitter! To begin, let&apos;s start with setting up your profile. </Typography>}
       <form onSubmit={formik.handleSubmit}>
         <Grid className={classes.formItem}>

@@ -45,7 +45,7 @@ export default function Profile(props: any): JSX.Element {
       </Grid>
       <Container maxWidth="md" className={classes.menuContainer}>
         {currentSection === 'editprofile' && <EditProfile newUser={isNewUser()}/>}
-        {currentSection === 'profilephoto' && <ProfilePhoto />}
+        {currentSection === 'profilephoto' && <ProfilePhoto newUser={isNewUser()}/>}
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}
