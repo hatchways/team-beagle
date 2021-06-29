@@ -6,6 +6,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     marginTop: '20px',
   },
+  newUserHeading: {
+    textAlign: 'center',
+    fontSize: '1.1rem',
+    fontWeight: 500,
+  }, 
   formItem: {
     display: 'flex',
     flexDirection: 'row',
