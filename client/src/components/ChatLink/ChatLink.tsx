@@ -6,23 +6,43 @@ interface ChatLink {
   firstName: string;
   lastName: string;
   profileImg: string;
-  recentMsg: string;
+  recentMsg: {
+    type: string;
+    content: string;
+  };
+}
+
+interface RecentMsg {
+  type: string;
+  content: string;
 }
 
 const ChatLink = ({ firstName, lastName, profileImg, recentMsg }: ChatLink): JSX.Element => {
   const classes = useStyles();
 
   const fullName = () => {
-    lastName !== '(n/a)' ? firstName : `${firstName} ${lastName}`;
+    if (lastName === '(n/a)') {
+      return firstName;
+    } else {
+      return `${firstName} ${lastName}`;
+    }
   };
 
-  const displayMsg = (recentMsg: string) => {
+  const displayMsg = (recentMsg: RecentMsg) => {
     if (recentMsg.type === 'msg') {
-      return recentMsg.content;
+      if (recentMsg.content.length > 23) {
+        return `${recentMsg.content.slice(0, 20)}...`;
+      } else {
+        return recentMsg.content;
+      }
     } else {
       return 'Sent photo';
     }
   };
+
+  // const displayMsg = (recentMsg: string) => {
+  //   return recentMsg;
+  // };
 
   return (
     <Grid className={classes.userContainer}>
@@ -31,9 +51,7 @@ const ChatLink = ({ firstName, lastName, profileImg, recentMsg }: ChatLink): JSX
       </Grid>
       <Grid className={classes.userNameMsg}>
         <Typography className={classes.userName}> {fullName()} </Typography>
-        <Typography className={`${classes.highlightUnreadMsg} ${classes.userMsg}`}>
-          {() => displayMsg(recentMsg)}
-        </Typography>
+        <Typography className={`${classes.highlightUnreadMsg} ${classes.userMsg}`}>{displayMsg(recentMsg)}</Typography>
       </Grid>
     </Grid>
   );

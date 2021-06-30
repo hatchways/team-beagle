@@ -48,14 +48,14 @@ const useStyles = makeStyles((theme) => ({
   },
   userMsg: {
     margin: '0 0',
-    fontSize: '0.8rem',
+    fontSize: '0.5rem',
   },
   unreadContainer: {
     position: 'relative',
   },
   highlightUnreadMsg: {
     fontWeight: 800,
-    fontSize: '2rem',
+    fontSize: '0.7rem',
   },
   hideUnreadMsgs: {
     visibility: 'hidden',
