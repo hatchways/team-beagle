@@ -18,47 +18,55 @@ import Messages from './pages/Messages/Messages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
 import SitterOwner from './pages/Sitters/SitterOwner';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 import './App.css';
 
+const stripePromise = loadStripe(
+  'pk_test_51J5B2eKVTqeqLi3vW1fqFgTEllljxwuWTGNwdOHOfzFZfSJeGlYisgmxohIEQLFUuNsefjYWrEtYr6errTkZfbq200PVHMyOyJ',
+);
+
 function App(): JSX.Element {
   return (
-    <MuiThemeProvider theme={theme}>
-      <BrowserRouter>
-        <SnackBarProvider>
-          <AuthProvider>
-            <SocketProvider>
-              <MuiPickersUtilsProvider utils={MomentUtils}>
-                <NavBar />
+    <Elements stripe={stripePromise}>
+      <MuiThemeProvider theme={theme}>
+        <BrowserRouter>
+          <SnackBarProvider>
+            <AuthProvider>
+              <SocketProvider>
+                <MuiPickersUtilsProvider utils={MomentUtils}>
+                  <NavBar />
 
-                <Switch>
-                  <Route exact path="/" component={Landing} />
-                  <Route exact path="/login" component={Login} />
-                  <Route exact path="/signup" component={Signup} />
+                  <Switch>
+                    <Route exact path="/" component={Landing} />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/signup" component={Signup} />
 
-                  <ProtectedRoute exact path="/sitters" component={SitterOwner} />
-                  <ProtectedRoute exact path="/messages" component={Messages} />
-                  <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
-                  <Route exact path="/profile">
-                    <Redirect to="/profile/editprofile" />
-                  </Route>
+                    <ProtectedRoute exact path="/sitters" component={SitterOwner} />
+                    <ProtectedRoute exact path="/messages" component={Messages} />
+                    <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
+                    <Route exact path="/profile">
+                      <Redirect to="/profile/editprofile" />
+                    </Route>
 
-                  <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <ProtectedRoute exact path="/profiledetail" component={ProfileDetails}/>
+                    <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+                    <ProtectedRoute exact path="/profiledetail" component={ProfileDetails} />
 
-                  <Route exact path="/unauthorized">
-                    <Unauthorized />
-                  </Route>
-                  <Route path="*">
-                    <Redirect to="/" />
-                  </Route>
-                </Switch>
-              </MuiPickersUtilsProvider>
-            </SocketProvider>
-          </AuthProvider>
-        </SnackBarProvider>
-      </BrowserRouter>
-    </MuiThemeProvider>
+                    <Route exact path="/unauthorized">
+                      <Unauthorized />
+                    </Route>
+                    <Route path="*">
+                      <Redirect to="/" />
+                    </Route>
+                  </Switch>
+                </MuiPickersUtilsProvider>
+              </SocketProvider>
+            </AuthProvider>
+          </SnackBarProvider>
+        </BrowserRouter>
+      </MuiThemeProvider>
+    </Elements>
   );
 }
 

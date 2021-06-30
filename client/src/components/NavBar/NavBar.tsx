@@ -103,7 +103,7 @@ const NavBar = (): JSX.Element => {
                 </Link>
                 <Badge
                   color="secondary"
-                  badgeContent={unreadNotifications.length}
+                  // badgeContent={unreadNotifications.length}
                   max={99}
                   anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
@@ -136,7 +136,11 @@ const NavBar = (): JSX.Element => {
                   <List>
                     {unreadNotifications.length > 0 ? (
                       unreadNotifications.map((notification) => (
-                        <Notification key={notification._id} title={notification.title} content={notification.content} />
+                        <Notification
+                          key={notification._id}
+                          title={notification.title}
+                          content={notification.content}
+                        />
                       ))
                     ) : (
                       <MenuItem>You have no unread notifications</MenuItem>
