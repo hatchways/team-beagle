@@ -18,6 +18,14 @@ const getPaymentSecret = async (req, res, next) => {
 
     if (payment && payment.customerSecret) {
       customerSecret = payment.customerSecret;
+      console.log(payment.customerId);
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: payment.customerId,
+        type: "card",
+      });
+      return res
+        .status(200)
+        .json({ customerSecret, card: paymentMethods.data[0] });
     } else {
       const user = await User.findById(userId);
       const customer = await stripe.customers.create({
@@ -34,7 +42,7 @@ const getPaymentSecret = async (req, res, next) => {
         customerSecret: customerSecret,
       });
     }
-    res.status(200).json({ customerSecret });
+    return res.status(200).json({ customerSecret });
   } catch (error) {
     return res.status(500).json({ message: error });
   }
@@ -53,12 +61,13 @@ const createPaymentIntent = async (req, res, next) => {
       userId: userId,
     });
 
-    console.log(payment);
-
     const paymentMethods = await stripe.paymentMethods.list({
       customer: payment.customerId,
       type: "card",
     });
+
+    console.log(paymentMethods);
+    console.log(paymentMethods.data[0].card);
 
     const paymentIntent = await stripe.paymentIntents.create({
       customer: payment.customerId,
@@ -67,12 +76,33 @@ const createPaymentIntent = async (req, res, next) => {
       payment_method: paymentMethods.data[0].id,
       off_session: true,
       confirm: true,
-      // on_behalf_of: "acct_1J7udd4IxhVupx05",
     });
-    res.status(200).json({ paymentIntent });
+    return res.status(200).json({ paymentIntent });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+};
+const detachPaymentMethod = async (req, res, next) => {
+  const userId = req.user.id;
+
+  try {
+    let payment;
+    payment = await Payment.findOne({
+      userId: userId,
+    });
+
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: payment.customerId,
+      type: "card",
+    });
+
+    const detachedPaymentMethod = await stripe.paymentMethods.detach(
+      paymentMethods.data[0].id
+    );
+    return res.status(200).json({ detachedPaymentMethod });
   } catch (error) {
     return res.status(500).json({ message: error });
   }
 };
 
-module.exports = { getPaymentSecret, createPaymentIntent };
+module.exports = { getPaymentSecret, createPaymentIntent, detachPaymentMethod };

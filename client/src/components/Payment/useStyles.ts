@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     '& .StripeElement--webkit-autofill': {
       backgroundColor: ' #fefde5 !important',
     },
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1, 0),
+    },
   },
   btnSave: {
     marginLeft: 'auto',
