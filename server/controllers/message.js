@@ -29,6 +29,7 @@ exports.newConversation = asyncHandler(async (req, res) => {
         participants: [userId, recipient],
         messages: [message],
         mostRecentMsg: message,
+        unreadMsgs: 1,
       });
       res.status(200).json({
         success: {
@@ -63,7 +64,7 @@ exports.newMessage = asyncHandler(async (req, res) => {
     });
     await Conversation.findOneAndUpdate(
       { $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }] },
-      { $push: { messages: message }, mostRecentMsg: message },
+      { $push: { messages: message }, mostRecentMsg: message, $inc: { unReadMsgs: 1 } },
     );
     res.status(201).json({
       success: {
@@ -123,7 +124,7 @@ exports.readMessages = asyncHandler(async (req, res) => {
       message.read = true;
       await message.save();
     });
-    console.log(conversation);
+    await Conversation.findOneAndUpdate({ _id: conversationId }, { unreadMsgs: 0 });
     res.status(200).json({ success: true });
   } catch (error) {
     return res.status(500).json({ error: 'Could not mark messages in conversation as read' });
