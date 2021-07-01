@@ -11,35 +11,42 @@ exports.newConversation = asyncHandler(async (req, res) => {
   const { type, content } = req.body;
   let decoded = decodeToken(req.cookies.token);
   const userId = decoded.id;
-  console.log('testing create new conversation route...');
   try {
-    const message = await Message.create({
-      sender: userId,
-      recipient,
-      sendDate: Date.now(),
-      content,
-      type,
+    const existingConversation = await Conversation.find({
+      $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }],
     });
-    await Conversation.create({
-      participants: [userId, recipient],
-      messages: [message],
-    });
-    res.status(200).json({
-      success: {
-        message: {
-          id: message._id,
-          content: message.content,
-          sendDate: message.sendDate,
-          read: message.read,
+    if (existingConversation.length > 0) {
+      res.status(403).json({ error: 'Conversation already exists' });
+    } else {
+      const message = await Message.create({
+        sender: userId,
+        recipient,
+        sendDate: Date.now(),
+        content,
+        type,
+      });
+      await Conversation.create({
+        participants: [userId, recipient],
+        messages: [message],
+        mostRecentMsg: message,
+      });
+      res.status(200).json({
+        success: {
+          message: {
+            id: message._id,
+            content: message.content,
+            sendDate: message.sendDate,
+            read: message.read,
+          },
         },
-      },
-    });
+      });
+    }
   } catch (error) {
     return res.status(500).json({ error: 'Could not create conversation' });
   }
 });
 
-// @route POST /messages/:id
+// @route POST /:id
 // Create a new message
 exports.newMessage = asyncHandler(async (req, res) => {
   const { type, content } = req.body;
@@ -50,10 +57,14 @@ exports.newMessage = asyncHandler(async (req, res) => {
     const message = await Message.create({
       sender: userId,
       recipient,
-      sendDate: this.createdAt(),
+      sendDate: Date.now(),
       content,
       type,
     });
+    await Conversation.findOneAndUpdate(
+      { $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }] },
+      { $push: { messages: message }, mostRecentMsg: message },
+    );
     res.status(201).json({
       success: {
         message: {
@@ -61,6 +72,7 @@ exports.newMessage = asyncHandler(async (req, res) => {
           content: message.content,
           sendDate: message.sendDate,
           read: message.read,
+          type: message.type,
         },
       },
     });
@@ -76,7 +88,9 @@ exports.getConversations = asyncHandler(async (req, res) => {
   const userId = decoded.id;
 
   try {
-    const conversations = Conversation.find({ $and: [{ participants: { $in: userId } }, { deleted: false }] });
+    const conversations = await Conversation.find({
+      $and: [{ participants: { $in: userId } }, { deleted: false }],
+    }).populate('mostRecentMsg');
     res.status(200).json({
       success: {
         conversations,
@@ -91,7 +105,6 @@ exports.getConversations = asyncHandler(async (req, res) => {
 // Delete conversation
 exports.deleteConversation = asyncHandler(async (req, res) => {
   let conversationId = req.params.id;
-
   try {
     await Conversation.findOneAndUpdate({ _id: conversationId }, { deleted: true });
     res.status(200).json({ success: true });
@@ -100,16 +113,17 @@ exports.deleteConversation = asyncHandler(async (req, res) => {
   }
 });
 
-// @route PATCH /messages/:id/read
+// @route PATCH /messages/read/:id
 // Mark all messages in a converstion as read
 exports.readMessages = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = Conversation.findOne({ _id: conversationId }).populate('messages');
-    conversation.messages.forEach((message) => {
+    const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
+    conversation.messages.forEach(async (message) => {
       message.read = true;
+      await message.save();
     });
-    await conversation.save();
+    console.log(conversation);
     res.status(200).json({ success: true });
   } catch (error) {
     return res.status(500).json({ error: 'Could not mark messages in conversation as read' });
@@ -121,7 +135,7 @@ exports.readMessages = asyncHandler(async (req, res) => {
 exports.getConversation = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = Conversation.findOne({ _id: conversationId }).populate('messages');
+    const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
     res.status(200).json({
       success: {
         conversation,
@@ -129,5 +143,19 @@ exports.getConversation = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not get conversation' });
+  }
+});
+
+// @route PATCH /conversation/pin/:id
+// Pin conversation to the top of the sidebar
+exports.pinConversation = asyncHandler(async (req, res) => {
+  const conversationId = req.params.id;
+  try {
+    await Conversation.findOneAndUpdate({ _id: conversationId }, { pinned: true });
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'Could not pin conversation' });
   }
 });
