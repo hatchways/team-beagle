@@ -23,9 +23,7 @@ import { loadStripe } from '@stripe/stripe-js';
 
 import './App.css';
 
-const stripePromise = loadStripe(
-  'pk_test_51J5B2eKVTqeqLi3vW1fqFgTEllljxwuWTGNwdOHOfzFZfSJeGlYisgmxohIEQLFUuNsefjYWrEtYr6errTkZfbq200PVHMyOyJ',
-);
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PKEY || '');
 
 function App(): JSX.Element {
   return (

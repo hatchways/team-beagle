@@ -8,9 +8,7 @@ const Payment = require("../models/Payment");
 // @route GET /payment/secret
 // @desc returns secret, create payment if there isn't one
 const getPaymentSecret = async (req, res, next) => {
-  let decoded = decodeToken(req.cookies.token);
-  const userId = decoded.id;
-
+  const userId = req.user.id;
   try {
     let payment;
     let customerSecret;
