@@ -3,16 +3,16 @@ import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Sitters from './Sitter';
+import Booking from './Booking';
 import { getBookingsSitter, getBookingsOwner } from '../../helpers/APICalls/request';
+import bookingTabStyle from './bookingTabStyles';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   dir?: string;
-  index: any;
-  value: any;
+  index: number;
+  value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -31,22 +31,15 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: any) {
+function a11yProps(index: number) {
   return {
     id: `full-width-tab-${index}`,
     'aria-controls': `full-width-tabpanel-${index}`,
   };
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    marginTop: 85,
-  },
-}));
-
-export default function FullWidthTabs() {
-  const classes = useStyles();
+export default function FullWidthTabs(): JSX.Element {
+  const classes = bookingTabStyle();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
 
@@ -54,13 +47,9 @@ export default function FullWidthTabs() {
     setValue(newValue);
   };
 
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
-
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
+      <AppBar position="static" color="default" className={classes.tabBar}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -76,10 +65,10 @@ export default function FullWidthTabs() {
       </AppBar>
 
       <TabPanel value={value} index={0} dir={theme.direction}>
-        <Sitters apiCall={getBookingsOwner} isDogStitter={false}></Sitters>
+        <Booking apiCall={getBookingsOwner} isDogStitter={false}></Booking>
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
-        <Sitters apiCall={getBookingsSitter} isDogStitter={true}></Sitters>
+        <Booking apiCall={getBookingsSitter} isDogStitter={true}></Booking>
       </TabPanel>
     </div>
   );

@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const decodeToken = require("../utils/decodeToken");
 const { request } = require("express");
 
-// @route POST /request
+// @route POST /request/new-request
 // @desc add request
 // @access Public
 exports.newRequest = asyncHandler(async (req, res, next) => {
@@ -47,11 +47,12 @@ exports.newRequest = asyncHandler(async (req, res, next) => {
 // //@route Patch /request/edit-profile/:id
 // //update request
 exports.editRequest = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
   const update = req.body;
   const requestId = req.params.id;
   try {
     const updatedRequest = await Request.findOneAndUpdate(
-      { _id: requestId },
+      { _id: requestId, userId: userId },
       update,
       { new: true }
     );
@@ -64,54 +65,13 @@ exports.editRequest = asyncHandler(async (req, res) => {
     return res.status(500).json({ error: "Could not update request" });
   }
 });
-// @route get /request/user/:id
-// @desc all requests made by user
-// @access Private
-exports.requestsByUser = asyncHandler(async (req, res, next) => {
-  const idString = req.params.id;
-
-  let requests;
-  if (idString) {
-    requests = await Request.find({
-      userId: idString,
-    });
-  }
-
-  if (!requests) {
-    res.status(404);
-    throw new Error("No requests made by user");
-  }
-
-  res.status(200).json({ requests: requests });
-});
-
-// @route get /request/sitter/:id
-// @desc all requests made for sitter
-// @access Private
-exports.requestsforSitter = asyncHandler(async (req, res, next) => {
-  const idString = req.params.id;
-
-  let requests;
-  if (idString) {
-    requests = await Request.find({
-      sitterId: idString,
-    });
-  }
-
-  if (!requests) {
-    res.status(404);
-    throw new Error("No requests for sitter");
-  }
-
-  res.status(200).json({ requests: requests });
-});
 
 // @route get /request/bookings/sitter
 // @desc all requests made for current user
 // @access Private
 exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
-  let decoded = decodeToken(req.cookies.token);
-  const userId = decoded.id;
+  const userId = req.user.id;
+
   let requests;
 
   if (userId) {
@@ -148,8 +108,7 @@ exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
 // @desc all requests made for current user
 // @access Private
 exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
-  let decoded = decodeToken(req.cookies.token);
-  const userId = decoded.id;
+  const userId = req.user.id;
   let requests;
 
   if (userId) {
@@ -180,4 +139,27 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
   );
 
   res.status(200).json({ requests: requestsProfile });
+});
+
+// @route Delete /request/delete/:id
+// @desc deletes request using id
+// @access Private
+exports.requestsDelete = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const requestId = req.params.id;
+  let requests;
+
+  if (requestId) {
+    requests = await Request.findOneAndDelete({
+      _id: requestId,
+      userId: userId,
+    });
+  }
+
+  if (!requests) {
+    res.status(404);
+    throw new Error("No requests for sitter");
+  }
+
+  res.status(200).json({ requests: requests });
 });
