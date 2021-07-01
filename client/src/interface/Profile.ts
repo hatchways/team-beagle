@@ -17,13 +17,14 @@ export interface Profile {
     saturday: boolean;
     sunday: boolean;
   };
-  availabilityDays: {
-    additionalDays: Date;
-    offDays: Date;
+  availabilityDays?: {
+    additionalDays?: Date;
+    offDays?: Date;
   };
-  rating: number;
-  hourlyRate: number;
-  tagLine: string;
+  rating?: number;
+  hourlyRate?: number;
+  tagLine?: string;
+  fullName?: string;
 }
 
 export interface SearchProfileApiData {
