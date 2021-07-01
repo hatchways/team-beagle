@@ -121,8 +121,10 @@ exports.readMessages = asyncHandler(async (req, res) => {
   try {
     const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
     conversation.messages.forEach(async (message) => {
-      message.read = true;
-      await message.save();
+      if (message.read === false) {
+        message.read = true;
+        await message.save();
+      }
     });
     await Conversation.findOneAndUpdate({ _id: conversationId }, { unreadMsgs: 0 });
     res.status(200).json({ success: true });
