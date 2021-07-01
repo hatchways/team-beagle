@@ -13,7 +13,7 @@ exports.newConversation = asyncHandler(async (req, res) => {
   const userId = decoded.id;
   try {
     const existingConversation = await Conversation.find({
-      $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }],
+      $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }, { deleted: false }],
     });
     if (existingConversation.length > 0) {
       res.status(403).json({ error: 'Conversation already exists' });
