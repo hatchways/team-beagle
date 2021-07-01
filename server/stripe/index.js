@@ -12,12 +12,12 @@ const getPaymentSecret = async (req, res, next) => {
   try {
     let payment;
     let customerSecret;
-    payment = await Payment.find({
+    payment = await Payment.findOne({
       userId: userId,
     });
 
-    if (payment && payment[0].customerSecret) {
-      customerSecret = payment[0].customerSecret;
+    if (payment && payment.customerSecret) {
+      customerSecret = payment.customerSecret;
     } else {
       const user = await User.findById(userId);
       const customer = await stripe.customers.create({
@@ -45,15 +45,21 @@ const getPaymentSecret = async (req, res, next) => {
 const createPaymentIntent = async (req, res, next) => {
   const amount = req.body.hourlyRate * req.body.hours * 100;
   const { currency } = req.body;
+  const userId = req.user.id;
+
   try {
     let payment;
-    payment = await Payment.find({
+    payment = await Payment.findOne({
       userId: userId,
     });
+
+    console.log(payment);
+
     const paymentMethods = await stripe.paymentMethods.list({
       customer: payment.customerId,
       type: "card",
     });
+
     const paymentIntent = await stripe.paymentIntents.create({
       customer: payment.customerId,
       amount,
@@ -61,6 +67,7 @@ const createPaymentIntent = async (req, res, next) => {
       payment_method: paymentMethods.data[0].id,
       off_session: true,
       confirm: true,
+      // on_behalf_of: "acct_1J7udd4IxhVupx05",
     });
     res.status(200).json({ paymentIntent });
   } catch (error) {
