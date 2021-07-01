@@ -20,6 +20,14 @@ export default function Profile(props: any): JSX.Element {
     props.history.push(`/profile/${section}`);
   };
 
+  const isNewUser = () => {
+    if (props.location.state === undefined) {
+      return false
+    } else {
+      return props.location.state.newUser
+    }
+  }
+
   return (
     <Grid container className={`${classes.root}`}>
       <CssBaseline />
@@ -36,8 +44,8 @@ export default function Profile(props: any): JSX.Element {
         ))}
       </Grid>
       <Container maxWidth="md" className={classes.menuContainer}>
-        {currentSection === 'editprofile' && <EditProfile />}
-        {currentSection === 'profilephoto' && <ProfilePhoto />}
+        {currentSection === 'editprofile' && <EditProfile newUser={isNewUser()}/>}
+        {currentSection === 'profilephoto' && <ProfilePhoto newUser={isNewUser()}/>}
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}

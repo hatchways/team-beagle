@@ -9,6 +9,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     marginTop: '30px',
   },
+  newUserHeading: {
+    textAlign: 'center',
+    fontSize: '1.1rem',
+    fontWeight: 500,
+  }, 
   settingsSubheading: {
     fontSize: '1.2rem',
     color: '#8D8D8D',

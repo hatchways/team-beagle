@@ -2,12 +2,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: 'calc(100vh - 85px)',
-    backgroundColor: '#FFFFFF',
-    alignContent: 'start',
+    margin: '0 0',
   },
-
-  dashboard: { backgroundColor: '#FFFFFF' },
 }));
 
 export default useStyles;

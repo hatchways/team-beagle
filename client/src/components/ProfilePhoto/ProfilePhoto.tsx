@@ -9,6 +9,12 @@ import changeMainPhoto from '../../helpers/APICalls/changeMainPhoto';
 import getProfile from '../../helpers/APICalls/getProfile';
 import deletePhoto from '../../helpers/APICalls/deletePhoto';
 import { AuthContext } from '../../context/useAuthContext';
+import { useSnackBar } from '../../context/useSnackbarContext';
+import { useHistory } from 'react-router-dom';
+
+interface Props {
+  newUser: boolean
+}
 
 function InputButton({ ...props }): JSX.Element {
   const classes = useStyles();
@@ -17,7 +23,7 @@ function InputButton({ ...props }): JSX.Element {
     target: HTMLInputElement & EventTarget;
   }
 
-  console.log(props);
+  const { updateSnackBarMessage } = useSnackBar();
 
   const validateAndUploadFile = (e: HTMLInputEvent | React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -32,6 +38,11 @@ function InputButton({ ...props }): JSX.Element {
           const data = await uploadPhoto('profilePhoto', file);
           const images = data.profile.images;
           props.setPhotos(images);
+          if (data.error) {
+            updateSnackBarMessage(data.error.message);
+          } else {
+            updateSnackBarMessage('You have successfully uploaded a new photo');
+          }
         };
         addPhoto();
       }
@@ -46,8 +57,11 @@ function InputButton({ ...props }): JSX.Element {
   );
 }
 
-export default function ProfilePhoto(): JSX.Element {
+export default function ProfilePhoto({newUser}: Props): JSX.Element {
   const classes = useStyles();
+
+  const { updateSnackBarMessage } = useSnackBar();
+  const history = useHistory();
 
   const { loggedInUser } = useContext(AuthContext);
   const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
@@ -67,6 +81,12 @@ export default function ProfilePhoto(): JSX.Element {
       const data = await changeMainPhoto(idx);
       const images = data.profile.images;
       setPhotos(images);
+      if (data.error) {
+        updateSnackBarMessage(data.error.message);
+      } else {
+        updateSnackBarMessage('You have successfully updated your main photo');
+        if (newUser === true) history.push('/dashboard')
+      }
     };
     setNewMainPhoto();
   };
@@ -76,6 +96,11 @@ export default function ProfilePhoto(): JSX.Element {
       const data = await deletePhoto(photo, index);
       const images = data.profile.images;
       setPhotos(images);
+      if (data.error) {
+        updateSnackBarMessage(data.error.message);
+      } else {
+        updateSnackBarMessage('You have successfully deleted a photo');
+      }
     };
     deleteCurrentPhoto();
   };
@@ -83,6 +108,8 @@ export default function ProfilePhoto(): JSX.Element {
   return (
     <Grid className={classes.root}>
       <CssBaseline />
+      {/* Replace the line below when using Reactour */}
+      {newUser === true && <Typography className={classes.newUserHeading}>Next, let&apos;s upload some photos to your profile! </Typography>}
       <Carousel autoPlay={false}>
         {photos.map((item, idx) => (
           <Grid key={idx} className={classes.photoContainer}>
