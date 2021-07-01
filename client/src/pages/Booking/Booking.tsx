@@ -105,19 +105,19 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const handleAccept = (setState: React.Dispatch<any>, id: string) => {
+  const handleAccept = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
     updateBookingsAccept(id, true, false).then(() => {
       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
     });
   };
 
-  const handleDecline = (setState: React.Dispatch<any>, id: string) => {
+  const handleDecline = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
     updateBookingsAccept(id, false, true).then(() => {
       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: false, decline: true } }));
     });
   };
 
-  const handleCancelBooking = (setState: React.Dispatch<any>, id: string) => {
+  const handleCancelBooking = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
     deleteBooking(id).then(() => {
       setState((prevState: RequestObj) => {
         const { [id]: value, ...newState } = prevState;
