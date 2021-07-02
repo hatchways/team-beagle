@@ -13,9 +13,10 @@ const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user");
 const requestRouter = require("./routes/request");
 const profileRouter = require("./routes/profile");
-const notificationsRouter = require("./routes/notifications")
+const notificationsRouter = require("./routes/notifications");
+const paymentRouter = require("./routes/payment");
 const { json, urlencoded } = express;
-const cors = require('cors')
+const cors = require("cors");
 
 connectDB();
 const app = express();
@@ -40,15 +41,15 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  )
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
-  res.setHeader("Access-Control-Allow-Credentials", "true")
-  next()
-})
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.use((req, res, next) => {
   req.io = io;
@@ -59,7 +60,8 @@ app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/request", requestRouter);
 app.use("/profile", profileRouter);
-app.use("/notifications", notificationsRouter)
+app.use("/notifications", notificationsRouter);
+app.use("/payment", paymentRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/client/build")));
