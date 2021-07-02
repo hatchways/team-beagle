@@ -5,44 +5,47 @@ import Grid from '@material-ui/core/Grid';
 
 import BookingRequest from '../../components/BookingRequest/BookingRequest';
 import SelectedProfileCard from '../../components/SelectedProfileCard/SelectedProfileCard';
-import {Profile} from "../../interface/Profile";
-import { CurrentProfile } from '../../interface/AuthApiData'
-import getProfile from '../../helpers/APICalls/getProfile';
-
+import { Profile } from '../../interface/Profile';
+import { CurrentProfile } from '../../interface/AuthApiData';
+import { getSitterProfile } from '../../helpers/APICalls/getProfile';
 
 import useStyles from './useStyles';
 
-
 export default function ProfileDetails(profile: any): JSX.Element {
-    const classes = useStyles();
-    const [userProfile, setUserProfile] = useState({});
+  const classes = useStyles();
+  const [userProfile, setUserProfile] = useState({});
 
-    console.log(profile.match.params)
+  console.log(profile.match.params);
 
-    
-   
-    useEffect(() => {
-    const fetchProfile = async () => {
-      const data = await getProfile(profile.match.params)();
-      console.log(data)
-      setUserProfile(data);
-    };
-    fetchProfile();
-  }, []);
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     const data = await getProfile(profile.match.params)();
+  //     console.log(data);
+  //     setUserProfile(data);
+  //   };
+  //   fetchProfile();
+  // }, [profile.match.params]);
+
+  useEffect(() => {
+    console.log('hit');
+    getSitterProfile(profile.match.params.userId).then((res: any) => {
+      console.log(res);
+      setUserProfile(res.profile);
+    });
+  }, [profile.match.params]);
 
   return (
     <Grid container direction="row" className={classes.root}>
       <Grid sm={12} md={8} className={classes.profileArea}>
         <Paper elevation={2} className={classes.profileCard}>
-          <SelectedProfileCard profile={profile}/>
+          <SelectedProfileCard profile={userProfile} />
         </Paper>
       </Grid>
       <Grid xs={12} md={4} className={classes.bookingArea}>
         <Paper elevation={2} className={classes.card}>
-          <BookingRequest profile={profile} />
+          <BookingRequest profile={userProfile} />
         </Paper>
       </Grid>
     </Grid>
   );
 }
-
