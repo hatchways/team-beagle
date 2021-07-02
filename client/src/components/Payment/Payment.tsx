@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import CardSection from './CardSection';
-import { getPaymentSecret } from '../../helpers/APICalls/payment';
+import { getPaymentSecret, deletePaymentCard, addPaymentCard } from '../../helpers/APICalls/payment';
 import Button from '@material-ui/core/Button';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import useStyles from './useStyles';
 import Alert from '@material-ui/lab/Alert';
@@ -13,8 +11,10 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
+import { useAuth } from '../../context/useAuthContext';
 
 export default function Payment(): JSX.Element {
+  const { loggedInUser, userProfile } = useAuth();
   const stripe = useStripe();
   const classes = useStyles();
   const elements = useElements();
@@ -22,22 +22,20 @@ export default function Payment(): JSX.Element {
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
   const [card, setCard] = useState<any>();
-  const [billingDetails, setBillingDetails] = useState({
-    email: '',
-    name: '',
-  });
+  const defaultBillingDetails = {
+    email: loggedInUser?.email,
+    name: `${userProfile?.firstName} ${userProfile?.lastName}`,
+  };
+  const [billingDetails, setBillingDetails] = useState(defaultBillingDetails);
   useEffect(() => {
     getPaymentSecret().then((res: any) => {
       const secret = res.customerSecret;
       setPaymentSecret(secret);
-      console.log(res.card);
       if (res.card) setCard(res.card);
     });
   }, []);
 
   const handleSubmit = async (event: any) => {
-    // We don't want to let default form submission happen here,
-    // which would refresh the page.
     event.preventDefault();
 
     if (!stripe || !elements) {
@@ -46,27 +44,33 @@ export default function Payment(): JSX.Element {
       return;
     }
 
-    const result = await stripe.confirmCardSetup(paymentSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement) || { token: '' },
-        billing_details: billingDetails,
-      },
+    const card: any = await stripe.createPaymentMethod({
+      type: 'card',
+      card: elements.getElement(CardElement) || { token: '' },
+      billing_details: billingDetails,
     });
+    const result = await addPaymentCard(card.paymentMethod.id);
+
+    // const result = await stripe.confirmCardSetup(paymentSecret, {
+    //   payment_method: {
+    //     card: elements.getElement(CardElement) || { token: '' },
+    //     billing_details: billingDetails,
+    //   },
+    // });
 
     if (result.error) {
-      // Display result.error.message in your UI.
       setError(result.error.message);
     } else {
-      // The setup has succeeded. Display a success message and send
-      // result.setupIntent.payment_method to your server to save the
-      // card to a Customer
       setSuccess(true);
+      setCard(result.attachedPaymentMethod);
+      setBillingDetails(defaultBillingDetails);
     }
   };
 
-  const handleDelete = async (event: any) => {
-    // card.id;
-    setCard(null);
+  const handleDelete = (event: any) => {
+    deletePaymentCard().then((res: any) => {
+      if (!res.error) setCard(null);
+    });
   };
 
   let cardInfo;
@@ -82,7 +86,6 @@ export default function Payment(): JSX.Element {
                   label="Name"
                   id="name"
                   type="text"
-                  placeholder="Jane Doe"
                   required
                   autoComplete="name"
                   variant="outlined"
@@ -95,7 +98,6 @@ export default function Payment(): JSX.Element {
                   label="Email"
                   id="email"
                   type="email"
-                  placeholder="janedoe@gmail.com"
                   required
                   autoComplete="email"
                   variant="outlined"
@@ -110,7 +112,6 @@ export default function Payment(): JSX.Element {
                   className={classes.btnSave}
                   color="primary"
                   variant="contained"
-                  // onClick={handleSubmit}
                   disabled={!stripe}
                   type="submit"
                 >

@@ -13,6 +13,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { updateBookingsAccept, deleteBooking } from '../../helpers/APICalls/request';
 import moment from 'moment';
+import { paymentPayBooking } from '../../helpers/APICalls/payment';
 
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -106,6 +107,7 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
   };
 
   const handleAccept = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
+    paymentPayBooking(id);
     updateBookingsAccept(id, true, false).then(() => {
       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
     });
