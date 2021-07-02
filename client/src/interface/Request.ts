@@ -11,3 +11,8 @@ export interface Request {
   paid: boolean;
   profile: Profile;
 }
+
+export interface CreateRequestApiData {
+  success?: string;
+  error?: string;
+}

@@ -11,7 +11,6 @@ import Divider from '@material-ui/core/Divider';
 
 import React, { useState, useEffect } from 'react';
 import useStyles from './useStyles';
-import { ProfileProps } from '../Listings/Listings';
 import { Profile } from '../../interface/Profile';
 import BackgroundImage from '../../Images/house.jpeg';
 import AvatarPic from '../../Images/avatar.png';
@@ -19,13 +18,9 @@ import AvatarPic from '../../Images/avatar.png';
 interface Props {
   profile: Profile;
 }
-// interface ExtendProfile extends Profile {
-//     later(email: string, after: number): boolean
-// }
 
 export default function SelectedProfileCard({ profile }: any): JSX.Element {
   const classes = useStyles();
-  console.log(profile);
   return (
     <Card className={classes.contentArea}>
       <CardMedia className={classes.cardMedia} image={BackgroundImage} />
@@ -54,7 +49,7 @@ export default function SelectedProfileCard({ profile }: any): JSX.Element {
         </Typography>
 
         <Grid container direction="row" justify="space-between" className={classes.cardFooter}>
-          {/* {profile.displayImages?.map((imgs: string, index: number) => {
+          {/* {profile.images.map((imgs: string, index: number) => {
                                 <CardMedia src={imgs} key={index}/>
                             })} */}
         </Grid>

@@ -17,15 +17,6 @@ export default function ProfileDetails(profile: any): JSX.Element {
 
   console.log(profile.match.params);
 
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     const data = await getProfile(profile.match.params)();
-  //     console.log(data);
-  //     setUserProfile(data);
-  //   };
-  //   fetchProfile();
-  // }, [profile.match.params]);
-
   useEffect(() => {
     console.log('hit');
     getSitterProfile(profile.match.params.userId).then((res: any) => {
@@ -34,6 +25,7 @@ export default function ProfileDetails(profile: any): JSX.Element {
     });
   }, [profile.match.params]);
 
+  console.log(userProfile)
   return (
     <Grid container direction="row" className={classes.root}>
       <Grid sm={12} md={8} className={classes.profileArea}>
