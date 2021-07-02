@@ -1,5 +1,6 @@
 import { AuthApiData } from '../../interface/AuthApiData';
 import { FetchOptions } from '../../interface/FetchOptions';
+import { SearchProfileApiData } from '../../interface/Profile';
 
 const getProfile = (id : string) => async () : Promise<any> => {
   const fetchOptions: FetchOptions = {

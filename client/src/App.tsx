@@ -9,7 +9,7 @@ import Login from './pages/Login/Login';
 import Signup from './pages/SignUp/SignUp';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
-import ProfileDetails from './components/ProfileDetails/ProfileDetails';
+import ProfileDetails from './pages/ProfileDetails/ProfileDetails';
 import { AuthProvider } from './context/useAuthContext';
 import { SocketProvider } from './context/useSocketContext';
 import { SnackBarProvider } from './context/useSnackbarContext';
@@ -44,8 +44,7 @@ function App(): JSX.Element {
                   </Route>
 
                   <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <ProtectedRoute exact path="/profiledetail" component={ProfileDetails}/>
-
+                  <ProtectedRoute exact path="/dashboard/:userId" component={ProfileDetails} />
                   <Route exact path="/unauthorized">
                     <Unauthorized />
                   </Route>
