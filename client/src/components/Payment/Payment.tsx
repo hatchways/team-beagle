@@ -75,20 +75,29 @@ export default function Payment(): JSX.Element {
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
+    const cardElement = elements.getElement(CardElement);
+    console.log(cardElement);
+
+    if (!cardElement) return;
 
     const card: any = await stripe.createPaymentMethod({
       type: 'card',
-      card: elements.getElement(CardElement) || { token: '' },
+      card: cardElement || { token: '' },
       billing_details: billingDetails,
     });
-    const result = await addPaymentMethod(card.paymentMethod.id, currency);
-
-    if (result.error) {
-      setError(result.error.message);
+    if (card.error) {
+      setError(card?.error.message);
     } else {
-      setSuccess(true);
-      setCard(result.attachedPaymentMethod);
-      setBillingDetails(defaultBillingDetails);
+      console.log(card);
+      const result = await addPaymentMethod(card.paymentMethod.id, currency);
+
+      if (result.error) {
+        setError(result.error.message);
+      } else {
+        setSuccess(true);
+        setCard(result.attachedPaymentMethod);
+        setBillingDetails(defaultBillingDetails);
+      }
     }
   };
 
@@ -176,8 +185,8 @@ export default function Payment(): JSX.Element {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button size="small" color="primary" onClick={handleDelete}>
-                Delete
+              <Button className={classes.btn} color="primary" variant="contained" onClick={handleDelete}>
+                Delete Card
               </Button>
             </CardActions>
           </Card>
