@@ -1,32 +1,60 @@
 import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { useAuth } from '../../context/useAuthContext';
 import CardSection from './CardSection';
-import { getPaymentSecret, deletePaymentCard, addPaymentCard } from '../../helpers/APICalls/payment';
+import { getPaymentSecret, deletePaymentCard, addPaymentMethod } from '../../helpers/APICalls/payment';
+import useStyles from './useStyles';
+
 import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormGroup';
-import useStyles from './useStyles';
 import Alert from '@material-ui/lab/Alert';
 import { Grid, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
-import { useAuth } from '../../context/useAuthContext';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export default function Payment(): JSX.Element {
   const { loggedInUser, userProfile } = useAuth();
   const stripe = useStripe();
   const classes = useStyles();
   const elements = useElements();
-  const [paymentSecret, setPaymentSecret] = useState<any>();
-  const [error, setError] = useState<string>();
-  const [success, setSuccess] = useState<boolean>(false);
-  const [card, setCard] = useState<any>();
+
   const defaultBillingDetails = {
     email: loggedInUser?.email,
     name: `${userProfile?.firstName} ${userProfile?.lastName}`,
   };
   const [billingDetails, setBillingDetails] = useState(defaultBillingDetails);
+  const [paymentSecret, setPaymentSecret] = useState<any>();
+  const [error, setError] = useState<string>();
+  const [success, setSuccess] = useState<boolean>(false);
+  const [card, setCard] = useState<any>();
+  const [currency, setCurrency] = React.useState('EUR');
+
+  const currencies = [
+    {
+      value: 'USD',
+      label: 'USD',
+    },
+    {
+      value: 'CAD',
+      label: 'CAD',
+    },
+    {
+      value: 'EUR',
+      label: 'EUR',
+    },
+    {
+      value: 'BTC',
+      label: 'BTC',
+    },
+    {
+      value: 'JPY',
+      label: 'JPY',
+    },
+  ];
+
   useEffect(() => {
     getPaymentSecret().then((res: any) => {
       const secret = res.customerSecret;
@@ -34,6 +62,10 @@ export default function Payment(): JSX.Element {
       if (res.card) setCard(res.card);
     });
   }, []);
+
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrency(event.target.value);
+  };
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -49,14 +81,7 @@ export default function Payment(): JSX.Element {
       card: elements.getElement(CardElement) || { token: '' },
       billing_details: billingDetails,
     });
-    const result = await addPaymentCard(card.paymentMethod.id);
-
-    // const result = await stripe.confirmCardSetup(paymentSecret, {
-    //   payment_method: {
-    //     card: elements.getElement(CardElement) || { token: '' },
-    //     billing_details: billingDetails,
-    //   },
-    // });
+    const result = await addPaymentMethod(card.paymentMethod.id, currency);
 
     if (result.error) {
       setError(result.error.message);
@@ -83,6 +108,21 @@ export default function Payment(): JSX.Element {
             <form onSubmit={handleSubmit}>
               <FormGroup>
                 <TextField
+                  id="outlined-select-currency"
+                  select
+                  required
+                  label="Select"
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  variant="outlined"
+                >
+                  {currencies.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
                   label="Name"
                   id="name"
                   type="text"
@@ -108,13 +148,7 @@ export default function Payment(): JSX.Element {
                 />
 
                 <CardSection />
-                <Button
-                  className={classes.btnSave}
-                  color="primary"
-                  variant="contained"
-                  disabled={!stripe}
-                  type="submit"
-                >
+                <Button className={classes.btn} color="primary" variant="contained" disabled={!stripe} type="submit">
                   Save Card
                 </Button>
                 {error && <Alert severity="warning">{error}</Alert>}

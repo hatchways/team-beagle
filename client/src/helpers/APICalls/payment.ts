@@ -24,11 +24,11 @@ export async function deletePaymentCard(): Promise<any> {
     }));
 }
 
-export async function addPaymentCard(paymentMethodId: string): Promise<any> {
+export async function addPaymentMethod(paymentMethodId: string, currency: string): Promise<any> {
   const fetchOptions: FetchOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ paymentMethodId }),
+    body: JSON.stringify({ paymentMethodId, currency }),
     credentials: 'include',
   };
   return await fetch(`/payment/add`, fetchOptions)
@@ -38,11 +38,11 @@ export async function addPaymentCard(paymentMethodId: string): Promise<any> {
     }));
 }
 
-export async function paymentPayBooking(requestId: string, currency: string): Promise<any> {
+export async function paymentPayBooking(requestId: string): Promise<any> {
   const fetchOptions: FetchOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ currency }),
+    body: JSON.stringify({}),
     credentials: 'include',
   };
   return await fetch(`/payment/pay-booking/${requestId}`, fetchOptions)

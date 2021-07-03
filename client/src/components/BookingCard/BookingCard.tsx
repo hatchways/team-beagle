@@ -8,17 +8,17 @@ import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-import { Request } from './../../interface/Request';
+import { Request, RequestWithProfile } from './../../interface/Request';
 import React from 'react';
 
-interface ExtRequest extends Request {
+interface ExtRequest extends RequestWithProfile {
   dates: any;
 }
 interface RequestObj {
   [key: string]: ExtRequest;
 }
 interface Props {
-  booking: Request;
+  booking: RequestWithProfile;
   isDogStitter: boolean;
   text?: string;
   showActions?: boolean;
@@ -68,13 +68,14 @@ export default function BookingCard({
 
           {isDogStitter && (
             <Typography variant="body2" className={classes.cardStatus}>
-              {statusSetter(booking.accept, booking.decline)}
+              {!booking.paid && statusSetter(booking.accept, booking.decline)}
+              {booking.paid && 'PAID'}
             </Typography>
           )}
         </Grid>
       </CardContent>
 
-      {isDogStitter && showActions && (
+      {!booking.paid && isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
           <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
             Accept
@@ -85,7 +86,7 @@ export default function BookingCard({
         </CardActions>
       )}
 
-      {!isDogStitter && showActions && (
+      {!booking.paid && !isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
           <Button size="small" color="primary" onClick={() => handleCancelBooking(setState, booking._id)}>
             Cancel Booking

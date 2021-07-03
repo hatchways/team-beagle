@@ -48,38 +48,6 @@ const getPaymentSecret = async (req, res, next) => {
   }
 };
 
-// @route POST /payment/new-payment
-// @desc create/returns new payment
-const createPaymentIntent = async (req, res, next) => {
-  const amount = req.body.hourlyRate * req.body.hours * 100;
-  const { currency } = req.body;
-  const userId = req.user.id;
-
-  try {
-    let payment;
-    payment = await Payment.findOne({
-      userId: userId,
-    });
-
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: payment.customerId,
-      type: "card",
-    });
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      customer: payment.customerId,
-      amount,
-      currency,
-      payment_method: paymentMethods.data[0].id,
-      off_session: true,
-      confirm: true,
-    });
-    return res.status(200).json({ paymentIntent });
-  } catch (error) {
-    return res.status(500).json({ message: error });
-  }
-};
-
 // @route POST /payment/delete
 // @desc detachs first payment method
 const detachPaymentMethod = async (req, res, next) => {
@@ -110,16 +78,25 @@ const detachPaymentMethod = async (req, res, next) => {
 const addPaymentMethod = async (req, res, next) => {
   const userId = req.user.id;
   const paymentMethodId = req.body.paymentMethodId;
+  const paymentCurrency = req.body.currency;
+
   try {
-    let payment;
-    payment = await Payment.findOne({
+    const payment = await Payment.findOne({
       userId: userId,
     });
-
     const attachedPaymentMethod = await stripe.paymentMethods.attach(
       paymentMethodId,
       { customer: payment.customerId }
     );
+
+    const updatedPayment = await Payment.findOneAndUpdate(
+      { userId: userId },
+      {
+        paymentMethodId,
+        paymentCurrency,
+      }
+    );
+
     return res.status(200).json({ attachedPaymentMethod });
   } catch (error) {
     return res.status(500).json({ message: error });
@@ -129,7 +106,6 @@ const addPaymentMethod = async (req, res, next) => {
 // @route POST /payment/pay-booking/:id
 // @desc create/returns new payment
 const payBooking = async (req, res, next) => {
-  const { currency } = req.body;
   const sitterId = req.user.id;
   const requestId = req.params.id;
 
@@ -141,6 +117,10 @@ const payBooking = async (req, res, next) => {
 
   const sitterProfile = await Profile.findOne({ userId: sitterId });
   const sitterUser = await User.findById(sitterId);
+  const sitterPayment = await Payment.findOne({ userId: sitterId });
+
+  if (!sitterPayment.paymentCurrency)
+    res.status(400).json("dog sitter has not set payments");
 
   const start = new moment(request.startDate);
   const end = new moment(request.endDate);
@@ -149,22 +129,17 @@ const payBooking = async (req, res, next) => {
   const amount = sitterProfile.hourlyRate * hours * 100;
 
   const ownerId = request.userId;
-  const payment = await Payment.findOne({
+  const ownerPayment = await Payment.findOne({
     userId: ownerId,
   });
-  if (!payment) res.status(400).json("dog owner has not set payments");
-
-  const paymentMethods = await stripe.paymentMethods.list({
-    customer: payment.customerId,
-    type: "card",
-  });
-  if (!payment) res.status(400).json("dog owner has not added credit cards");
+  if (!ownerPayment.paymentMethodId)
+    res.status(400).json("dog owner has not set payments");
 
   const paymentIntent = await stripe.paymentIntents.create({
-    customer: payment.customerId,
+    customer: ownerPayment.customerId,
     amount,
-    currency,
-    payment_method: paymentMethods.data[0].id,
+    currency: sitterPayment.paymentCurrency,
+    payment_method: ownerPayment.paymentMethodId,
     off_session: true,
     confirm: true,
     description: `${sitterProfile.firstName} ${sitterProfile.lastName} ${sitterUser.email}`,
@@ -175,7 +150,6 @@ const payBooking = async (req, res, next) => {
 
 module.exports = {
   getPaymentSecret,
-  createPaymentIntent,
   detachPaymentMethod,
   addPaymentMethod,
   payBooking,
