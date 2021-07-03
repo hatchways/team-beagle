@@ -130,7 +130,7 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />
 
-      <Grid container spacing={5} className={classes.innerContainer}>
+      <Grid container className={classes.innerContainer}>
         <Grid item className={classes.innerContainerItem}>
           {nextBooking && Object.keys(nextBooking).length > 0 && (
             <Card className={classes.cardTop}>
