@@ -1,8 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const decodeToken = require('../utils/decodeToken');
+const mongoose = require('mongoose');
 
 const Message = require('../models/Message');
 const Conversation = require('../models/Conversation');
+const Profile = require('../models/Profile');
+
+mongoose.set('useFindAndModify', false);
 
 // @route POST /conversation/create/:id
 // Create a conversation
@@ -21,12 +25,15 @@ exports.newConversation = asyncHandler(async (req, res) => {
       const message = await Message.create({
         sender: userId,
         recipient,
-        sendDate: Date.now(),
         content,
         type,
       });
+      const participantProfile1 = await Profile.findOne({ userId: userId });
+      const participantProfile2 = await Profile.findOne({ userId: recipient });
+      console.log(participantProfile1, participantProfile2);
       await Conversation.create({
         participants: [userId, recipient],
+        participantProfiles: [participantProfile1._id, participantProfile2._id],
         messages: [message],
         mostRecentMsg: message,
         unreadMsgs: 1,
@@ -36,9 +43,9 @@ exports.newConversation = asyncHandler(async (req, res) => {
           message: {
             id: message._id,
             content: message.content,
-            sendDate: message.sendDate,
             read: message.read,
           },
+          conversation,
         },
       });
     }
@@ -58,20 +65,18 @@ exports.newMessage = asyncHandler(async (req, res) => {
     const message = await Message.create({
       sender: userId,
       recipient,
-      sendDate: Date.now(),
       content,
       type,
     });
     await Conversation.findOneAndUpdate(
       { $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }] },
-      { $push: { messages: message }, mostRecentMsg: message, $inc: { unReadMsgs: 1 } },
+      { $push: { messages: message._id }, mostRecentMsg: message._id, $inc: { unreadMsgs: 1 } },
     );
     res.status(201).json({
       success: {
         message: {
           id: message._id,
           content: message.content,
-          sendDate: message.sendDate,
           read: message.read,
           type: message.type,
         },
@@ -91,11 +96,11 @@ exports.getConversations = asyncHandler(async (req, res) => {
   try {
     const conversations = await Conversation.find({
       $and: [{ participants: { $in: userId } }, { deleted: false }],
-    }).populate('mostRecentMsg');
+    })
+      .populate('mostRecentMsg')
+      .populate('participantProfiles');
     res.status(200).json({
-      success: {
-        conversations,
-      },
+      conversations,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not get conversation' });
@@ -138,11 +143,11 @@ exports.readMessages = asyncHandler(async (req, res) => {
 exports.getConversation = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
+    const conversation = await Conversation.findOneAndUpdate({ _id: conversationId }, { unreadMsgs: 0 })
+      .populate('messages')
+      .populate('participantProfiles');
     res.status(200).json({
-      success: {
-        conversation,
-      },
+      conversation,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not get conversation' });
