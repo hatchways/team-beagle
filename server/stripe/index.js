@@ -1,37 +1,108 @@
-require("dotenv").config()
-const stripe = require("stripe")(process.env.STRIPE_SECRET)
+require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_KEY);
+const decodeToken = require("../utils/decodeToken");
+const Profile = require("../models/Profile");
+const User = require("../models/User");
+const Payment = require("../models/Payment");
 
-const createCustomer = async (req, res, next) => {
-  const { email, address, currency, notes} = req.body
+// @route GET /payment/secret
+// @desc returns secret, create payment if there isn't one
+const getPaymentSecret = async (req, res, next) => {
+  const userId = req.user.id;
   try {
-    const customer = await stripe.customers
-      .create({
-        description: notes,
-        email,
-        address,
-        currency
-      })
-      return customer
-  } catch (error) {
-    return res.status(500).json({ message: error })
-  }
-}
+    let payment;
+    let customerSecret;
+    payment = await Payment.findOne({
+      userId: userId,
+    });
 
+    if (payment && payment.customerSecret) {
+      customerSecret = payment.customerSecret;
+      console.log(payment.customerId);
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: payment.customerId,
+        type: "card",
+      });
+      return res
+        .status(200)
+        .json({ customerSecret, card: paymentMethods.data[0] });
+    } else {
+      const user = await User.findById(userId);
+      const customer = await stripe.customers.create({
+        description: "Loving Sitter",
+        email: user.email,
+      });
+      const intent = await stripe.setupIntents.create({
+        customer: customer.id,
+      });
+      customerSecret = intent.client_secret;
+      payment = await Payment.create({
+        userId,
+        customerId: customer.id,
+        customerSecret: customerSecret,
+      });
+    }
+    return res.status(200).json({ customerSecret });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+};
+
+// @route POST /payment/new-payment
+// @desc create/returns new payment
 const createPaymentIntent = async (req, res, next) => {
-  const amount = req.body.hourlyRate * req.body.hours * 100
-  const { currency } = req.body
+  const amount = req.body.hourlyRate * req.body.hours * 100;
+  const { currency } = req.body;
+  const userId = req.user.id;
+
   try {
+    let payment;
+    payment = await Payment.findOne({
+      userId: userId,
+    });
+
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: payment.customerId,
+      type: "card",
+    });
+
+    console.log(paymentMethods);
+    console.log(paymentMethods.data[0].card);
+
     const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency,
-    payment_method_types: ['card'],
-    })
-    res.send({ clientSecret: paymentIntent.client_secret })
+      customer: payment.customerId,
+      amount,
+      currency,
+      payment_method: paymentMethods.data[0].id,
+      off_session: true,
+      confirm: true,
+    });
+    return res.status(200).json({ paymentIntent });
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ message: error });
   }
-}
+};
+const detachPaymentMethod = async (req, res, next) => {
+  const userId = req.user.id;
 
+  try {
+    let payment;
+    payment = await Payment.findOne({
+      userId: userId,
+    });
 
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: payment.customerId,
+      type: "card",
+    });
 
-module.exports = { createCustomer, createPaymentIntent }
+    const detachedPaymentMethod = await stripe.paymentMethods.detach(
+      paymentMethods.data[0].id
+    );
+    return res.status(200).json({ detachedPaymentMethod });
+  } catch (error) {
+    return res.status(500).json({ message: error });
+  }
+};
+
+module.exports = { getPaymentSecret, createPaymentIntent, detachPaymentMethod };
