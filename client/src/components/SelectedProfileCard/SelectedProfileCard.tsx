@@ -15,16 +15,12 @@ import { Profile } from '../../interface/Profile';
 import BackgroundImage from '../../Images/house.jpeg';
 import AvatarPic from '../../Images/avatar.png';
 
-interface Props {
-  profile: Profile;
-}
-
 export default function SelectedProfileCard({ profile }: any): JSX.Element {
   const classes = useStyles();
   return (
     <Card className={classes.contentArea}>
       <CardMedia className={classes.cardMedia} image={BackgroundImage} />
-      <Avatar alt="User" src={AvatarPic} className={classes.cardAvatar} />
+      <Avatar alt="User" src={profile.images ? profile.images[0] : AvatarPic} className={classes.cardAvatar} />
       <Grid className={classes.profileInfo}>
         <Box className={classes.infoSection}>
           <Typography variant="h6" component="h2" className={classes.cardName}>

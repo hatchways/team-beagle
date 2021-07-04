@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     bookingCard: {
       boxShadow: 'rgba(0, 0, 0, 0.15) 0px 0px 10px 0px;',
       padding: '45px',
+      maxWidth: '100%',
     },
   bookingInfo: {
     display: 'flex',
@@ -29,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   formArea: {
     width: "100%",
     [theme.breakpoints.down("lg")]: {
-      width: '50%',
+      width: '100%',
       }
   },
     form: {

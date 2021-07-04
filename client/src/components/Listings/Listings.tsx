@@ -18,7 +18,7 @@ export interface ProfileProps {
   lastName: string;
   description: string;
   location: string;
-  images: [string] | null;
+  images: [string];
   userId: string;
   hourlyRate: string;
 }

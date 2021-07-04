@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react';
 import { Typography, Card, Box, TextField, Button } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import useStyles from './useStyles';
@@ -23,7 +24,6 @@ export default function BookingRequest({ profile }: any): JSX.Element {
   const classes = useStyles();
   const {loggedInUser} = useAuth(); 
   const {updateSnackBarMessage} = useSnackBar();
-  console.log(profile)
 
     const handleSubmit = (values: FormProps, {setSubmitting}: FormikHelpers<FormProps>): void => {
         const {startDate, endDate} = values;
@@ -41,6 +41,7 @@ export default function BookingRequest({ profile }: any): JSX.Element {
         });
     };
 
+  
 
   return (
     <Card className={classes.bookingCard}>

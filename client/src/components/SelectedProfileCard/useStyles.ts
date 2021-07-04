@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   cardAvatar: {
     width: '125px',
-    height: 'auto',
+    height: '125px',
     transform: 'translateY(-50%)',
     marginBottom: theme.spacing(1),
     border: '1px solid black',
