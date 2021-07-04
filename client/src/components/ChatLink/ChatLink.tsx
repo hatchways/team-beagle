@@ -1,23 +1,24 @@
-import { useState } from 'react';
-import { Grid, Typography, Avatar } from '@material-ui/core';
+import { Grid, Typography, Avatar, Badge, Button } from '@material-ui/core';
 import useStyles from './useStyles';
 
 interface ChatLink {
   firstName: string;
   lastName: string;
   profileImg: string;
-  recentMsg: {
+  mostRecentMsg: {
     type: string;
     content: string;
   };
+  unreadMsgs: number;
+  key: string;
 }
 
-interface RecentMsg {
+interface mostRecentMsg {
   type: string;
   content: string;
 }
 
-const ChatLink = ({ firstName, lastName, profileImg, recentMsg }: ChatLink): JSX.Element => {
+const ChatLink = ({ firstName, lastName, profileImg, mostRecentMsg, unreadMsgs }: ChatLink): JSX.Element => {
   const classes = useStyles();
 
   const fullName = () => {
@@ -28,30 +29,31 @@ const ChatLink = ({ firstName, lastName, profileImg, recentMsg }: ChatLink): JSX
     }
   };
 
-  const displayMsg = (recentMsg: RecentMsg) => {
-    if (recentMsg.type === 'msg') {
-      if (recentMsg.content.length > 23) {
-        return `${recentMsg.content.slice(0, 20)}...`;
+  const displayMsg = (mostRecentMsg: mostRecentMsg) => {
+    if (mostRecentMsg.type === 'msg') {
+      if (mostRecentMsg.content.length > 23) {
+        return `${mostRecentMsg.content.slice(0, 20)}...`;
       } else {
-        return recentMsg.content;
+        return mostRecentMsg.content;
       }
     } else {
       return 'Sent photo';
     }
   };
 
-  // const displayMsg = (recentMsg: string) => {
-  //   return recentMsg;
-  // };
-
   return (
     <Grid className={classes.userContainer}>
       <Grid className={classes.userPicStatus}>
-        <Avatar className={classes.userPic} src={profileImg} alt="userPic" />
+        <Badge badgeContent={unreadMsgs} color="primary">
+          <Avatar className={classes.userPic} src={profileImg} alt="userPic" />
+        </Badge>
       </Grid>
+
       <Grid className={classes.userNameMsg}>
         <Typography className={classes.userName}> {fullName()} </Typography>
-        <Typography className={`${classes.highlightUnreadMsg} ${classes.userMsg}`}>{displayMsg(recentMsg)}</Typography>
+        <Typography className={`${unreadMsgs !== 0 ? classes.highlightUnreadMsg : ''} ${classes.userMsg}`}>
+          {displayMsg(mostRecentMsg)}
+        </Typography>
       </Grid>
     </Grid>
   );

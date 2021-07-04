@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flexStart',
     width: '300px',
     alignItems: 'center',
-    margin: '30px 20px',
+    margin: '15px 20px',
+    cursor: 'pointer',
   },
   userPicStatus: {
     position: 'relative',
@@ -45,10 +46,12 @@ const useStyles = makeStyles((theme) => ({
   userName: {
     margin: '0 0',
     fontWeight: 600,
+    cursor: 'pointer',
   },
   userMsg: {
     margin: '0 0',
     fontSize: '0.5rem',
+    cursor: 'pointer',
   },
   unreadContainer: {
     position: 'relative',
