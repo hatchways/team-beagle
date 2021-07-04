@@ -9,6 +9,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import SendIcon from '@material-ui/icons/Send';
 import getConversations from '../../helpers/APICalls/getConversations';
 import getConversationDetails from '../../helpers/APICalls/getConversationDetails';
+import sendMessage from '../../helpers/APICalls/sendMessage';
 import { Conversation } from '../../interface/Conversation';
 import { IMessage } from '../../interface/Message';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -53,8 +54,22 @@ export default function Messages(): JSX.Element {
     fetchConversations();
   }, [loggedInUser]);
 
-  const handleMsgSubmit = () => {
-    console.log('submitting message');
+  const handleMsgSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    recipient: string,
+    type: string,
+    content: string,
+  ) => {
+    e.preventDefault();
+    const data = await sendMessage(recipient, type, content)();
+    setMessage(() => '');
+    console.log(data);
+    if (data !== undefined) {
+      setSelectedConversation({
+        ...selectedConversation,
+        messages: [...selectedConversation.messages, data.message],
+      });
+    }
   };
 
   const fetchConversationDetails = async (conversation: string, index: number) => {
@@ -72,7 +87,6 @@ export default function Messages(): JSX.Element {
 
   const getMsgPic = (message: IMessage) => {
     if (userProfile !== null && userProfile !== undefined && loggedInUser !== null && loggedInUser !== undefined) {
-      console.log(message.sender, loggedInUser);
       if (message.sender === loggedInUser.id) {
         return userProfile.images[0];
       } else {
@@ -187,7 +201,7 @@ export default function Messages(): JSX.Element {
             ))}
           </Grid>
         </Grid>
-        <form onSubmit={() => handleMsgSubmit()}>
+        <form onSubmit={(e) => handleMsgSubmit(e, selectedConversation.participantProfiles[0].userId, 'msg', message)}>
           {selectedConversation !== null && (
             <TextField
               className={classes.chatMsgInput}
