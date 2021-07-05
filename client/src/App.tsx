@@ -13,11 +13,10 @@ import ProfileDetails from './components/ProfileDetails/ProfileDetails';
 import { AuthProvider } from './context/useAuthContext';
 import { SocketProvider } from './context/useSocketContext';
 import { SnackBarProvider } from './context/useSnackbarContext';
-import Sitters from './pages/Sitters/Sitter';
 import Messages from './pages/Messages/Messages';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
-import SitterOwner from './pages/Sitters/SitterOwner';
+import BookingTabs from './pages/Booking/BookingTabs';
 
 import './App.css';
 
@@ -36,7 +35,7 @@ function App(): JSX.Element {
                   <Route exact path="/login" component={Login} />
                   <Route exact path="/signup" component={Signup} />
 
-                  <ProtectedRoute exact path="/sitters" component={SitterOwner} />
+                  <ProtectedRoute exact path="/sitters" component={BookingTabs} />
                   <ProtectedRoute exact path="/messages" component={Messages} />
                   <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
                   <Route exact path="/profile">
@@ -44,7 +43,7 @@ function App(): JSX.Element {
                   </Route>
 
                   <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <ProtectedRoute exact path="/profiledetail" component={ProfileDetails}/>
+                  <ProtectedRoute exact path="/profiledetail" component={ProfileDetails} />
 
                   <Route exact path="/unauthorized">
                     <Unauthorized />
