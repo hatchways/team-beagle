@@ -30,18 +30,17 @@ export default function BookingRequest({ profile }: any): JSX.Element {
         const userId = loggedInUser?.id ? loggedInUser?.id : "";
         const sitterId = profile?.userId
 
-    createBookingRequest({startDate, endDate, userId, sitterId}).then((data) => {
+    createBookingRequest({ startDate, endDate, userId, sitterId}).then((data) => {
             if(data.error) {
             setSubmitting(false);
-            updateSnackBarMessage(data.error);
+            updateSnackBarMessage('An unexpected error occurred. Please try again');
             } else if (data.success) {
             setSubmitting(false);
-            updateSnackBarMessage(data.success);
+            updateSnackBarMessage("Your booking request has been successfully submitted");
             }
         });
     };
 
-  
 
   return (
     <Card className={classes.bookingCard}>
@@ -51,65 +50,65 @@ export default function BookingRequest({ profile }: any): JSX.Element {
       </Box>
       <Box className={classes.formArea}>
           <Formik
-            initialValues={{
-                startDate: '',
-                endDate: '',
-                        }}
-            validationSchema={Yup.object().shape({
-            startDate: Yup.string().required('Drop In Date is required'),
-            endDate: Yup.string().required('Drop Off Date is required'),
-            })}
-            onSubmit={handleSubmit}
-            >
+              initialValues={{
+                  startDate: '',
+                  endDate: '',
+                          }}
+              validationSchema={Yup.object().shape({
+              startDate: Yup.string().required('Drop In Date is required'),
+              endDate: Yup.string().required('Drop Off Date is required'),
+              })}
+              onSubmit={handleSubmit}
+              >
 
-            {({handleSubmit, handleChange, values, touched, errors, isSubmitting}) => (
-            <form 
-                className={classes.form} 
-                noValidate
-                onSubmit={handleSubmit}
-            >
-                <Box className={classes.date}>
+              {({handleSubmit, handleChange, values, touched, errors, isSubmitting}) => (
+              <form 
+                  className={classes.form} 
+                  noValidate
+                  onSubmit={handleSubmit}
+              >
+                  <Box className={classes.date}>
                     <TextField
-                    label={<Typography className={classes.label}>Drop In</Typography>}
-                    id="dateStart"
-                    type="date"
-                    defaultValue={new Date()}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    InputProps={{
-                        classes: { input: classes.inputs },
-                    }}
-                    helperText={touched.startDate ? errors.startDate : ''}
-                    error={touched.startDate && Boolean(errors.startDate)}
-                    value={values.startDate}
-                    onChange={handleChange}
-                    />
-                    <TextField
-                    label={<Typography className={classes.label}>Drop Off</Typography>}
-                    id="dateEnd"
-                    type="date"
-                    defaultValue={new Date()}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    InputProps={{
-                        classes: { input: classes.inputs },
-                    }}
-                    helperText={touched.endDate ? errors.endDate : ''}
-                    error={touched.endDate && Boolean(errors.endDate)}
-                    value={values.endDate}
-                    onChange={handleChange}
-                    />
-                </Box>
-            <Box>
-                <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
-                SEND REQUEST
-                </Button>
-            </Box>
-            </form>
-            )}
-        </Formik>  
+                      label={<Typography className={classes.label}>Drop In</Typography>}
+                      id="startDate"
+                      type="date"
+                      name="startDate"
+                      InputLabelProps={{
+                          shrink: true,
+                      }}
+                      InputProps={{
+                          classes: { input: classes.inputs },
+                      }}
+                      helperText={touched.startDate ? errors.startDate : ''}
+                      error={touched.startDate && Boolean(errors.startDate)}
+                      onChange={handleChange}
+                      value={values.startDate}
+                      />
+                      <TextField
+                      label={<Typography className={classes.label}>Drop Off</Typography>}
+                      id="endDate"
+                      type="date"
+                      name="endDate"
+                      InputLabelProps={{
+                          shrink: true,
+                      }}
+                      InputProps={{
+                          classes: { input: classes.inputs },
+                      }}
+                      helperText={touched.endDate ? errors.endDate : ''}
+                      error={touched.endDate && Boolean(errors.endDate)}
+                      onChange={handleChange}
+                      value={values.endDate}
+                      />
+                  </Box>
+              <Box>
+                  <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
+                  SEND REQUEST
+                  </Button>
+              </Box>
+              </form>
+              )}
+          </Formik>  
       </Box>
     </Card>
   );

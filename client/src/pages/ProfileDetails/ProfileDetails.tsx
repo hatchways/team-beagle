@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 
 import BookingRequest from '../../components/BookingRequest/BookingRequest';
 import SelectedProfileCard from '../../components/SelectedProfileCard/SelectedProfileCard';
-import { Profile } from '../../interface/Profile';
 import { getSitterProfile } from '../../helpers/APICalls/getProfile';
 
 import useStyles from './useStyles';
@@ -14,11 +13,9 @@ export default function ProfileDetails(profile: any): JSX.Element {
   const classes = useStyles();
   const [userProfile, setUserProfile] = useState({});
 
-  console.log(profile.match.params);
 
   useEffect(() => {
     getSitterProfile(profile.match.params.userId).then((res: any) => {
-      console.log(res);
       setUserProfile(res.profile);
     });
   }, [profile.match.params]);

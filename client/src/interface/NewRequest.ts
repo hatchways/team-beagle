@@ -1,5 +1,3 @@
-import { Profile } from './Profile';
-
 export interface NewRequest {
   userId: string;
   sitterId: string;
