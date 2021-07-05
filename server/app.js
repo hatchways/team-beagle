@@ -19,6 +19,7 @@ const messageRouter = require('./routes/message');
 const { json, urlencoded } = express;
 const cors = require("cors");
 
+
 connectDB();
 const app = express();
 const server = http.createServer(app);

@@ -6,8 +6,7 @@ import Rating from '@material-ui/lab/Rating';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-
-import React, {useState, useEffect } from 'react';
+import React from 'react';
 import useStyles from './useStyles';
 
 import { Link as RouterLink } from 'react-router-dom';
@@ -22,11 +21,10 @@ interface CardProps {
 const ProfileCard: React.FC<CardProps> = ({ profile }) => {
     const classes = useStyles();
 
-
     return (
-    <Link component={RouterLink} to="/profiledetail">
+    <Link component={RouterLink} to={`/dashboard/${profile.userId}`}>
         <Paper className={classes.card} elevation={3}>
-            <Avatar alt="Remy Sharp" src={profile.images[0]} className={classes.cardAvatar} />
+            <Avatar alt={profile.lastName} src={profile.images[0]} className={classes.cardAvatar} />
                 <Typography variant="h6" component="h2" className={classes.cardName}>
                   {profile.firstName} {profile.lastName}
                 </Typography>

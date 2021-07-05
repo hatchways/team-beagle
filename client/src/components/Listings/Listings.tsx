@@ -12,13 +12,24 @@ import getProfiles from '../../helpers/APICalls/getProfiles';
 import { User } from '../../interface/User';
 import { Profile } from '../../interface/Profile';
 import ProfileCard from '../ProfileCard/ProfileCard';
-const Listings = (): JSX.Element => {
+
+export interface ProfileProps {
+  firstName: string;
+  lastName: string;
+  description: string;
+  location: string;
+  images: [string];
+  userId: string;
+  hourlyRate: string;
+}
+
+export default function Listings(): JSX.Element {
   const classes = useStyles();
 
   const date = new Date();
   const [sitters, setSitters] = useState<Profile[]>([]);
   const [searchProfiles, setSearchProfiles] = useState<string>('');
-
+  
   const profilesOnLoad = () => {
     const profileList: Profile[] = [];
     getProfiles().then((data) => {
@@ -34,7 +45,6 @@ const Listings = (): JSX.Element => {
     })
   
     }
-
 
   const updateProfiles = useCallback(async () => {
     const searchList: Profile[] = [];
@@ -110,4 +120,3 @@ const Listings = (): JSX.Element => {
     </Grid>
   );
 };
-export default Listings;

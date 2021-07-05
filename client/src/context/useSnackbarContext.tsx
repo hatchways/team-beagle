@@ -24,6 +24,7 @@ export const SnackBarProvider: FunctionComponent = ({ children }): JSX.Element =
     setOpen(false);
   }, []);
 
+
   const snackbarHandleClose = useCallback((event: SyntheticEvent, reason: SnackbarCloseReason) => {
     if (reason === 'clickaway') return;
     setOpen(false);
