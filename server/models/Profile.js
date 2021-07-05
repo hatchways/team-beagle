@@ -28,6 +28,7 @@ const profileSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  default: [],
 
   //  sitter
   isDogSitter: {

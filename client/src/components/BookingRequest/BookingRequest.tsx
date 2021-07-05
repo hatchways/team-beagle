@@ -16,6 +16,7 @@ interface Props {
 
 interface FormProps {
     startDate: string;
+
     endDate: string;
 }
 
@@ -73,7 +74,7 @@ export default function BookingRequest({ profile }: any): JSX.Element {
                     <TextField
                       label={<Typography className={classes.label}>Drop In</Typography>}
                       id="startDate"
-                      type="date"
+                      type="datetime-local"
                       name="startDate"
                       InputLabelProps={{
                           shrink: true,
@@ -89,7 +90,7 @@ export default function BookingRequest({ profile }: any): JSX.Element {
                       <TextField
                       label={<Typography className={classes.label}>Drop Off</Typography>}
                       id="endDate"
-                      type="date"
+                      type="datetime-local"
                       name="endDate"
                       InputLabelProps={{
                           shrink: true,

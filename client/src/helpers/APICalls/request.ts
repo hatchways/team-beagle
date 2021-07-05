@@ -23,7 +23,7 @@ export async function getBookingsOwner(): Promise<Request> {
       error: { message: 'Unable to connect to server. Please try again' },
     }));
 }
-export async function updateAccept(id: string, accept: boolean, decline: boolean): Promise<Request> {
+export async function updateBookingsAccept(id: string, accept: boolean, decline: boolean): Promise<Request> {
   const fetchOptions: FetchOptions = {
     method: 'PATCH',
     credentials: 'include',
@@ -31,6 +31,18 @@ export async function updateAccept(id: string, accept: boolean, decline: boolean
     body: JSON.stringify({ accept, decline }),
   };
   return await fetch(`/request/edit-request/${id}`, fetchOptions)
+    .then((res) => res.json())
+    .catch(() => ({
+      error: { message: 'Unable to connect to server. Please try again' },
+    }));
+}
+
+export async function deleteBooking(id: string): Promise<Request> {
+  const fetchOptions: FetchOptions = {
+    method: 'Delete',
+    credentials: 'include',
+  };
+  return await fetch(`/request/delete/${id}`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },

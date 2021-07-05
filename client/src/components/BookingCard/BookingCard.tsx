@@ -10,25 +10,34 @@ import Button from '@material-ui/core/Button';
 
 import { Request } from './../../interface/Request';
 import React from 'react';
+
+interface ExtRequest extends Request {
+  dates: any;
+}
+interface RequestObj {
+  [key: string]: ExtRequest;
+}
 interface Props {
   booking: Request;
-  handleAccept: any;
-  handleDecline: any;
-  setState: React.Dispatch<any>;
-  showActions: boolean;
-  text: string;
   isDogStitter: boolean;
-  handleCancelBooking: any;
+  text?: string;
+  showActions?: boolean;
+
+  handleAccept?: ((setState: React.Dispatch<RequestObj>, id: string) => void) | any;
+  handleDecline?: ((setState: React.Dispatch<any>, id: string) => void) | any;
+  setState?: React.Dispatch<RequestObj>;
+  handleCancelBooking?: ((setState: React.Dispatch<any>, id: string) => void) | any;
 }
 
 export default function BookingCard({
   booking,
+  isDogStitter,
+  text = '',
+  showActions,
+
   handleAccept,
   handleDecline,
   setState,
-  showActions,
-  text = '',
-  isDogStitter,
   handleCancelBooking,
 }: Props): JSX.Element {
   const classes = useStyles();
@@ -54,8 +63,8 @@ export default function BookingCard({
           {`${moment(booking.startDate).format('D MMM  YYYY')}  -  ${moment(booking.endDate).format('D MMM  YYYY')}`}
         </Typography>
         <Grid container direction="row" alignItems="center">
-          <Avatar alt={profile.firstName} src={`${profile.images[0]}`} className={classes.cardAvatar} />
-          <Typography variant="h6">{`${profile.firstName} ${profile.lastName}`}</Typography>
+          <Avatar alt={profile.fullName} src={`${profile.images[0]}`} className={classes.cardAvatar} />
+          <Typography variant="h6">{`${profile.fullName}`}</Typography>
 
           {isDogStitter && (
             <Typography variant="body2" className={classes.cardStatus}>
