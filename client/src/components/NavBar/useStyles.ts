@@ -49,7 +49,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   link: {
     fontWeight: 'bolder',
     // margin: theme.spacing(10, 20),
-    fontSize: 18,
+    // fontSize: 18,
+    fontSize: '.9rem',
     marginRight: '20px',
     ' &.selected, .selected': {
       color: theme.palette.primary.main,
