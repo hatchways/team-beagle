@@ -10,7 +10,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Hidden from '@material-ui/core/Hidden';
-import { Link as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink } from 'react-router-dom';
 
 import Avatar from '@material-ui/core/Avatar';
 import PetsIcon from '@material-ui/icons/Pets';
@@ -87,35 +87,45 @@ const NavBar = (): JSX.Element => {
               <Box display={{ xs: 'none', md: 'block' }}>LovingSitter.</Box>
             </Typography>
           </Link>
-          <Grid container alignItems="center" direction="row" className={classes.toolbarLeftContainer}>
-            {!loggedInUser && (
-              <AppBar position="relative" elevation={0} className={classes.appBar}>
-                <Toolbar className={classes.toolbar}>
-                  <Grid container direction="row" justify="flex-end" alignItems="center">
-                    <Hidden only={['sm', 'md', 'lg', 'xl']}>
-                      <MenuIcon color="primary" className={classes.menuIcon} />
-                    </Hidden>
-                    <Hidden only={['xs']}>
-                      <Hidden only={['xs', 'sm']}>
-                        <Typography className={classes.toolbarLink}>
-                          <Link className={classes.secondaryLink} href="/sitters">
-                            Become a Sitter
-                          </Link>
-                        </Typography>
-                      </Hidden>
-                      <LoginHeader linkTo="/login" btnText="Log In" />
-                      <SignupHeader linkTo="/signup" btnText="Sign Up" />
-                    </Hidden>
-                  </Grid>
-                </Toolbar>
-              </AppBar>
-            )}
-            {loggedInUser && (
-              <Grid item xs={10} sm={6} md={4} className={classes.toolbarLeft}>
-                <Link component={RouterLink} variant="button" to="/dashboard" className={classes.link}>
+          {!loggedInUser && (
+            <Grid container direction="row" justify="flex-end" alignItems="center">
+              <Hidden only={['sm', 'md', 'lg', 'xl']}>
+                <MenuIcon color="primary" className={classes.menuIcon} />
+              </Hidden>
+              <Hidden only={['xs']}>
+                <Hidden only={['xs', 'sm']}>
+                  <Typography className={classes.toolbarLink}>
+                    <Link className={classes.secondaryLink} href="/sitters">
+                      Become a Sitter
+                    </Link>
+                  </Typography>
+                </Hidden>
+                <LoginHeader linkTo="/login" btnText="Log In" />
+                <SignupHeader linkTo="/signup" btnText="Sign Up" />
+              </Hidden>
+            </Grid>
+          )}
+          {loggedInUser && (
+            <Grid item className={classes.toolbarLeft}>
+              <Hidden only={['xs', 'sm']}>
+                <Link
+                  component={RouterLink}
+                  variant="button"
+                  color="textPrimary"
+                  to="/dashboard"
+                  activeClassName="selected"
+                  className={classes.link}
+                >
                   Dashboard
                 </Link>
-                <Link component={RouterLink} variant="button" to="/sitters" className={classes.link}>
+                <Link
+                  component={RouterLink}
+                  variant="button"
+                  color="textPrimary"
+                  to="/sitters"
+                  activeClassName="selected"
+                  className={classes.link}
+                >
                   Bookings
                 </Link>
                 {unreadNotifications && (
@@ -134,6 +144,7 @@ const NavBar = (): JSX.Element => {
                         to="#"
                         className={classes.link}
                         onClick={handleNotificationsClick}
+                        color="textPrimary"
                       >
                         Notifications
                       </Link>
@@ -178,39 +189,76 @@ const NavBar = (): JSX.Element => {
                     </Popover>
                   </>
                 )}
-                <Badge color="primary" variant="dot">
+                <Badge color="primary" variant="dot" className={classes.link}>
                   <Link
                     component={RouterLink}
                     variant="button"
                     color="textPrimary"
                     to="/messages"
                     className={classes.messages}
+                    activeClassName="selected"
                   >
                     Messages
                   </Link>
                 </Badge>
-                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick}>
-                  <Avatar
-                    alt={userProfile ? userProfile.firstName : ''}
-                    src={userProfile ? userProfile.images[0] : ''}
-                    className={classes.avatarLink}
-                  />
-                </Button>
-                <Menu
-                  id="simple-menu"
-                  anchorEl={anchorEl}
-                  keepMounted
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                >
-                  <MenuItem component={RouterLink} onClick={handleMenuClose} to="/profile">
-                    Profile
+              </Hidden>
+              <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick}>
+                <Avatar
+                  alt={userProfile ? userProfile.firstName : ''}
+                  src={userProfile ? userProfile.images[0] : ''}
+                  className={classes.avatarLink}
+                />
+              </Button>
+              <Menu
+                disableScrollLock={true}
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                getContentAnchorEl={null}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem>
+                  <Typography variant="h6" color="primary">
+                    {userProfile ? `${userProfile.firstName} ${userProfile.lastName} ` : ''}
+                  </Typography>
+                </MenuItem>
+                <Divider />
+                <MenuItem component={RouterLink} onClick={handleMenuClose} to="/profile">
+                  Profile
+                </MenuItem>
+                <Hidden mdUp>
+                  <MenuItem>
+                    <Link component={RouterLink} color="textPrimary" to="/dashboard" activeClassName="selected">
+                      Dashboard
+                    </Link>
                   </MenuItem>
-                  <MenuItem onClick={handleLogOut}>Logout</MenuItem>
-                </Menu>
-              </Grid>
-            )}
-          </Grid>
+
+                  <MenuItem>
+                    <Link component={RouterLink} color="textPrimary" to="/sitters" activeClassName="selected">
+                      Bookings
+                    </Link>
+                  </MenuItem>
+
+                  <MenuItem>
+                    <Link component={RouterLink} color="textPrimary" to="/messages" activeClassName="selected">
+                      Messages
+                    </Link>
+                  </MenuItem>
+                </Hidden>
+
+                <MenuItem onClick={handleLogOut}>Logout</MenuItem>
+              </Menu>
+            </Grid>
+          )}
         </Toolbar>
       </AppBar>
     </Grid>
