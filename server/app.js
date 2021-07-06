@@ -13,6 +13,7 @@ const requestRouter = require('./routes/request');
 const profileRouter = require('./routes/profile');
 const notificationsRouter = require('./routes/notifications');
 const messageRouter = require('./routes/message');
+const paymentRouter = require('./routes/payment');
 const { json, urlencoded } = express;
 const cors = require('cors');
 const { appSocket } = require('./socket/index');
@@ -51,6 +52,7 @@ app.use('/request', requestRouter);
 app.use('/profile', profileRouter);
 app.use('/notifications', notificationsRouter);
 app.use('/message', messageRouter);
+app.use('/payment', paymentRouter);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '/client/build')));
