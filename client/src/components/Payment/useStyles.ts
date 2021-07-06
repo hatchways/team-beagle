@@ -4,33 +4,35 @@ const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(5),
     '& .StripeElement': {
-      height: 40,
-      padding: '10px 12px',
+      height: 53,
+      padding: '16px 12px',
       width: '100%',
       backgroundColor: 'white',
-      border: ' 1px solid transparent',
-      borderRadius: 4,
-      boxShadow: ' 0 1px 3px 0 #e6ebf1',
-      '-webkit-transition': 'box-shadow 150ms ease',
-      transition: 'box-shadow 150ms ease',
+      border: ' 1px solid  ',
+      borderColor: theme.palette.grey[400],
+      borderRadius: theme.shape.borderRadius,
     },
     '& .StripeElement--focus': {
-      boxHhadow: '0 1px 3px 0 #cfd7df',
+      borderColor: theme.palette.primary.main,
     },
 
     '& .StripeElement--invalid': {
-      borderColor: '#fa755a',
+      borderColor: theme.palette.warning.main,
     },
     '& .StripeElement--webkit-autofill': {
-      backgroundColor: ' #fefde5 !important',
+      backgroundColor: `${theme.palette.secondary.light} !important`,
     },
     '& .MuiTextField-root': {
       margin: theme.spacing(1, 0),
     },
   },
-  btnSave: {
+  btn: {
     marginLeft: 'auto',
     marginTop: theme.spacing(1),
+  },
+  formControl: {
+    margin: theme.spacing(1, 0),
+    width: '100%',
   },
 }));
 

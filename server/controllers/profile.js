@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary");
 const Profile = require("../models/Profile");
 const asyncHandler = require("express-async-handler");
-const Review = require("../models/Review");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

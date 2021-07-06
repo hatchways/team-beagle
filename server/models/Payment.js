@@ -15,6 +15,12 @@ const paymentSchema = new mongoose.Schema({
   customerAcct: {
     type: String,
   },
+  paymentMethodId: {
+    type: String,
+  },
+  paymentCurrency: {
+    type: String,
+  },
 });
 
 module.exports = Payment = mongoose.model("payment", paymentSchema);
