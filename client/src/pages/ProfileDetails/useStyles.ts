@@ -7,41 +7,39 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'row',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.between('sm', 'xs')]: {
       flexDirection: 'column',
     },
   },
   profileArea: {
     width: '100%',
   },
-    profileCard: {
-      marginTop: '80px',
-      marginLeft: '170px',
-      marginRight: '130px',
-      flex: 1,
-      justifyContent: 'space-around',
-      [theme.breakpoints.down('lg')]: {
+  profileCard: {
+    marginTop: '80px',
+    marginLeft: '170px',
+    marginRight: '130px',
+    flex: 1,
+    justifyContent: 'space-around',
+    [theme.breakpoints.down('lg')]: {
       marginTop: '50px',
       marginRight: '10px',
       marginLeft: '10px',
     },
-    },
-    bookingArea: {
-      flex: 1,
-      marginTop: '80px',
-      marginRight: '170px',
-      justifyContent: 'space-around',
-      [theme.breakpoints.down('lg')]: {
+  },
+  bookingArea: {
+    flex: 1,
+    marginTop: '80px',
+    marginRight: '170px',
+    justifyContent: 'space-around',
+    [theme.breakpoints.down('lg')]: {
       marginTop: '50px',
       marginLeft: '10px',
       marginRight: '10px',
-      
     },
-    },
-     card: {
-      width: '100%',
-    }
-
+  },
+  card: {
+    width: '100%',
+  },
 }));
 
 export default useStyles;
