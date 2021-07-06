@@ -28,6 +28,7 @@ import Notification from '../Notification/Notification';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import { useHistory } from 'react-router-dom';
+import { socket } from '../../context/useSocketContext';
 
 interface Notification {
   title: string;
@@ -87,6 +88,12 @@ const NavBar = (): JSX.Element => {
     };
     fetchUnreadNotifications();
   }, [loggedInUser]);
+
+  socket !== undefined
+    ? socket.once('notification', ({ from, to, content }) => {
+        console.log(content);
+      })
+    : '';
 
   return (
     <Grid container component="main" className={`${classes.root}`}>
