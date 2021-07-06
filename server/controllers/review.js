@@ -71,7 +71,6 @@ exports.reviewsforSitter = asyncHandler(async (req, res, next) => {
       sitterId: sitterId,
     });
   }
-  console.log(sitterId);
   if (!reviews) {
     res.status(404);
     throw new Error("No reviews for sitter");
@@ -105,7 +104,6 @@ exports.deleteReview = asyncHandler(async (req, res, next) => {
   if (reviewId) {
     review = await Review.findById(reviewId);
   }
-  console.log(review);
   if (review) {
     sitterProfile = await Profile.findOne({ userId: review.sitterId });
     if (sitterProfile) {
@@ -149,7 +147,6 @@ exports.editReview = asyncHandler(async (req, res, next) => {
   if (reviewId) {
     review = await Review.findById(reviewId);
   }
-  console.log(review);
   if (review) {
     sitterProfile = await Profile.findOne({ userId: review.sitterId });
     if (sitterProfile) {
