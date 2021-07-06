@@ -25,16 +25,14 @@ exports.newRequest = asyncHandler(async (req, res, next) => {
 
   if (request) {
     res.status(201).json({
-      success: {
-        request: {
-          userId: userId,
-          sitterId: request.sitterId,
-          startDate: request.startDate,
-          endDate: request.endDate,
-          accept: request.accept,
-          decline: request.decline,
-          paid: request.paid,
-        },
+      request: {
+        userId: userId,
+        sitterId: request.sitterId,
+        startDate: request.startDate,
+        endDate: request.endDate,
+        accept: request.accept,
+        decline: request.decline,
+        paid: request.paid,
       },
     });
   } else {

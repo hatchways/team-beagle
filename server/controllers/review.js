@@ -21,6 +21,7 @@ exports.newReview = asyncHandler(async (req, res, next) => {
   });
 
   const sitterProfile = await Profile.findOne({ userId: sitterId });
+  const reviewerProfile = await Profile.findOne({ userId: reviewerId });
 
   const numberOfReviews = sitterProfile.numberOfReviews || 0;
   let newRating;
@@ -42,14 +43,14 @@ exports.newReview = asyncHandler(async (req, res, next) => {
 
   if (review && sitterProfile && updatedSitterProfile) {
     res.status(201).json({
-      success: {
-        reviews: {
-          reviewerId: reviewerId,
-          sitterId: review.sitterId,
-          rating: review.rating,
-          title: review.title,
-          body: review.body,
-        },
+      reviews: {
+        reviewerId: reviewerId,
+        sitterId: review.sitterId,
+        rating: review.rating,
+        title: review.title,
+        body: review.body,
+        profile: reviewerProfile,
+        _id: review._id,
       },
     });
   } else {
@@ -89,7 +90,6 @@ exports.reviewsforSitter = asyncHandler(async (req, res, next) => {
       };
     })
   );
-
   res.status(200).json({ reviews: reviewsProfile });
 });
 
@@ -166,7 +166,7 @@ exports.editReview = asyncHandler(async (req, res, next) => {
     }
     const newReview = { rating, title, body };
     updatedReview = await Review.findOneAndUpdate(
-      { _id: reviewId },
+      { _id: reviewId, reviewerId: reviewerId },
       newReview,
       {
         new: true,

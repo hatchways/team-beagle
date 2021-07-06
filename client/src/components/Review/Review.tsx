@@ -26,13 +26,18 @@ interface Props {
 
 export default function Review({ profile }: Props): JSX.Element {
   const classes = useStyles();
+  const defaultReview = {
+    rating: 0,
+    title: '',
+    body: '',
+  };
+  const [userReview, setuserReview] = React.useState<any>(defaultReview);
+
   const [reviews, setReviews] = useState<any>();
-  const [value, setValue] = React.useState<number | null>(2);
 
   useEffect(() => {
     if (profile.userId) {
       getReview(profile.userId).then((res: any) => {
-        console.log(res);
         setReviews(res.reviews);
       });
     }
@@ -40,7 +45,10 @@ export default function Review({ profile }: Props): JSX.Element {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    console.log('submit');
+    addReview(profile.userId, userReview.rating, userReview.title, userReview.body).then((res: any) => {
+      setReviews([...reviews, res.reviews]);
+      setuserReview(defaultReview);
+    });
   };
 
   return (
@@ -57,9 +65,9 @@ export default function Review({ profile }: Props): JSX.Element {
                   <Typography component="legend">Rating</Typography>
                   <Rating
                     name="simple-controlled"
-                    value={value}
+                    value={userReview.rating}
                     onChange={(event, newValue) => {
-                      setValue(newValue);
+                      setuserReview({ ...userReview, rating: newValue });
                     }}
                   />
                 </Box>
@@ -71,6 +79,10 @@ export default function Review({ profile }: Props): JSX.Element {
                     placeholder="What's most important to know?"
                     variant="outlined"
                     style={{ width: '100%' }}
+                    value={userReview.title}
+                    onChange={(e) => {
+                      setuserReview({ ...userReview, title: e.target.value });
+                    }}
                   />
                 </Box>
                 <Box mb={2} borderColor="transparent">
@@ -83,6 +95,10 @@ export default function Review({ profile }: Props): JSX.Element {
                     placeholder="What did you like or dislike?"
                     variant="outlined"
                     style={{ width: '100%' }}
+                    value={userReview.body}
+                    onChange={(e) => {
+                      setuserReview({ ...userReview, body: e.target.value });
+                    }}
                   />
                 </Box>
                 <Button color="primary" variant="contained" type="submit" style={{ marginLeft: 'auto' }}>
@@ -92,34 +108,29 @@ export default function Review({ profile }: Props): JSX.Element {
             </form>
           </AccordionDetails>
         </Accordion>
+        <Box mb={2} />
         <List>
           {reviews &&
             reviews.map(({ profile, ...review }: any) => (
               <ListItem key={review._id}>
-                <ListItemText
-                  primary={
-                    <Box mb={1}>
-                      <Grid container alignItems="center">
-                        <Avatar alt={profile.firstName} src={`${profile.images[0]}`} />
-                        <Box mr={1} />
-                        <Typography>{`${profile.firstName} ${profile.lastName}`}</Typography>
-                      </Grid>
-                    </Box>
-                  }
-                  secondary={
-                    <React.Fragment>
-                      <Grid container alignItems="center">
-                        <Rating value={review.rating} readOnly />
-                        <Box mr={1} />
-                        <Typography variant="body2" color="textPrimary">
-                          {review.title}
-                        </Typography>
-                      </Grid>
+                <Grid container>
+                  <Grid container alignItems="center">
+                    <Avatar alt={profile.firstName} src={`${profile.images[0]}`} />
+                    <Box mr={1} />
+                    <Typography>{`${profile.firstName} ${profile.lastName}`}</Typography>
+                  </Grid>
+                  <Grid container alignItems="center">
+                    <Rating value={review.rating} readOnly />
+                    <Box mr={1} />
+                    <Typography variant="body2" color="textPrimary">
+                      {review.title}
+                    </Typography>
+                  </Grid>
 
-                      <Typography>{review.body}</Typography>
-                    </React.Fragment>
-                  }
-                />
+                  <Typography variant="body1" color="textSecondary">
+                    {review.body}
+                  </Typography>
+                </Grid>
               </ListItem>
             ))}
         </List>
