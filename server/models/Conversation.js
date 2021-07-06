@@ -15,6 +15,16 @@ const ConversationSchema = new mongoose.Schema({
     ],
     validate: [arrayLimit, 'Participants exceed the limit of 2'],
   },
+  participantProfiles: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'profile',
+        required: true,
+      },
+    ],
+    validate: [arrayLimit, 'Participants exceed the limit of 2'],
+  },
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
   mostRecentMsg: {
     type: mongoose.Schema.Types.ObjectId,
