@@ -48,6 +48,7 @@ export default function Messages(): JSX.Element {
     const fetchConversations = async () => {
       const data = await getConversations()();
       if (data !== undefined) {
+        console.log(data.conversations);
         setAllConversations(data.conversations);
       }
     };
