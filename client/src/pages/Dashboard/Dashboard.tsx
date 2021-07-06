@@ -10,8 +10,12 @@ export default function Dashboard(): JSX.Element {
   const classes = useStyles();
   const { initSocket } = useSocket();
 
+
   useEffect(() => {
     initSocket();
+    // return () => {
+    //   socket.close();
+    // }
   }, [initSocket]);
 
   return (

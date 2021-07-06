@@ -73,14 +73,7 @@ exports.newMessage = asyncHandler(async (req, res) => {
       { $push: { messages: message._id }, mostRecentMsg: message._id, $inc: { unreadMsgs: 1 } },
     );
     res.status(201).json({
-      success: {
-        message: {
-          id: message._id,
-          content: message.content,
-          read: message.read,
-          type: message.type,
-        },
-      },
+      message,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not send mesage' });

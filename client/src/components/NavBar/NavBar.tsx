@@ -27,6 +27,7 @@ import getUnreadNotifications from '../../helpers/APICalls/getUnreadNotification
 import Notification from '../Notification/Notification';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import { useHistory } from 'react-router-dom';
 
 interface Notification {
   title: string;
@@ -51,6 +52,17 @@ const NavBar = (): JSX.Element => {
 
   const handleNotificationsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     setNotificationsAnchorEl(e.currentTarget);
+  };
+
+  const history = useHistory();
+
+  const handleViewNotifications = () => {
+    handleMenuClose();
+    history.push('/messages');
+  };
+
+  const markAllNotificationsAsRead = () => {
+    console.log('marking all notifications as read...');
   };
 
   const handleMenuClose = () => {
@@ -172,11 +184,29 @@ const NavBar = (): JSX.Element => {
                                 title={notification.title}
                                 content={notification.content}
                                 date={notification.date}
+                                type={notification.type}
                               />
                               {idx === unreadNotifications.length - 1 ? (
-                                <Link>
-                                  <Typography className={classes.notificationsLink}>View all notifications</Typography>
-                                </Link>
+                                <>
+                                  <Link
+                                    className={classes.viewNotifications}
+                                    underline="none"
+                                    onClick={() => handleViewNotifications()}
+                                  >
+                                    <Typography className={classes.notificationsLink}>
+                                      View all notifications
+                                    </Typography>
+                                  </Link>
+                                  <Link
+                                    className={classes.viewNotifications}
+                                    underline="none"
+                                    onClick={() => markAllNotificationsAsRead()}
+                                  >
+                                    <Typography className={classes.notificationsLink}>
+                                      Mark all notifications as read
+                                    </Typography>
+                                  </Link>
+                                </>
                               ) : (
                                 <Divider />
                               )}

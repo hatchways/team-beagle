@@ -89,6 +89,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   notificationsLink: {
     textAlign: 'center',
   },
+  viewNotifications: {
+    cursor: 'pointer',
+  },
 }));
 
 export default useStyles;
