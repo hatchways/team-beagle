@@ -6,6 +6,11 @@ export interface Conversations {
   conversations: Conversation[];
 }
 
+// interface unreadMsg {
+//   userId: string;
+//   amount: number;
+// }
+
 export interface Conversation {
   participants: User[];
   participantProfiles: Profile[];

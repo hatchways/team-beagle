@@ -67,15 +67,7 @@ exports.newMessage = asyncHandler(async (req, res) => {
       { $push: { messages: message }, mostRecentMsg: message, $inc: { unReadMsgs: 1 } },
     );
     res.status(201).json({
-      success: {
-        message: {
-          id: message._id,
-          content: message.content,
-          sendDate: message.sendDate,
-          read: message.read,
-          type: message.type,
-        },
-      },
+      message,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not send mesage' });
@@ -91,11 +83,11 @@ exports.getConversations = asyncHandler(async (req, res) => {
   try {
     const conversations = await Conversation.find({
       $and: [{ participants: { $in: userId } }, { deleted: false }],
-    }).populate('mostRecentMsg');
+    })
+      .populate('mostRecentMsg')
+      .populate('participantProfiles');
     res.status(200).json({
-      success: {
-        conversations,
-      },
+      conversations,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not get conversation' });
@@ -138,11 +130,11 @@ exports.readMessages = asyncHandler(async (req, res) => {
 exports.getConversation = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
+    const conversation = await Conversation.findOne({ _id: conversationId })
+      .populate('messages')
+      .populate('participantProfiles');
     res.status(200).json({
-      success: {
-        conversation,
-      },
+      conversation,
     });
   } catch (error) {
     return res.status(500).json({ error: 'Could not get conversation' });

@@ -11,6 +11,7 @@ interface ChatMessage {
   content: string;
   key: string;
   sendDate: Date;
+  // ref: ((node: HTMLDivElement) => void) | HTMLDivElement | null;
 }
 
 const Message = ({ type, sendDate, content, senderName, senderPic, direction }: ChatMessage): JSX.Element => {
@@ -22,7 +23,7 @@ const Message = ({ type, sendDate, content, senderName, senderPic, direction }: 
       {type === 'msg' ? (
         <Typography className={classes.sentMsgBubble}>{content}</Typography>
       ) : (
-        <Image src={content} alt={content} />
+        <Image src={content} alt={content} className={classes.sentMsgPic} />
       )}
     </Grid>
   ) : (
@@ -36,7 +37,7 @@ const Message = ({ type, sendDate, content, senderName, senderPic, direction }: 
         {type === 'msg' ? (
           <Typography className={classes.receivedMsgBubble}>{content}</Typography>
         ) : (
-          <Image src={content} alt={content} />
+          <Image src={content} alt={content} className={classes.receivedMsgPic} />
         )}
       </Grid>
     </Grid>

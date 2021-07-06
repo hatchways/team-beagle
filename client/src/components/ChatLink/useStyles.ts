@@ -52,6 +52,8 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 0',
     fontSize: '0.5rem',
     cursor: 'pointer',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
   },
   unreadContainer: {
     position: 'relative',

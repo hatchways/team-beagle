@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, FunctionComponent, useCallback } from 'react';
+import { useEffect, useState, useContext, createContext, FunctionComponent, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 interface ISocketContext {
@@ -21,6 +21,20 @@ export const SocketProvider: FunctionComponent = ({ children }): JSX.Element => 
         withCredentials: true,
       }),
     );
+  }, []);
+
+  // const closeSocket = (socket: any) => {
+  //   return () => socket.close();
+  // };
+
+  useEffect(() => {
+    console.log('trying to connect');
+    const newSocket = io('/', {
+      withCredentials: true,
+    });
+    setSocket(newSocket);
+
+    () => newSocket.close();
   }, []);
 
   return <SocketContext.Provider value={{ socket, initSocket }}>{children}</SocketContext.Provider>;

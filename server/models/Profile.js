@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     unique: true,
     required: true,
   },
@@ -59,17 +59,19 @@ const profileSchema = new mongoose.Schema({
   tagLine: {
     // if sitter require
     type: String,
+    required: true,
+    default: '',
   },
 });
 
-profileSchema.pre("validate", function (next) {
+profileSchema.pre('validate', function (next) {
   if (this.isDogSitter && !this.hourlyRate) {
-    next(new Error("Must include hourly rate"));
+    next(new Error('Must include hourly rate'));
   } else if (this.isDogSitter && !this.tagLine) {
-    next(new Error("Must include tag line"));
+    next(new Error('Must include tag line'));
   } else {
     next();
   }
 });
 
-module.exports = Profile = mongoose.model("profile", profileSchema);
+module.exports = Profile = mongoose.model('profile', profileSchema);

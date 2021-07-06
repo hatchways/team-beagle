@@ -23,7 +23,7 @@ export interface Profile {
   };
   rating?: number;
   hourlyRate?: number;
-  tagLine?: string;
+  tagLine: string;
   fullName?: string;
 }
 
