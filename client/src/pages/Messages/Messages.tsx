@@ -199,9 +199,6 @@ export default function Messages(): JSX.Element {
                     selectedConversation._id === conversation._id ? classes.selectedConversation : ''
                   }`}
                 >
-                  {/* {showOptions === conversation._id && ( */}
-
-                  {/* )} */}
                   <Button onClick={() => console.log(conversation._id)}>
                     <MoreVertIcon className={classes.optionsBtn} />
                   </Button>

@@ -23,10 +23,6 @@ export const SocketProvider: FunctionComponent = ({ children }): JSX.Element => 
     );
   }, []);
 
-  // const closeSocket = (socket: any) => {
-  //   return () => socket.close();
-  // };
-
   useEffect(() => {
     console.log('trying to connect');
     const newSocket = io('/', {

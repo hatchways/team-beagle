@@ -11,7 +11,6 @@ interface ChatMessage {
   content: string;
   key: string;
   sendDate: Date;
-  // ref: ((node: HTMLDivElement) => void) | HTMLDivElement | null;
 }
 
 const Message = ({ type, sendDate, content, senderName, senderPic, direction }: ChatMessage): JSX.Element => {

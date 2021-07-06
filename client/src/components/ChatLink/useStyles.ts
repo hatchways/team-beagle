@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
   userMsg: {
     margin: '0 0',
-    fontSize: '0.5rem',
+    fontSize: '0.7rem',
     cursor: 'pointer',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
