@@ -22,16 +22,17 @@ export default function Notification({ title, content, date, type }: Notificatio
   };
 
   const getIcon = (type: string) => {
-    if (type === 'message') {
-      return <MessageIcon />;
-    } else if (type === 'bookingRequested') {
-      return <LiveHelpIcon />;
-    } else if (type === 'bookingConfirmed') {
-      return <DoneOutlineIcon />;
-    } else if (type === 'bookingCancelled') {
-      return <CancelIcon />;
-    } else if (type === 'reminder') {
-      return <NotificationsIcon />;
+    switch (type) {
+      case 'message':
+        return <MessageIcon />;
+      case 'bookingRequested':
+        return <LiveHelpIcon />;
+      case 'bookingConfirmed':
+        return <DoneOutlineIcon />;
+      case 'bookingCancelled':
+        return <CancelIcon />;
+      case 'reminder':
+        return <NotificationsIcon />;
     }
   };
 

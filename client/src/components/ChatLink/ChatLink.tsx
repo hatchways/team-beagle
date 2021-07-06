@@ -51,8 +51,8 @@ const ChatLink = ({ firstName, lastName, profileImg, mostRecentMsg, unreadMsgs }
 
       <Grid className={classes.userNameMsg}>
         <Typography className={classes.userName}> {fullName()} </Typography>
-        <Typography className={`${unreadMsgs !== 0 ? classes.highlightUnreadMsg : ''} ${classes.userMsg}`}>
-          {displayMsg(mostRecentMsg)}
+        <Typography noWrap className={`${unreadMsgs !== 0 ? classes.highlightUnreadMsg : ''} ${classes.userMsg}`}>
+          {mostRecentMsg.content}
         </Typography>
       </Grid>
     </Grid>
