@@ -52,6 +52,9 @@ const profileSchema = new mongoose.Schema({
   rating: {
     type: Number,
   },
+  numberOfReviews: {
+    type: Number,
+  },
   hourlyRate: {
     // if sitter require
     type: Number,
