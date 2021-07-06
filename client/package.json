@@ -24,6 +24,7 @@
     "date-fns": "^2.22.1",
     "eslint": "^7.26.0",
     "formik": "^2.2.6",
+    "material-ui-image": "^3.3.2",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-day-picker": "^7.4.10",
