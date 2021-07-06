@@ -76,7 +76,6 @@ export default function Payment(): JSX.Element {
       return;
     }
     const cardElement = elements.getElement(CardElement);
-    console.log(cardElement);
 
     if (!cardElement) return;
 
@@ -88,7 +87,6 @@ export default function Payment(): JSX.Element {
     if (card.error) {
       setError(card?.error.message);
     } else {
-      console.log(card);
       const result = await addPaymentMethod(card.paymentMethod.id, currency);
 
       if (result.error) {
