@@ -223,6 +223,7 @@ const NavBar = (): JSX.Element => {
                     </Popover>
                   </>
                 )}
+
                 <Badge color="primary" variant="dot" className={classes.link}>
                   <Link
                     component={RouterLink}
