@@ -219,7 +219,7 @@ export default function Messages(): JSX.Element {
       </Grid>
       <Grid className={classes.currentChatContainer}>
         <Grid className={classes.currentChatTitle}>
-          {selectedConversation.participants.length !== 0 && (
+          {selectedConversation.participantProfiles.length !== 0 && (
             <Box className={classes.currentChatTitleBar}>
               <Typography className={classes.chatName}>
                 {selectedConversation.participantProfiles[0].lastName !== '(n/a)'
