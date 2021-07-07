@@ -59,8 +59,8 @@ const profileSchema = new mongoose.Schema({
   tagLine: {
     // if sitter require
     type: String,
-    default: '',
     required: true,
+    default: '',
   },
 });
 

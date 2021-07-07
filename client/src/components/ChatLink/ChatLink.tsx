@@ -29,18 +29,6 @@ const ChatLink = ({ firstName, lastName, profileImg, mostRecentMsg, unreadMsgs }
     }
   };
 
-  const displayMsg = (mostRecentMsg: mostRecentMsg) => {
-    if (mostRecentMsg.type === 'msg') {
-      if (mostRecentMsg.content.length > 23) {
-        return `${mostRecentMsg.content.slice(0, 20)}...`;
-      } else {
-        return mostRecentMsg.content;
-      }
-    } else {
-      return 'Sent photo';
-    }
-  };
-
   return (
     <Grid className={classes.userContainer}>
       <Grid className={classes.userPicStatus}>

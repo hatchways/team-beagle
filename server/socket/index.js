@@ -31,6 +31,15 @@ exports.appSocket = (server) => {
   io.on('connection', (socket) => {
     console.log('User', socket.id, 'Connected');
 
+    socket.on('login', () => socket.emit('new user'));
+
+    socket.on('message', ({ sender, recipient }) => {
+      socket.broadcast.emit('message', {
+        from: sender,
+        to: recipient,
+      });
+    });
+
     // // user logs in
     // socket.on("login", id => {
     //     if (!onlineUsers.includes(id)) {
@@ -40,7 +49,8 @@ exports.appSocket = (server) => {
     //     console.log('User', socket.id, 'Logged In');
     // });
 
-    // user logs off
+
+    // //user logs off
     // socket.on("logout", (id) => {
     //     if (onlineUsers.includes(id)) {
     //         userIndex = onlineUsers.indexOf(id);
@@ -50,7 +60,7 @@ exports.appSocket = (server) => {
     //     console.log('User', socket.id, 'Logged Out');
     // });
 
-    //disconnect
+    // //disconnect
     // socket.on("disconnect", () => {
     //     if (onlineUsers.includes(id)) {
     //         userIndex = onlineUsers.indexOf(id);
