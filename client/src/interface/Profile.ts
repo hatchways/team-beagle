@@ -25,6 +25,7 @@ export interface Profile {
   hourlyRate?: number;
   tagLine?: string;
   fullName?: string;
+  isPaymentMethod?: boolean;
 }
 
 export interface SearchProfileApiData {

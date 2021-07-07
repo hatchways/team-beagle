@@ -16,7 +16,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 
 export default function Payment(): JSX.Element {
-  const { loggedInUser, userProfile } = useAuth();
+  const { loggedInUser, userProfile, updateProfileContext } = useAuth();
   const stripe = useStripe();
   const classes = useStyles();
   const elements = useElements();
@@ -92,6 +92,7 @@ export default function Payment(): JSX.Element {
       if (result.error) {
         setError(result.error.message);
       } else {
+        updateProfileContext({ ...userProfile, isPaymentMethod: true });
         setSuccess(true);
         setCard(result.attachedPaymentMethod);
         setBillingDetails(defaultBillingDetails);
@@ -100,9 +101,12 @@ export default function Payment(): JSX.Element {
   };
 
   const handleDelete = () => {
+    setSuccess(false);
+    setError('');
     deletePaymentCard().then((res: any) => {
       if (!res.error) setCard(null);
     });
+    updateProfileContext({ ...userProfile, isPaymentMethod: false });
   };
 
   let cardInfo;

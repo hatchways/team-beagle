@@ -46,12 +46,11 @@ export default function Review({ profile }: Props): JSX.Element {
   const [userReview, setuserReview] = React.useState<UserReview>(defaultReview);
 
   const [reviews, setReviews] = useState<ReviewIF[]>([]);
-  const [userSitterReviewCnt, setUserSitterReviewCnts] = useState<number>();
+  const [userSitterReviewCnt, setUserSitterReviewCnts] = useState<number>(0);
 
   useEffect(() => {
     if (profile.userId) {
       getReview(profile.userId).then((res: ResultsArray) => {
-        console.log(res);
         setReviews(res.reviews);
         setUserSitterReviewCnts(res.userSitterReviewCnt);
       });
@@ -86,7 +85,7 @@ export default function Review({ profile }: Props): JSX.Element {
   return (
     <Card>
       <CardContent>
-        {userSitterReviewCnt && userSitterReviewCnt > 0 && (
+        {userSitterReviewCnt > 0 && (
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <Typography>Write a customer review</Typography>
@@ -143,6 +142,8 @@ export default function Review({ profile }: Props): JSX.Element {
           </Accordion>
         )}
         <Box mb={2} />
+        <Typography variant="subtitle1">Reviews</Typography>
+
         <List>
           {reviews &&
             reviews.map(({ profile, ...review }: ReviewIF) => (

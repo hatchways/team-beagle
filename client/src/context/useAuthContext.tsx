@@ -10,6 +10,7 @@ interface IAuthContext {
   loggedInUser: User | null | undefined;
   userProfile: Profile | null | undefined;
   updateLoginContext: (data: AuthApiDataSuccess) => void;
+  updateProfileContext: (data: any) => void;
   logout: () => void;
 }
 
@@ -17,6 +18,7 @@ export const AuthContext = createContext<IAuthContext>({
   loggedInUser: undefined,
   userProfile: undefined,
   updateLoginContext: () => null,
+  updateProfileContext: () => null,
   logout: () => null,
 });
 
@@ -28,6 +30,9 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   const updateLoginContext = useCallback((data: AuthApiDataSuccess) => {
     setLoggedInUser(data.user);
     setUserProfile(data.profile);
+  }, []);
+  const updateProfileContext = useCallback((data: any) => {
+    setUserProfile(data);
   }, []);
 
   const logout = useCallback(async () => {
@@ -60,7 +65,7 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   }, [updateLoginContext, history]);
 
   return (
-    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout }}>
+    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout, updateProfileContext }}>
       {children}
     </AuthContext.Provider>
   );

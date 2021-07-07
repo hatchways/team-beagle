@@ -7,9 +7,11 @@ import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-
+import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
 import { Request, RequestWithProfile } from './../../interface/Request';
 import React from 'react';
+import { useAuth } from '../../context/useAuthContext';
 
 interface ExtRequest extends RequestWithProfile {
   dates: any;
@@ -41,6 +43,7 @@ export default function BookingCard({
   handleCancelBooking,
 }: Props): JSX.Element {
   const classes = useStyles();
+  const { loggedInUser, userProfile } = useAuth();
 
   const profile = booking.profile;
 
@@ -74,15 +77,23 @@ export default function BookingCard({
           )}
         </Grid>
       </CardContent>
-
       {!booking.paid && isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
-          <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
-            Accept
-          </Button>
-          <Button size="small" color="primary" onClick={() => handleDecline(setState, booking._id)}>
-            Decline
-          </Button>
+          {userProfile?.isPaymentMethod && (
+            <>
+              <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
+                Accept
+              </Button>
+              <Button size="small" color="primary" onClick={() => handleDecline(setState, booking._id)}>
+                Decline
+              </Button>
+            </>
+          )}
+          {!userProfile?.isPaymentMethod && (
+            <Button size="small" color="primary" to="/profile/payment" component={RouterLink}>
+              Enter payment method
+            </Button>
+          )}
         </CardActions>
       )}
 
