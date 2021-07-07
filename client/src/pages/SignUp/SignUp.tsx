@@ -23,13 +23,15 @@ export default function Register(): JSX.Element {
     { setSubmitting }: FormikHelpers<{ email: string; password: string; username: string }>,
   ) => {
     register(username, email, password).then((data) => {
+      setSubmitting(true)
       if (data.error) {
         console.error({ error: data.error.message });
         setSubmitting(false);
         updateSnackBarMessage(data.error.message);
       } else if (data.success) {
+        setSubmitting(false);
         updateLoginContext(data.success);
-        history.push({pathname: '/profile/editprofile', state: {newUser: true}});
+        history.push({ pathname: '/profile/editprofile', state: { newUser: true } });
       } else {
         // should not get here from backend but this catch is for an unknown issue
         console.error({ data });
