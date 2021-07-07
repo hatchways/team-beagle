@@ -28,24 +28,15 @@ import Notification from '../Notification/Notification';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import { useHistory } from 'react-router-dom';
-import { socket } from '../../context/useSocketContext';
-
-interface Notification {
-  title: string;
-  content: string;
-  date: Date;
-  sender: string;
-  recipient: string;
-  type: string;
-  read: boolean;
-}
+import { useSocket } from '../../context/useSocketContext';
+import { INotification } from '../../interface/Notification';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState<Element | null>(null);
-  const [unreadNotifications, setUnreadNotifications] = React.useState<any[]>([]);
+  const [unreadNotifications, setUnreadNotifications] = React.useState<INotification[]>([]);
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
@@ -75,23 +66,29 @@ const NavBar = (): JSX.Element => {
     logout();
   };
 
+  const fetchUnreadNotifications = async () => {
+    const data = await getUnreadNotifications()();
+    if (data.notifications) {
+      setUnreadNotifications(
+        data.notifications.sort(
+          (a: INotification, b: INotification) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+        ),
+      );
+    }
+  };
+
   useEffect(() => {
-    const fetchUnreadNotifications = async () => {
-      const data = await getUnreadNotifications()();
-      if (data.notifications) {
-        setUnreadNotifications(
-          data.notifications.sort(
-            (a: Notification, b: Notification) => new Date(b.date).valueOf() - new Date(a.date).valueOf(),
-          ),
-        );
-      }
-    };
     fetchUnreadNotifications();
   }, [loggedInUser]);
 
+  const { socket } = useSocket();
   socket !== undefined
-    ? socket.once('notification', ({ from, to, content }) => {
-        console.log(content);
+    ? socket.once('notification', ({ from, to, type }) => {
+        if (loggedInUser !== undefined && loggedInUser !== null) {
+          if (to === loggedInUser.id) {
+            fetchUnreadNotifications();
+          }
+        }
       })
     : '';
 
@@ -190,7 +187,7 @@ const NavBar = (): JSX.Element => {
                                 key={notification._id}
                                 title={notification.title}
                                 content={notification.content}
-                                date={notification.date}
+                                date={notification.createdAt}
                                 type={notification.type}
                               />
                               {idx === unreadNotifications.length - 1 ? (

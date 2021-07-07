@@ -31,6 +31,14 @@ exports.appSocket = (server) => {
   io.on('connection', (socket) => {
     console.log('User', socket.id, 'Connected');
 
+    socket.on('notification', ({ type, sender, recipient }) => {
+      socket.broadcast.emit('notification', {
+        type,
+        from: sender,
+        to: recipient,
+      });
+    });
+
     // // user logs in
     // socket.on("login", id => {
     //     if (!onlineUsers.includes(id)) {
