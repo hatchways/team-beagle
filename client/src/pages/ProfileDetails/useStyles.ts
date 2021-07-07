@@ -7,7 +7,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'row',
-    [theme.breakpoints.between('sm', 'xs')]: {
+    [theme.breakpoints.only('xs')]: {
+      flexDirection: 'column',
+    },
+    [theme.breakpoints.only('sm')]: {
       flexDirection: 'column',
     },
   },

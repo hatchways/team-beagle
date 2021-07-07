@@ -7,8 +7,5 @@ export interface ReviewIF {
   rating: number;
   title: string;
   body: string;
-}
-
-export interface ReviewWithProfile extends ReviewIF {
-  profile: Profile;
+  profile?: Profile;
 }
