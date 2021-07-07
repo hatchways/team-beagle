@@ -80,14 +80,11 @@ export default function Listings(): JSX.Element {
 
   const updateProfilesByDate = useCallback(async () => {
     const profileList: Profile[] = [];
-    console.log(dates);
     if (!dates) {
       profilesOnLoad()
     } else {
       const data = await searchSittersByDays(dates);
-      console.log(data)
       const profile: any = data.profiles;
-      console.log(profile);
       if (profile) {
         profile.map((user: Profile) => {
           profileList.push(user);
