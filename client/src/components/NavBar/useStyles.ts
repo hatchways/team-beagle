@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   appBar: {
     backgroundColor: '#FFFFFF',
+    height: 85,
   },
   toolbar: {},
 
@@ -48,8 +49,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   link: {
     fontWeight: 'bolder',
-    // margin: theme.spacing(10, 20),
-    // fontSize: 18,
     fontSize: '.9rem',
     marginRight: '20px',
     ' &.selected, .selected': {
@@ -58,7 +57,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   avatarLink: {
     fontWeight: 'bolder',
-    // margin: theme.spacing(10, 20),
     width: '60px',
     height: '60px',
     marginTop: '10px',

@@ -7,11 +7,20 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Container from '@material-ui/core/Container';
 import SearchIcon from '@material-ui/icons/Search';
 import React, { useState, useEffect, useCallback } from 'react';
+
+//Api calls
 import searchSitters from '../../helpers/APICalls/searchSitters';
+import searchSittersByDays from '../../helpers/APICalls/searchSittersByDays';
 import getProfiles from '../../helpers/APICalls/getProfiles';
+
+//Interface
 import { User } from '../../interface/User';
 import { Profile } from '../../interface/Profile';
 import ProfileCard from '../ProfileCard/ProfileCard';
+
+
+import moment from 'moment';
+
 
 export interface ProfileProps {
   firstName: string;
@@ -23,34 +32,42 @@ export interface ProfileProps {
   hourlyRate: string;
 }
 
+interface DateProps {
+  startDate: Date;
+  endDate: Date;
+}
+
+
+
 export default function Listings(): JSX.Element {
   const classes = useStyles();
 
   const date = new Date();
   const [sitters, setSitters] = useState<Profile[]>([]);
   const [searchProfiles, setSearchProfiles] = useState<string>('');
-  
+  const [dates, setDates] = useState<string>('');
+  const { startDate, endDate } = value;
+
   const profilesOnLoad = () => {
     const profileList: Profile[] = [];
     getProfiles().then((data) => {
-    const profile: any = data.profiles;
-    if (profile) {
-      profile.map((user: Profile) => {
-        if (profile) {
-          profileList.push(user)
-        }
-      });
+      const profile: any = data.profiles;
+      if (profile) {
+        profile.map((user: Profile) => {
+          if (profile) {
+            profileList.push(user)
+          }
+        });
         setSitters(profileList);
-    }
+      }
     })
-  
-    }
 
-  const updateProfiles = useCallback(async () => {
+  }
+
+  const updateProfilesByCity = useCallback(async () => {
     const searchList: Profile[] = [];
     const data = await searchSitters(searchProfiles);
     const profile: any = data.profiles;
-    console.log(profile);
     if (profile) {
       profile.map((user: Profile) => {
         if (profile) {
@@ -61,17 +78,60 @@ export default function Listings(): JSX.Element {
     }
   }, [searchProfiles]);
 
+
+  const updateProfilesByDate = useCallback(async () => {
+    const profileList: Profile[] = [];
+    console.log(dates);
+    if (!dates) {
+      profilesOnLoad()
+    } else {
+      const data = await searchSittersByDays(dates);
+      console.log(data)
+      const profile: any = data.profiles;
+      console.log(profile);
+      if (profile) {
+        profile.map((user: Profile) => {
+          profileList.push(user);
+        })
+      } else {
+        profilesOnLoad();
+      }
+      setSitters(profileList)
+    }
+  }, [dates]);
+
   const handleChange = (e: any) => {
     e.preventDefault();
     setSearchProfiles(e.target.value);
   };
+
+  const getDaysArray = (startDate: any, endDate: any) => {
+    const arr: [] = [];
+    for (let arr = [], dt = new Date(startDate); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
+      arr.push(new Date(dt));
+    }
+    return arr;
+  };
+
+  const handleDateChange = (event: any) => {
+    const dayList = getDaysArray(startDate, endDate)
+    const formatedList = dayList.map((day: any) => day.toISOString().slice(0, 10)).join("")
+    console.log(formatedList)
+    // const now = moment(e.target.value).format("dddd").toLocaleLowerCase()
+    // setDates(now);
+  }
   useEffect(() => {
-    updateProfiles();
-  }, [setSearchProfiles, updateProfiles]);
+    updateProfilesByCity();
+  }, [setSearchProfiles, updateProfilesByCity]);
+
+  useEffect(() => {
+    updateProfilesByDate()
+  }, [updateProfilesByDate, setSearchProfiles])
 
   useEffect(() => {
     profilesOnLoad();
   }, []);
+
 
   return (
     <Grid container component="main" direction="column" className={`${classes.root} ${classes.listings}`}>
@@ -96,21 +156,37 @@ export default function Listings(): JSX.Element {
             }}
           />
           <TextField
-            id="date"
-            type="date"
-            defaultValue={date}
+            className={`${classes.textField} ${classes.textFieldLocation}`}
+            label="Drop Off"
+            id="outlined-basic"
             variant="outlined"
-            className={classes.textField}
+            type="date"
+            defaultValue={new Date()}
             InputLabelProps={{
               shrink: true,
             }}
+            value={startDate}
+            onChange={handleDateChange}
+          />
+          <TextField
+            className={`${classes.textField} ${classes.textFieldLocation}`}
+            label="Pick Up"
+            variant="outlined"
+            id="outlined-basic"
+            type="date"
+            defaultValue={new Date()}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            value={endDate}
+            onChange={handleDateChange}
           />
         </Grid>
       </Container>
       {/* End search */}
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {sitters.slice(0,6).map((profile) => (
+          {sitters.slice(0, 6).map((profile) => (
             <Grid item key={profile.userId} xs={12} sm={6} md={4}>
               <ProfileCard profile={profile} />
             </Grid>

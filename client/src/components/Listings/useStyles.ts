@@ -32,6 +32,11 @@ const useStyles = makeStyles((theme: Theme) => ({
       marginRight: -2,
     },
   },
+  label: {
+    fontSize: 19,
+    color: 'rgb(0,0,0,1)',
+    paddingLeft: '5px',
+  },
   cardGrid: {
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8),

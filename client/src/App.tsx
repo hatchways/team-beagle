@@ -47,22 +47,22 @@ function App(): JSX.Element {
                       <Redirect to="/profile/editprofile" />
                     </Route>
 
-                  <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <ProtectedRoute exact path="/dashboard/:userId" component={ProfileDetails} />
-                  <Route exact path="/unauthorized">
-                    <Unauthorized />
-                  </Route>
-                  <Route path="*">
-                    <Redirect to="/" />
-                  </Route>
-                </Switch>
-              </MuiPickersUtilsProvider>
-            </SocketProvider>
-          </AuthProvider>
-        </SnackBarProvider>
-      </BrowserRouter>
-    </MuiThemeProvider>
-  </Elements>
+                    <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+                    <ProtectedRoute exact path="/dashboard/:userId" component={ProfileDetails} />
+                    <Route exact path="/unauthorized">
+                      <Unauthorized />
+                    </Route>
+                    <Route path="*">
+                      <Redirect to="/" />
+                    </Route>
+                  </Switch>
+                </MuiPickersUtilsProvider>
+              </SocketProvider>
+            </AuthProvider>
+          </SnackBarProvider>
+        </BrowserRouter>
+      </MuiThemeProvider>
+    </Elements>
   );
 }
 
