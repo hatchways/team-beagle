@@ -46,7 +46,6 @@ export default function Listings(): JSX.Element {
   const [sitters, setSitters] = useState<Profile[]>([]);
   const [searchProfiles, setSearchProfiles] = useState<string>('');
   const [dates, setDates] = useState<string>('');
-  const { startDate, endDate } = value;
 
   const profilesOnLoad = () => {
     const profileList: Profile[] = [];
@@ -105,20 +104,10 @@ export default function Listings(): JSX.Element {
     setSearchProfiles(e.target.value);
   };
 
-  const getDaysArray = (startDate: any, endDate: any) => {
-    const arr: [] = [];
-    for (let arr = [], dt = new Date(startDate); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
-      arr.push(new Date(dt));
-    }
-    return arr;
-  };
+  const handleDateChange = (e: any) => {
 
-  const handleDateChange = (event: any) => {
-    const dayList = getDaysArray(startDate, endDate)
-    const formatedList = dayList.map((day: any) => day.toISOString().slice(0, 10)).join("")
-    console.log(formatedList)
-    // const now = moment(e.target.value).format("dddd").toLocaleLowerCase()
-    // setDates(now);
+    const now = moment(e.target.value).format("dddd").toLocaleLowerCase()
+    setDates(now);
   }
   useEffect(() => {
     updateProfilesByCity();
@@ -165,22 +154,10 @@ export default function Listings(): JSX.Element {
             InputLabelProps={{
               shrink: true,
             }}
-            value={startDate}
+            name="startDate"
             onChange={handleDateChange}
           />
-          <TextField
-            className={`${classes.textField} ${classes.textFieldLocation}`}
-            label="Pick Up"
-            variant="outlined"
-            id="outlined-basic"
-            type="date"
-            defaultValue={new Date()}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={endDate}
-            onChange={handleDateChange}
-          />
+
         </Grid>
       </Container>
       {/* End search */}
