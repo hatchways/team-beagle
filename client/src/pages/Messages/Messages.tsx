@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect } from 'react';
-import { Box, Grid, Typography, TextField, InputAdornment, Button, Tabs, Link } from '@material-ui/core';
+import { useContext, useState, useEffect, useRef } from 'react';
+import { Box, Grid, Typography, TextField, InputAdornment, Button } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 import Message from '../../components/Message/Message';
@@ -13,9 +13,11 @@ import sendMessage from '../../helpers/APICalls/sendMessage';
 import { Conversation } from '../../interface/Conversation';
 import { IMessage } from '../../interface/Message';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { useSocket } from '../../context/useSocketContext';
 
 export default function Messages(): JSX.Element {
   const classes = useStyles();
+  const { socket } = useSocket();
 
   const { loggedInUser, userProfile } = useContext(AuthContext);
   const [message, setMessage] = useState('');
@@ -48,12 +50,48 @@ export default function Messages(): JSX.Element {
     const fetchConversations = async () => {
       const data = await getConversations()();
       if (data !== undefined) {
-        console.log(data.conversations);
-        setAllConversations(data.conversations);
+        setAllConversations(
+          data.conversations.sort(
+            (a: Conversation, b: Conversation) =>
+              new Date(b.mostRecentMsg.createdAt).valueOf() - new Date(a.mostRecentMsg.createdAt).valueOf(),
+          ),
+        );
       }
     };
     fetchConversations();
-  }, [loggedInUser]);
+  }, [loggedInUser, selectedConversation]);
+
+  const endRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (endRef !== null) {
+      endRef.current !== null ? endRef.current.scrollIntoView({ behavior: 'auto' }) : '';
+    }
+  }, [selectedConversation]);
+
+  socket !== undefined
+    ? socket.once('message', ({ from, to }) => {
+        const fetchConversations = async () => {
+          const data = await getConversations()();
+          if (data !== undefined) {
+            setAllConversations(data.conversations);
+          }
+        };
+        if (loggedInUser !== undefined && loggedInUser !== null) {
+          if (to === loggedInUser.id) {
+            fetchConversations();
+            const currentConversation = allConversations.filter(
+              (conversation) => conversation._id === selectedConversation._id,
+            );
+            if (selectedConversation.participants.length !== 0 && loggedInUser !== null && loggedInUser !== undefined) {
+              const idx = currentConversation[0].participantProfiles[0].userId === loggedInUser.id ? 1 : 0;
+              fetchConversationDetails(selectedConversation._id, idx);
+            }
+          } else if (from === loggedInUser.id) {
+            fetchConversations();
+          }
+        }
+      })
+    : '';
 
   const handleMsgSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -64,7 +102,18 @@ export default function Messages(): JSX.Element {
     e.preventDefault();
     const data = await sendMessage(recipient, type, content)();
     setMessage(() => '');
-    console.log(data);
+    if (socket !== undefined) {
+      socket.emit('message', {
+        content: message,
+        sender: loggedInUser?.id,
+        recipient,
+      });
+      socket.emit('notification', {
+        type: 'message',
+        sender: loggedInUser?.id,
+        recipient,
+      });
+    }
     if (data !== undefined) {
       setSelectedConversation({
         ...selectedConversation,
@@ -150,11 +199,9 @@ export default function Messages(): JSX.Element {
                     selectedConversation._id === conversation._id ? classes.selectedConversation : ''
                   }`}
                 >
-                  {showOptions === conversation._id && (
-                    <Button onClick={() => console.log(conversation._id)}>
-                      <MoreVertIcon className={classes.optionsBtn} />
-                    </Button>
-                  )}
+                  <Button onClick={() => console.log(conversation._id)}>
+                    <MoreVertIcon className={classes.optionsBtn} />
+                  </Button>
 
                   <ChatLink
                     key={conversation._id}
@@ -189,21 +236,24 @@ export default function Messages(): JSX.Element {
         </Grid>
         <Grid className={classes.chatMsgsContainer}>
           <Grid className={classes.chatMsgs}>
-            {selectedConversation.messages.map((message) => (
-              <Message
-                key={message._id}
-                type={message.type}
-                sendDate={message.createdAt}
-                content={message.content}
-                senderPic={getMsgPic(message)}
-                senderName={getMsgName(message)}
-                direction={getMsgDirection(message)}
-              />
-            ))}
+            {selectedConversation.messages.map((message) => {
+              return (
+                <Message
+                  key={message._id}
+                  type={message.type}
+                  sendDate={message.createdAt}
+                  content={message.content}
+                  senderPic={getMsgPic(message)}
+                  senderName={getMsgName(message)}
+                  direction={getMsgDirection(message)}
+                />
+              );
+            })}
+            <Grid ref={endRef}></Grid>
           </Grid>
         </Grid>
         <form onSubmit={(e) => handleMsgSubmit(e, selectedConversation.participantProfiles[0].userId, 'msg', message)}>
-          {selectedConversation !== null && (
+          {selectedConversation.participants.length !== 0 && (
             <TextField
               className={classes.chatMsgInput}
               placeholder="Type something..."
@@ -213,7 +263,7 @@ export default function Messages(): JSX.Element {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Button>
+                    <Button type="submit">
                       <SendIcon />
                     </Button>
                     <Button>
