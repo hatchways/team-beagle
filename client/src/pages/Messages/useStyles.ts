@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   '@keyframes showOptions': {
     '0%': {
-      transform: 'translateX(-80px)',
+      transform: 'translateX(-10px)',
     },
     '100%': {
       transform: 'translateX(0px)',
@@ -48,14 +48,14 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#eaeef8',
       transform: 'translateX(0px)',
       animationName: '$showOptions',
-      animationDuration: '100ms',
+      animationDuration: '200ms',
       animationTimingFunction: 'linear',
       visibility: 'visible',
     },
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    transform: 'translateX(-80px)',
+    transform: 'translateX(-10px)',
     zIndex: -3,
     width: '500px',
   },
