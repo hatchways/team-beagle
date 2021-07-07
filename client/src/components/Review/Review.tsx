@@ -13,41 +13,59 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CardContent from '@material-ui/core/CardContent';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
+import { useAuth } from '../../context/useAuthContext';
+import { ReviewWithProfile } from '../../interface/Review';
 
 import React, { useState, useEffect } from 'react';
-import useStyles from './useStyles';
 import { addReview, getReview, deleteReview } from '../../helpers/APICalls/review';
 
 interface Props {
   profile: Profile | Record<string, never>;
 }
 
+interface UserReview {
+  rating: number;
+  title: string;
+  body: string;
+}
+interface ResultsArray {
+  reviews: ReviewWithProfile[];
+}
+interface Results {
+  reviews: ReviewWithProfile;
+}
 export default function Review({ profile }: Props): JSX.Element {
-  const classes = useStyles();
+  const { loggedInUser } = useAuth();
   const defaultReview = {
     rating: 0,
     title: '',
     body: '',
   };
-  const [userReview, setuserReview] = React.useState<any>(defaultReview);
+  const [userReview, setuserReview] = React.useState<UserReview>(defaultReview);
 
-  const [reviews, setReviews] = useState<any>();
+  const [reviews, setReviews] = useState<ReviewWithProfile[]>([]);
 
   useEffect(() => {
     if (profile.userId) {
-      getReview(profile.userId).then((res: any) => {
+      getReview(profile.userId).then((res: ResultsArray) => {
         setReviews(res.reviews);
       });
     }
   }, [profile.userId]);
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    addReview(profile.userId, userReview.rating, userReview.title, userReview.body).then((res: any) => {
-      setReviews([...reviews, res.reviews]);
+    addReview(profile.userId, userReview.rating, userReview.title, userReview.body).then((res: Results) => {
+      setReviews([res.reviews, ...reviews]);
       setuserReview(defaultReview);
+    });
+  };
+
+  const handleDelete = async (reviewId: string) => {
+    deleteReview(reviewId).then(() => {
+      const newReviews = reviews.filter((rev: ReviewWithProfile) => rev._id !== reviewId);
+      setReviews(newReviews);
     });
   };
 
@@ -67,7 +85,7 @@ export default function Review({ profile }: Props): JSX.Element {
                     name="simple-controlled"
                     value={userReview.rating}
                     onChange={(event, newValue) => {
-                      setuserReview({ ...userReview, rating: newValue });
+                      setuserReview({ ...userReview, rating: newValue || 0 });
                     }}
                   />
                 </Box>
@@ -111,7 +129,7 @@ export default function Review({ profile }: Props): JSX.Element {
         <Box mb={2} />
         <List>
           {reviews &&
-            reviews.map(({ profile, ...review }: any) => (
+            reviews.map(({ profile, ...review }: ReviewWithProfile) => (
               <ListItem key={review._id}>
                 <Grid container>
                   <Grid container alignItems="center">
@@ -130,6 +148,11 @@ export default function Review({ profile }: Props): JSX.Element {
                   <Typography variant="body1" color="textSecondary">
                     {review.body}
                   </Typography>
+                  {loggedInUser?.id === profile.userId && (
+                    <Button color="primary" onClick={() => handleDelete(review._id)} style={{ marginLeft: 'auto' }}>
+                      delete
+                    </Button>
+                  )}
                 </Grid>
               </ListItem>
             ))}

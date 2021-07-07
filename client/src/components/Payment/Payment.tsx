@@ -26,7 +26,7 @@ export default function Payment(): JSX.Element {
     name: `${userProfile?.firstName} ${userProfile?.lastName}`,
   };
   const [billingDetails, setBillingDetails] = useState(defaultBillingDetails);
-  const [paymentSecret, setPaymentSecret] = useState<any>();
+  const [paymentSecret, setPaymentSecret] = useState<string>();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
   const [card, setCard] = useState<any>();
@@ -67,7 +67,7 @@ export default function Payment(): JSX.Element {
     setCurrency(event.target.value);
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
@@ -99,7 +99,7 @@ export default function Payment(): JSX.Element {
     }
   };
 
-  const handleDelete = (event: any) => {
+  const handleDelete = () => {
     deletePaymentCard().then((res: any) => {
       if (!res.error) setCard(null);
     });

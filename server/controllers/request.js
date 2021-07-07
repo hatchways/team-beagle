@@ -25,14 +25,16 @@ exports.newRequest = asyncHandler(async (req, res, next) => {
 
   if (request) {
     res.status(201).json({
-      request: {
-        userId: userId,
-        sitterId: request.sitterId,
-        startDate: request.startDate,
-        endDate: request.endDate,
-        accept: request.accept,
-        decline: request.decline,
-        paid: request.paid,
+      success: {
+        request: {
+          userId: userId,
+          sitterId: request.sitterId,
+          startDate: request.startDate,
+          endDate: request.endDate,
+          accept: request.accept,
+          decline: request.decline,
+          paid: request.paid,
+        },
       },
     });
   } else {
@@ -73,9 +75,13 @@ exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      sitterId: userId,
-    });
+    requests = await Request.find(
+      {
+        sitterId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {
@@ -110,9 +116,13 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      userId: userId,
-    });
+    requests = await Request.find(
+      {
+        userId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {

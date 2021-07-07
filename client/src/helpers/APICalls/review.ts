@@ -1,6 +1,12 @@
 import { FetchOptions } from '../../interface/FetchOptions';
+import { ReviewIF, ReviewWithProfile } from '../../interface/Review';
 
-export async function addReview(sitterId: string, rating: string, title: string, body: string): Promise<any> {
+export async function addReview(
+  sitterId: string,
+  rating: number,
+  title: string,
+  body: string,
+): Promise<{ reviews: ReviewWithProfile }> {
   const fetchOptions: FetchOptions = {
     method: 'POST',
     credentials: 'include',
@@ -14,7 +20,7 @@ export async function addReview(sitterId: string, rating: string, title: string,
     }));
 }
 
-export async function getReview(sitterId: string): Promise<any> {
+export async function getReview(sitterId: string): Promise<{ reviews: ReviewWithProfile[] }> {
   const fetchOptions: FetchOptions = {
     method: 'GET',
     credentials: 'include',
@@ -26,7 +32,7 @@ export async function getReview(sitterId: string): Promise<any> {
     }));
 }
 
-export async function deleteReview(reviewId: string): Promise<any> {
+export async function deleteReview(reviewId: string): Promise<{ reviews: ReviewIF[] }> {
   const fetchOptions: FetchOptions = {
     method: 'Delete',
     credentials: 'include',

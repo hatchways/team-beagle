@@ -68,9 +68,13 @@ exports.reviewsforSitter = asyncHandler(async (req, res, next) => {
   let reviews;
 
   if (sitterId) {
-    reviews = await Review.find({
-      sitterId: sitterId,
-    });
+    reviews = await Review.find(
+      {
+        sitterId: sitterId,
+      },
+      null,
+      { sort: { createdAt: -1 } }
+    );
   }
   if (!reviews) {
     res.status(404);
