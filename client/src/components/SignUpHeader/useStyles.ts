@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme:Theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   authHeader: {
     alignSelf: 'flex-end',
     justifyContent: 'flex-end',
@@ -17,7 +17,6 @@ const useStyles = makeStyles((theme:Theme) => ({
     backgroundColor: '#f04826',
     color: '#ffffff',
     boxShadow: 'none',
-    marginRight: 40,
   },
 }));
 

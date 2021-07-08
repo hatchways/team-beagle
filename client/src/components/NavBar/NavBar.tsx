@@ -93,7 +93,7 @@ const NavBar = (): JSX.Element => {
     : '';
 
   return (
-    <Grid container component="main" className={`${classes.root}`}>
+    <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
@@ -256,10 +256,6 @@ const NavBar = (): JSX.Element => {
                   vertical: 'bottom',
                   horizontal: 'right',
                 }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
               >
                 <MenuItem>
                   <Typography variant="h6" color="primary">
@@ -272,19 +268,37 @@ const NavBar = (): JSX.Element => {
                 </MenuItem>
                 <Hidden mdUp>
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/dashboard" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/dashboard"
+                      activeClassName="selected"
+                    >
                       Dashboard
                     </Link>
                   </MenuItem>
 
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/sitters" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/sitters"
+                      activeClassName="selected"
+                    >
                       Bookings
                     </Link>
                   </MenuItem>
 
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/messages" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/messages"
+                      activeClassName="selected"
+                    >
                       Messages
                     </Link>
                   </MenuItem>
