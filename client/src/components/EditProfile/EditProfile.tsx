@@ -129,6 +129,7 @@ export default function EditProfile({ newUser }: Props): JSX.Element {
     isDogSitter,
     firstName,
     lastName,
+    location,
     geoLocation,
     selfDescription,
     hourlyRate,
@@ -138,6 +139,7 @@ export default function EditProfile({ newUser }: Props): JSX.Element {
     isDogSitter: boolean;
     firstName: string;
     lastName: string;
+    location: string;
     geoLocation: string;
     selfDescription: string;
     hourlyRate: number;
@@ -180,7 +182,8 @@ export default function EditProfile({ newUser }: Props): JSX.Element {
       isDogSitter,
       firstName,
       lastName,
-      geoLocation,
+      location,
+      geoCoordinates,
       selfDescription,
       hourlyRate,
       tagLine,
@@ -271,8 +274,8 @@ export default function EditProfile({ newUser }: Props): JSX.Element {
       primaryPhone: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')
-        .min(10, 'You must enter a ten-digit phone number with the area code')
-        .required('Your primary phone is required'),
+        .min(10, 'You must enter a ten-digit phone number with the area code'),
+      // .required('Your primary phone is required'),
       secondaryPhone: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')

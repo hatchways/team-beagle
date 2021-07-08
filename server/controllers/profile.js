@@ -69,6 +69,7 @@ exports.newProfile = asyncHandler(async (req, res) => {
 // //update profiles
 exports.editProfile = asyncHandler(async (req, res) => {
   const update = req.body;
+  console.log(update);
   let decoded = decodeToken(req.cookies.token);
   const userId = decoded.id;
   try {

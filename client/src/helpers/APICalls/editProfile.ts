@@ -6,6 +6,7 @@ const editProfile = async (
   isDogSitter: boolean,
   firstName: string,
   lastName: string,
+  location: string,
   geoLocation: string,
   selfDescription: string,
   hourlyRate: number,
@@ -44,9 +45,19 @@ const editProfile = async (
   const fetchOptions: FetchOptions = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ isDogSitter, firstName, lastName, description: selfDescription, geoLocation, hourlyRate, tagLine }),
+    body: JSON.stringify({
+      isDogSitter,
+      firstName,
+      lastName,
+      description: selfDescription,
+      geoLocation,
+      location,
+      hourlyRate,
+      tagLine,
+    }),
     credentials: 'include',
   };
+  console.log(location, geoLocation);
   return await fetch(`http://localhost:3001/profile/edit-profile/${id}`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
