@@ -1,6 +1,7 @@
 const Review = require("../models/Review");
 const asyncHandler = require("express-async-handler");
 const decodeToken = require("../utils/decodeToken");
+const Request = require("../models/Request");
 
 // @route POST /review/new-review/:sitterId
 // @desc add review
@@ -21,6 +22,7 @@ exports.newReview = asyncHandler(async (req, res, next) => {
   });
 
   const sitterProfile = await Profile.findOne({ userId: sitterId });
+  const reviewerProfile = await Profile.findOne({ userId: reviewerId });
 
   const numberOfReviews = sitterProfile.numberOfReviews || 0;
   let newRating;
@@ -42,14 +44,14 @@ exports.newReview = asyncHandler(async (req, res, next) => {
 
   if (review && sitterProfile && updatedSitterProfile) {
     res.status(201).json({
-      success: {
-        reviews: {
-          reviewerId: reviewerId,
-          sitterId: review.sitterId,
-          rating: review.rating,
-          title: review.title,
-          body: review.body,
-        },
+      reviews: {
+        reviewerId: reviewerId,
+        sitterId: review.sitterId,
+        rating: review.rating,
+        title: review.title,
+        body: review.body,
+        profile: reviewerProfile,
+        _id: review._id,
       },
     });
   } else {
@@ -63,18 +65,23 @@ exports.newReview = asyncHandler(async (req, res, next) => {
 // @access Private
 exports.reviewsforSitter = asyncHandler(async (req, res, next) => {
   const sitterId = req.params.sitterId;
-
+  const reviewerId = req.user.id;
   let reviews;
 
   if (sitterId) {
     reviews = await Review.find({
       sitterId: sitterId,
-    });
+    }).sort({ createdAt: -1 });
   }
   if (!reviews) {
     res.status(404);
     throw new Error("No reviews for sitter");
   }
+  const userSitterReviewCnt = await Request.where({
+    userId: reviewerId,
+    sitterId: sitterId,
+  }).countDocuments();
+
   let reviewsProfile = await Promise.all(
     reviews.map(async (review) => {
       let profile = await Profile.findOne({ userId: review.reviewerId });
@@ -89,8 +96,7 @@ exports.reviewsforSitter = asyncHandler(async (req, res, next) => {
       };
     })
   );
-
-  res.status(200).json({ reviews: reviewsProfile });
+  res.status(200).json({ reviews: reviewsProfile, userSitterReviewCnt });
 });
 
 // @route Delete /review/delete/:reviewId
@@ -166,7 +172,7 @@ exports.editReview = asyncHandler(async (req, res, next) => {
     }
     const newReview = { rating, title, body };
     updatedReview = await Review.findOneAndUpdate(
-      { _id: reviewId },
+      { _id: reviewId, reviewerId: reviewerId },
       newReview,
       {
         new: true,
