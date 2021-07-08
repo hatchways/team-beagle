@@ -7,6 +7,7 @@ const mockUserProfile: Profile = {
   lastName: 'mockLaastName',
   description: 'mockdesc',
   location: 'mock location',
+  geoLocation: '43.653226 -79.83226',
   images: ['test1', 'test2', 'test3'],
   isDogSitter: false,
   availabilityWeek: {
@@ -33,6 +34,7 @@ const mockOtherUserProfile1: Profile = {
   lastName: 'mockLaastName',
   description: 'mockdesc',
   location: 'mock location',
+  geoLocation: '43.653226 -79.83226',
   images: ['test1', 'test2', 'test3'],
   isDogSitter: false,
   availabilityWeek: {
@@ -58,6 +60,7 @@ const mockOtherUserProfile2: Profile = {
   lastName: 'mockLaastName',
   description: 'mockdesc',
   location: 'mock location',
+  geoLocation: '43.653226 -79.83226',
   images: ['test1', 'test2', 'test3'],
   isDogSitter: false,
   availabilityWeek: {
@@ -83,6 +86,7 @@ const mockOtherUserProfile3: Profile = {
   lastName: 'mockLaastName',
   description: 'mockdesc',
   location: 'mock location',
+  geoLocation: '43.653226 -79.83226',
   images: ['test1', 'test2', 'test3'],
   isDogSitter: false,
   availabilityWeek: {

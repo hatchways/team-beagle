@@ -6,6 +6,7 @@ export interface Profile {
   lastName: string;
   description: string;
   location: string;
+  geoLocation: string,
   images: string[];
   isDogSitter: boolean;
   availabilityWeek: {

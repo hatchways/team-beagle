@@ -23,6 +23,10 @@ const profileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  geoLocation: {
+    type: String,
+    required: true,
+  },
   images: [
     {
       type: String,

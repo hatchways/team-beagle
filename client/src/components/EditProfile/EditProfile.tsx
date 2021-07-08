@@ -27,13 +27,24 @@ import { useSnackBar } from '../../context/useSnackbarContext';
 import { CurrentProfile } from '../../interface/AuthApiData'
 import { useHistory } from 'react-router-dom';
 
+import Geocode from "react-geocode";
+
 interface Props {
   newUser: boolean
 }
 
-export default function EditProfile({newUser}: Props): JSX.Element {
-  const classes = useStyles();
+export default function EditProfile({ newUser }: Props): JSX.Element {
+  Geocode.setApiKey("AIzaSyCi4h-V5TBcpg-vcK_d8pAhnJvTY3H1cOo");
 
+  // set response language. Defaults to english.
+  Geocode.setLanguage("en");
+
+  // set response region. Its optional.
+  // A Geocoding request with region=es (Spain) will return the Spanish city.
+  Geocode.setRegion("cn");
+
+  const classes = useStyles();
+  const [geoCoordinates, setGeoCoordinates] = useState("");
   const [isDogSitter, setIsDogSitter] = useState(false);
   const [CurrentProfile, setCurrentProfile] = useState<CurrentProfile>({
     profile: {
@@ -41,6 +52,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       firstName: '',
       lastName: '',
       location: '',
+      geoLocation: '',
       description: '',
       hourlyRate: 1,
       tagLine: '',
@@ -91,6 +103,19 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     setIsDogSitter(!isDogSitter);
   };
 
+  const handleLocation = (e: any) => {
+    Geocode.fromAddress(e.target.value).then(
+      (response: any) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        const coordinates = lat + (" ") + lng
+        setGeoCoordinates(coordinates)
+      },
+      (error: any) => {
+        console.log(error)
+      }
+    )
+  }
+
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -103,6 +128,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     isDogSitter,
     firstName,
     lastName,
+    geoLocation,
     selfDescription,
     hourlyRate,
     tagLine,
@@ -111,6 +137,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     isDogSitter: boolean;
     firstName: string;
     lastName: string;
+    geoLocation: string;
     selfDescription: string;
     hourlyRate: number;
     tagLine: string;
@@ -144,13 +171,16 @@ export default function EditProfile({newUser}: Props): JSX.Element {
         pm: boolean;
       };
     };
+
   }) => {
-    editProfile(loggedInUserId, isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine, availability).then((data) => {
+    console.log(geoLocation)
+    editProfile(loggedInUserId, isDogSitter, firstName, lastName, geoLocation, selfDescription, hourlyRate, tagLine, availability).then((data) => {
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
+        console.log(data)
         updateSnackBarMessage('Your profile has been upated');
-        if (newUser === true) history.push({pathname: '/dashboard'})
+        if (newUser === true) history.push({ pathname: '/dashboard' })
       }
     });
   };
@@ -159,8 +189,8 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     const fetchProfile = async () => {
       const data = await getProfile(loggedInUserId)();
       if (data.profile) {
-      setCurrentProfile(data);
-      setIsDogSitter(data.profile.isDogSitter)
+        setCurrentProfile(data);
+        setIsDogSitter(data.profile.isDogSitter)
       }
     };
     fetchProfile();
@@ -175,6 +205,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       primaryPhone: '',
       secondaryPhone: '',
       location: CurrentProfile.profile.location === '(this user has not set a location yet)' ? '' : CurrentProfile.profile.location,
+      geoLocation: CurrentProfile.profile.geoLocation === '(this user has not set a location yet)' ? '' : CurrentProfile.profile.geoLocation,
       selfDescription: CurrentProfile.profile.description === '(this user has not written a description yet)' ? '' : CurrentProfile.profile.description,
       hourlyRate: CurrentProfile.profile.hourlyRate,
       tagLine: CurrentProfile.profile.tagLine,
@@ -227,7 +258,7 @@ export default function EditProfile({newUser}: Props): JSX.Element {
         .max(14, 'You must enter a ten-digit phone number with the area code')
         .min(10, 'You must enter a ten-digit phone number with the area code'),
       location: Yup.string()
-        .max(40, 'Please enter your address in 40 characters or less')
+        .max(70, 'Please enter your address in 70 characters or less')
         .required('Your address is required'),
       selfDescription: Yup.string()
         .max(300, 'Please describe yourself in 300 characters or less')
@@ -235,12 +266,12 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       hourlyRate:
         isDogSitter === true
           ? Yup.number()
-              .test('This is a valid rate', 'This is not a valid rate', (value) =>
-                value !== undefined ? /^\d+(?:\.\d{1,2})?$/.test(value.toString()) : false,
-              )
-              .max(200, 'The maximum you can charge is $200/hour')
-              .min(1, 'The minimum you can charge is $1/hour')
-              .required()
+            .test('This is a valid rate', 'This is not a valid rate', (value) =>
+              value !== undefined ? /^\d+(?:\.\d{1,2})?$/.test(value.toString()) : false,
+            )
+            .max(200, 'The maximum you can charge is $200/hour')
+            .min(1, 'The minimum you can charge is $1/hour')
+            .required()
           : Yup.number(),
       tagLine:
         isDogSitter === true
@@ -249,35 +280,35 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       availability:
         isDogSitter === true
           ? Yup.object({
-              Sunday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Monday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Tuesday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Wednesday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Thursday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Friday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-              Saturday: Yup.object({
-                am: Yup.boolean(),
-                pm: Yup.boolean(),
-              }),
-            }).required()
+            Sunday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Monday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Tuesday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Wednesday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Thursday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Friday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+            Saturday: Yup.object({
+              am: Yup.boolean(),
+              pm: Yup.boolean(),
+            }),
+          }).required()
           : Yup.object(),
     }),
     onSubmit: (values) => handleSubmit(values),
@@ -401,6 +432,8 @@ export default function EditProfile({newUser}: Props): JSX.Element {
             variant="outlined"
             placeholder="Address"
             {...formik.getFieldProps('location')}
+            setState={formik.getFieldProps("location")}
+            onChange={handleLocation}
             error={formik.touched.location && formik.errors.location !== undefined}
             helperText={formik.touched.location && formik.errors.location ? formik.errors.location : ''}
             InputProps={{
@@ -414,6 +447,36 @@ export default function EditProfile({newUser}: Props): JSX.Element {
             inputProps={{ maxLength: 40 }}
           />
         </Grid>
+        <Grid className={classes.formItem}>
+          <TextField
+            className={`${classes.formInput}`}
+            size="small"
+            variant="outlined"
+            placeholder="Geocoordinates"
+            {...formik.getFieldProps('geoLocation')}
+            value={geoCoordinates}
+            error={formik.touched.geoLocation && formik.errors.geoLocation !== undefined}
+            helperText={formik.touched.geoLocation && formik.errors.geoLocation ? formik.errors.geoLocation : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {formik.touched.geoLocation && !formik.errors.geoLocation && <CheckCircleIcon />}
+                  {formik.touched.geoLocation && formik.errors.geoLocation && <ErrorIcon />}
+                </InputAdornment>
+              ),
+            }}
+            inputProps={{ maxLength: 40 }}
+          />
+        </Grid>
+        <FormHelperText
+          error={
+            formik.touched.location &&
+            (formik.errors.location !== undefined || formik.errors.location !== undefined)
+          }
+          className={classes.addressHelperText}
+        >
+          Include your full address, including; Street, City, Province/State and Postal Code
+        </FormHelperText>
         <Grid className={classes.formItem}>
           <Typography className={classes.formLabel}>DESCRIBE YOURSELF</Typography>
           <TextField

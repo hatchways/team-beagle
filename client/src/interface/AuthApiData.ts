@@ -20,6 +20,7 @@ export interface CurrentProfile {
     firstName: string;
     lastName: string;
     location: string;
+    geoLocation: string,
     description: string;
     hourlyRate: number;
     tagLine: string;

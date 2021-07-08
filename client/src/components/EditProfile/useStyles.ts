@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     fontSize: '1.1rem',
     fontWeight: 500,
-  }, 
+  },
   formItem: {
     display: 'flex',
     flexDirection: 'row',
@@ -25,6 +25,9 @@ const useStyles = makeStyles((theme) => ({
   formInput: {
     width: '70%',
     marginLeft: '20px',
+  },
+  formItemHidden: {
+    display: 'none',
   },
   formTextField: {
     multiline: true,
@@ -47,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
   },
   phoneHelperText: {
+    marginLeft: '180px',
+    padding: 0,
+  },
+  addressHelperText: {
     marginLeft: '180px',
     padding: 0,
   },

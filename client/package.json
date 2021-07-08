@@ -29,6 +29,7 @@
     "react": "^17.0.1",
     "react-day-picker": "^7.4.10",
     "react-dom": "^17.0.1",
+    "react-geocode": "^0.2.3",
     "react-material-ui-carousel": "^2.2.6",
     "react-multi-date-picker": "^2.9.8",
     "react-router-dom": "^5.2.0",
@@ -62,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-geocode": "^0.2.0",
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
