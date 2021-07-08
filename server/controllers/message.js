@@ -1,12 +1,12 @@
-const asyncHandler = require('express-async-handler');
-const decodeToken = require('../utils/decodeToken');
-const mongoose = require('mongoose');
+const asyncHandler = require("express-async-handler");
+const decodeToken = require("../utils/decodeToken");
+const mongoose = require("mongoose");
 
-const Message = require('../models/Message');
-const Conversation = require('../models/Conversation');
-const Profile = require('../models/Profile');
+const Message = require("../models/Message");
+const Conversation = require("../models/Conversation");
+const Profile = require("../models/Profile");
 
-mongoose.set('useFindAndModify', false);
+mongoose.set("useFindAndModify", false);
 
 // @route POST /conversation/create/:id
 // Create a conversation
@@ -17,10 +17,14 @@ exports.newConversation = asyncHandler(async (req, res) => {
   const userId = decoded.id;
   try {
     const existingConversation = await Conversation.find({
-      $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }, { deleted: false }],
+      $and: [
+        { participants: { $in: userId } },
+        { participants: { $in: recipient } },
+        { deleted: false },
+      ],
     });
     if (existingConversation.length > 0) {
-      res.status(403).json({ error: 'Conversation already exists' });
+      res.status(403).json({ error: "Conversation already exists" });
     } else {
       const message = await Message.create({
         sender: userId,
@@ -50,7 +54,7 @@ exports.newConversation = asyncHandler(async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Could not create conversation' });
+    return res.status(500).json({ error: "Could not create conversation" });
   }
 });
 
@@ -69,14 +73,57 @@ exports.newMessage = asyncHandler(async (req, res) => {
       type,
     });
     await Conversation.findOneAndUpdate(
-      { $and: [{ participants: { $in: userId } }, { participants: { $in: recipient } }] },
-      { $push: { messages: message._id }, mostRecentMsg: message._id, $inc: { unreadMsgs: 1 } },
+      {
+        $and: [
+          { participants: { $in: userId } },
+          { participants: { $in: recipient } },
+        ],
+      },
+      {
+        $push: { messages: message._id },
+        mostRecentMsg: message._id,
+        $inc: { unreadMsgs: 1 },
+      }
     );
     res.status(201).json({
       message,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not send mesage' });
+    return res.status(500).json({ error: "Could not send mesage" });
+  }
+});
+
+// @route PATCH /image/:id
+// add image to a message
+exports.newImage = asyncHandler(async (req, res) => {
+  const recipient = req.params.id;
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
+  try {
+    const message = await Message.create({
+      sender: userId,
+      recipient,
+      content: req.file.path,
+      type: "img",
+    });
+    await Conversation.findOneAndUpdate(
+      {
+        $and: [
+          { participants: { $in: userId } },
+          { participants: { $in: recipient } },
+        ],
+      },
+      {
+        $push: { messages: message._id },
+        mostRecentMsg: message._id,
+        $inc: { unreadMsgs: 1 },
+      }
+    );
+    res.status(200).json({
+      message,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Could not attach image to mesage" });
   }
 });
 
@@ -90,13 +137,13 @@ exports.getConversations = asyncHandler(async (req, res) => {
     const conversations = await Conversation.find({
       $and: [{ participants: { $in: userId } }, { deleted: false }],
     })
-      .populate('mostRecentMsg')
-      .populate('participantProfiles');
+      .populate("mostRecentMsg")
+      .populate("participantProfiles");
     res.status(200).json({
       conversations,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not get conversation' });
+    return res.status(500).json({ error: "Could not get conversation" });
   }
 });
 
@@ -105,10 +152,13 @@ exports.getConversations = asyncHandler(async (req, res) => {
 exports.deleteConversation = asyncHandler(async (req, res) => {
   let conversationId = req.params.id;
   try {
-    await Conversation.findOneAndUpdate({ _id: conversationId }, { deleted: true });
+    await Conversation.findOneAndUpdate(
+      { _id: conversationId },
+      { deleted: true }
+    );
     res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not delete conversation' });
+    return res.status(500).json({ error: "Could not delete conversation" });
   }
 });
 
@@ -117,17 +167,24 @@ exports.deleteConversation = asyncHandler(async (req, res) => {
 exports.readMessages = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = await Conversation.findOne({ _id: conversationId }).populate('messages');
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+    }).populate("messages");
     conversation.messages.forEach(async (message) => {
       if (message.read === false) {
         message.read = true;
         await message.save();
       }
     });
-    await Conversation.findOneAndUpdate({ _id: conversationId }, { unreadMsgs: 0 });
+    await Conversation.findOneAndUpdate(
+      { _id: conversationId },
+      { unreadMsgs: 0 }
+    );
     res.status(200).json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not mark messages in conversation as read' });
+    return res
+      .status(500)
+      .json({ error: "Could not mark messages in conversation as read" });
   }
 });
 
@@ -136,14 +193,17 @@ exports.readMessages = asyncHandler(async (req, res) => {
 exports.getConversation = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    const conversation = await Conversation.findOneAndUpdate({ _id: conversationId }, { unreadMsgs: 0 })
-      .populate('messages')
-      .populate('participantProfiles');
+    const conversation = await Conversation.findOneAndUpdate(
+      { _id: conversationId },
+      { unreadMsgs: 0 }
+    )
+      .populate("messages")
+      .populate("participantProfiles");
     res.status(200).json({
       conversation,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not get conversation' });
+    return res.status(500).json({ error: "Could not get conversation" });
   }
 });
 
@@ -152,11 +212,14 @@ exports.getConversation = asyncHandler(async (req, res) => {
 exports.pinConversation = asyncHandler(async (req, res) => {
   const conversationId = req.params.id;
   try {
-    await Conversation.findOneAndUpdate({ _id: conversationId }, { pinned: true });
+    await Conversation.findOneAndUpdate(
+      { _id: conversationId },
+      { pinned: true }
+    );
     res.status(200).json({
       success: true,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not pin conversation' });
+    return res.status(500).json({ error: "Could not pin conversation" });
   }
 });

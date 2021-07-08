@@ -5,17 +5,21 @@ const useStyles = makeStyles((theme) => ({
     width: '250px',
     borderRadius: '10px',
   },
-  receivedMsgPic: {
+  receivedMsgAvatar: {
     width: '40px',
     height: '40px',
-    borderRadius: '50%',
+    alignItems: 'center',
+    marginRight: '10px',
+  },
+  receivedMsgPic: {
+    width: '120px',
+    height: '120px',
     alignItems: 'center',
     marginRight: '10px',
   },
   sentMsgPic: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
+    width: '120px',
+    height: '120px',
     alignItems: 'center',
     marginLeft: '10px',
   },

@@ -24,6 +24,7 @@ import LoginHeader from '../LoginHeader/LoginHeader';
 import SignupHeader from '../SignUpHeader/SignUpHeader';
 import Popover from '@material-ui/core/Popover';
 import getUnreadNotifications from '../../helpers/APICalls/getUnreadNotifications';
+import { patchAllNotificationsAsRead, patchNotificationAsRead } from '../../helpers/APICalls/markNotificationAsRead';
 import Notification from '../Notification/Notification';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -50,11 +51,15 @@ const NavBar = (): JSX.Element => {
 
   const handleViewNotifications = () => {
     handleMenuClose();
-    history.push('/messages');
+    history.push('/notifications');
   };
 
-  const markAllNotificationsAsRead = () => {
-    console.log('marking all notifications as read...');
+  const markAllNotificationsAsRead = async () => {
+    console.log('marking all notifications as read');
+    const data = await patchAllNotificationsAsRead();
+    if (data.notifications) {
+      fetchUnreadNotifications();
+    }
   };
 
   const handleMenuClose = () => {
@@ -196,15 +201,6 @@ const NavBar = (): JSX.Element => {
                                   <Link
                                     className={classes.viewNotifications}
                                     underline="none"
-                                    onClick={() => handleViewNotifications()}
-                                  >
-                                    <Typography className={classes.notificationsLink}>
-                                      View all notifications
-                                    </Typography>
-                                  </Link>
-                                  <Link
-                                    className={classes.viewNotifications}
-                                    underline="none"
                                     onClick={() => markAllNotificationsAsRead()}
                                   >
                                     <Typography className={classes.notificationsLink}>
@@ -221,6 +217,13 @@ const NavBar = (): JSX.Element => {
                           <MenuItem>You have no unread notifications</MenuItem>
                         )}
                       </List>
+                      <Link
+                        className={classes.viewNotifications}
+                        underline="none"
+                        onClick={() => handleViewNotifications()}
+                      >
+                        <Typography className={classes.notificationsLink}>View all notifications</Typography>
+                      </Link>
                     </Popover>
                   </>
                 )}
