@@ -9,8 +9,11 @@ import * as Yup from 'yup';
 import { useSnackBar } from '../../context/useSnackbarContext';
 import { useAuth } from '../../context/useAuthContext';
 import { useHistory } from 'react-router-dom';
+import { useSocket } from '../../context/useSocketContext';
+import sendNotification from '../../helpers/APICalls/sendNotification';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
+
 interface Props {
   profile: Profile;
 }
@@ -26,11 +29,22 @@ export default function BookingRequest({ profile }: any): JSX.Element {
   const { loggedInUser, userProfile } = useAuth();
   const { updateSnackBarMessage } = useSnackBar();
   const history = useHistory();
+  const { socket } = useSocket();
 
   const handleSubmit = (values: FormProps, { setSubmitting }: FormikHelpers<FormProps>): void => {
     const { startDate, endDate } = values;
     const userId = loggedInUser?.id ? loggedInUser?.id : '';
     const sitterId = profile?.userId;
+    const username =
+      userProfile?.lastName === '(n/a)' ? userProfile.firstName : `${userProfile?.firstName} ${userProfile?.lastName}`;
+
+    const sendRequestNotification = async (startDate: string, endDate: string) =>
+      await sendNotification(
+        'bookingRequested',
+        `Booking request from ${username}`,
+        `${username} would like to request dogsitting services from ${startDate} to ${endDate}`,
+        sitterId,
+      )();
 
     createBookingRequest({ startDate, endDate, userId, sitterId }).then((data) => {
       if (data.error) {
@@ -39,6 +53,14 @@ export default function BookingRequest({ profile }: any): JSX.Element {
       } else if (data.success) {
         setSubmitting(false);
         updateSnackBarMessage('Your booking request has been successfully submitted');
+        sendRequestNotification(startDate, endDate).then((data) => console.log(data));
+        if (socket !== undefined) {
+          socket.emit('notification', {
+            type: 'bookingRequest',
+            sender: userId,
+            recipient: sitterId,
+          });
+        }
         history.push('/sitters');
       }
     });

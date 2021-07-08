@@ -32,7 +32,6 @@ const profileSchema = new mongoose.Schema({
   isPaymentMethod: {
     type: Boolean,
   },
-
   //  sitter
   isDogSitter: {
     type: Boolean,
@@ -65,6 +64,8 @@ const profileSchema = new mongoose.Schema({
   tagLine: {
     // if sitter require
     type: String,
+    required: true,
+    default: "",
   },
 });
 
