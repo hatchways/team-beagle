@@ -32,12 +32,12 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
   await Profile.create({
     userId: user._id,
     firstName: username,
-    lastName: '(n/a)',
-    description: '(this user has not written a description yet)',
-    location: '(this user has not set a location yet)',
+    lastName: "(n/a)",
+    description: "(this user has not written a description yet)",
+    location: "(this user has not set a location yet)",
     isDogSitter: false,
     hourlyRate: 15,
-  })
+  });
 
   if (user) {
     const token = generateToken(user._id);
