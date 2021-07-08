@@ -11,6 +11,8 @@ import { useAuth } from '../../context/useAuthContext';
 import { useHistory } from 'react-router-dom';
 import { useSocket } from '../../context/useSocketContext';
 import sendNotification from '../../helpers/APICalls/sendNotification';
+import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface Props {
   profile: Profile;
@@ -64,11 +66,21 @@ export default function BookingRequest({ profile }: any): JSX.Element {
     });
   };
 
+  if (!userProfile?.isPaymentMethod) {
+    return (
+      <Card className={classes.bookingCard}>
+        <Typography>Please enter your payment method before making a booking</Typography>
+        <Link to="/profile/payment" component={RouterLink}>
+          Enter payment method
+        </Link>
+      </Card>
+    );
+  }
   return (
     <Card className={classes.bookingCard}>
       <Box className={classes.bookingInfo}>
-        <Typography className={classes.cardRate}>{profile.hourlyRate}/hr</Typography>
-        <Rating value={4} size="small" readOnly className={classes.rating} />
+        <Typography className={classes.cardRate}>${profile.hourlyRate}/hr</Typography>
+        <Rating value={profile.rating || 0} size="small" readOnly className={classes.rating} />
       </Box>
       <Box className={classes.formArea}>
         <Formik

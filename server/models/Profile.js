@@ -29,7 +29,9 @@ const profileSchema = new mongoose.Schema({
     },
   ],
   default: [],
-
+  isPaymentMethod: {
+    type: Boolean,
+  },
   //  sitter
   isDogSitter: {
     type: Boolean,

@@ -151,6 +151,7 @@ const NavBar = (): JSX.Element => {
                       badgeContent={unreadNotifications.length}
                       max={99}
                       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      className={classes.link}
                     >
                       <Link
                         aria-controls="notifications-menu"
@@ -158,7 +159,7 @@ const NavBar = (): JSX.Element => {
                         component={RouterLink}
                         variant="button"
                         to="#"
-                        className={classes.link}
+                        className={classes.messages}
                         onClick={handleNotificationsClick}
                         color="textPrimary"
                       >
