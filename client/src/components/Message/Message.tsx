@@ -27,7 +27,7 @@ const Message = ({ type, sendDate, content, senderName, senderPic, direction }: 
     </Grid>
   ) : (
     <Grid className={classes.receivedMsg}>
-      <Avatar className={classes.receivedMsgPic} src={senderPic} alt="senderPic" />
+      <Avatar className={classes.receivedMsgAvatar} src={senderPic} alt="senderPic" />
       <Grid>
         <Grid className={classes.receivedMsgHeading}>
           <Typography className={classes.receivedMsgName}>{senderName}</Typography>{' '}

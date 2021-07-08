@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const asyncHandler = require('express-async-handler');
-const decodeToken = require('../utils/decodeToken');
-const jwt = require('jsonwebtoken');
+const mongoose = require("mongoose");
+const asyncHandler = require("express-async-handler");
+const decodeToken = require("../utils/decodeToken");
+const jwt = require("jsonwebtoken");
 
-const Notification = require('../models/Notifications');
+const Notification = require("../models/Notifications");
 
 // @route GET /notifications/all
 // Get all notifications
@@ -15,10 +15,12 @@ exports.getAllNotifications = asyncHandler(async (req, res) => {
     if (allNotifications) {
       res.status(200).json({ notifications: allNotifications });
     } else {
-      res.status(404).json({ message: 'Notifications not found' });
+      res.status(404).json({ message: "Notifications not found" });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Could not get notifications for this user' });
+    return res
+      .status(500)
+      .json({ error: "Could not get notifications for this user" });
   }
 });
 
@@ -34,10 +36,12 @@ exports.getUnreadNotifications = asyncHandler(async (req, res) => {
     if (unreadNotifications) {
       res.status(200).json({ notifications: unreadNotifications });
     } else {
-      res.status(404).json({ message: 'Unread notifications not found' });
+      res.status(404).json({ message: "Unread notifications not found" });
     }
   } catch (error) {
-    return res.status(500).json({ error: 'Could not get read notifications for this user' });
+    return res
+      .status(500)
+      .json({ error: "Could not get read notifications for this user" });
   }
 });
 
@@ -61,7 +65,7 @@ exports.newNotification = asyncHandler(async (req, res) => {
       notification,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not post notification' });
+    return res.status(500).json({ error: "Could not post notification" });
   }
 });
 
@@ -70,11 +74,34 @@ exports.newNotification = asyncHandler(async (req, res) => {
 exports.readNotification = asyncHandler(async (req, res) => {
   const notificationId = req.params.id;
   try {
-    await Notification.findOneAndUpdate({ _id: notificationId }, { read: true });
-    res.status(201).json({
+    await Notification.findOneAndUpdate(
+      { _id: notificationId },
+      { read: true }
+    );
+    res.status(200).json({
       notification,
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Could not mark notification as read' });
+    return res
+      .status(500)
+      .json({ error: "Could not mark notification as read" });
+  }
+});
+
+// @route PATCH /notifications/readall
+// Mark all notifications as read
+exports.readAllNotifications = asyncHandler(async (req, res) => {
+  let decoded = decodeToken(req.cookies.token);
+  const userId = decoded.id;
+  try {
+    const unreadNotifications = await Notification.updateMany(
+      { $and: [{ recipient: userId }, { read: false }] },
+      { read: true }
+    );
+    res.status(200).json({ notifications: unreadNotifications });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: "Could not mark all notifications as read" });
   }
 });
