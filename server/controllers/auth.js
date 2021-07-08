@@ -37,6 +37,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     location: "(this user has not set a location yet)",
     isDogSitter: false,
     hourlyRate: 15,
+    geoLocation: "(this user has not set a geolocation yet)",
   });
 
   if (user) {
