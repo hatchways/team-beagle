@@ -22,11 +22,11 @@ export default function Profile(props: any): JSX.Element {
 
   const isNewUser = () => {
     if (props.location.state === undefined) {
-      return false
+      return false;
     } else {
-      return props.location.state.newUser
+      return props.location.state.newUser;
     }
-  }
+  };
 
   return (
     <Grid container className={`${classes.root}`}>
@@ -35,7 +35,9 @@ export default function Profile(props: any): JSX.Element {
         {MENU_LIST.map((item) => (
           <Link
             onClick={() => handleClick(item.replace(/\s/g, '').toLowerCase())}
-            className={`${classes.menuItem} ${currentSection === item.replace(/\s/g, '').toLowerCase() && classes.selectedMenuItem}`}
+            className={`${classes.menuItem} ${
+              currentSection === item.replace(/\s/g, '').toLowerCase() && classes.selectedMenuItem
+            }`}
             underline="none"
             key={item}
           >
@@ -44,8 +46,8 @@ export default function Profile(props: any): JSX.Element {
         ))}
       </Grid>
       <Container maxWidth="md" className={classes.menuContainer}>
-        {currentSection === 'editprofile' && <EditProfile newUser={isNewUser()}/>}
-        {currentSection === 'profilephoto' && <ProfilePhoto newUser={isNewUser()}/>}
+        {currentSection === 'editprofile' && <EditProfile />}
+        {currentSection === 'profilephoto' && <ProfilePhoto />}
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}

@@ -9,8 +9,10 @@ import logoutAPI from '../helpers/APICalls/logout';
 interface IAuthContext {
   loggedInUser: User | null | undefined;
   userProfile: Profile | null | undefined;
-  updateLoginContext: (data: AuthApiDataSuccess) => void;
+  updateLoginContext: (data: AuthApiDataSuccess, newUser: boolean) => void;
   logout: () => void;
+  // for notifications error
+  setLoggedInUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -18,6 +20,8 @@ export const AuthContext = createContext<IAuthContext>({
   userProfile: undefined,
   updateLoginContext: () => null,
   logout: () => null,
+  // for notifications error
+  setLoggedInUser: () => null,
 });
 
 export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
@@ -25,8 +29,8 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   const [loggedInUser, setLoggedInUser] = useState<User | null | undefined>();
   const [userProfile, setUserProfile] = useState<Profile | null | undefined>();
   const history = useHistory();
-  const updateLoginContext = useCallback((data: AuthApiDataSuccess) => {
-    setLoggedInUser(data.user);
+  const updateLoginContext = useCallback((data: AuthApiDataSuccess, newUser: boolean) => {
+    setLoggedInUser({ ...data.user, newUser });
     setUserProfile(data.profile);
   }, []);
 
@@ -46,7 +50,7 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
     const checkLoginWithCookies = async () => {
       await loginWithCookies().then((data: AuthApiData) => {
         if (data.success) {
-          updateLoginContext(data.success);
+          updateLoginContext(data.success, false);
         } else {
           // don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
           setLoggedInUser(null);
@@ -60,7 +64,7 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   }, [updateLoginContext, history]);
 
   return (
-    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout }}>
+    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout, setLoggedInUser }}>
       {children}
     </AuthContext.Provider>
   );

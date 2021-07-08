@@ -14,6 +14,7 @@ import { AuthProvider } from './context/useAuthContext';
 import { SocketProvider } from './context/useSocketContext';
 import { SnackBarProvider } from './context/useSnackbarContext';
 import Messages from './pages/Messages/Messages';
+import Notifications from './pages/Notifications/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
 import BookingTabs from './pages/Booking/BookingTabs';
@@ -42,27 +43,28 @@ function App(): JSX.Element {
 
                     <ProtectedRoute exact path="/sitters" component={BookingTabs} />
                     <ProtectedRoute exact path="/messages" component={Messages} />
+                    <ProtectedRoute exact path="/notifications" component={Notifications} />
                     <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
                     <Route exact path="/profile">
                       <Redirect to="/profile/editprofile" />
                     </Route>
 
-                  <ProtectedRoute exact path="/dashboard" component={Dashboard} />
-                  <ProtectedRoute exact path="/dashboard/:userId" component={ProfileDetails} />
-                  <Route exact path="/unauthorized">
-                    <Unauthorized />
-                  </Route>
-                  <Route path="*">
-                    <Redirect to="/" />
-                  </Route>
-                </Switch>
-              </MuiPickersUtilsProvider>
-            </SocketProvider>
-          </AuthProvider>
-        </SnackBarProvider>
-      </BrowserRouter>
-    </MuiThemeProvider>
-  </Elements>
+                    <ProtectedRoute exact path="/dashboard" component={Dashboard} />
+                    <ProtectedRoute exact path="/dashboard/:userId" component={ProfileDetails} />
+                    <Route exact path="/unauthorized">
+                      <Unauthorized />
+                    </Route>
+                    <Route path="*">
+                      <Redirect to="/" />
+                    </Route>
+                  </Switch>
+                </MuiPickersUtilsProvider>
+              </SocketProvider>
+            </AuthProvider>
+          </SnackBarProvider>
+        </BrowserRouter>
+      </MuiThemeProvider>
+    </Elements>
   );
 }
 

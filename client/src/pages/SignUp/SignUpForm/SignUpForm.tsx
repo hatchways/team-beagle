@@ -42,7 +42,7 @@ const SignUpForm = ({ handleSubmit }: Props): JSX.Element => {
   const demoUserSubmit = () => {
     login('demo@hatchways.com', 'demo123').then((data) => {
       if (data.success) {
-        updateLoginContext(data.success);
+        updateLoginContext(data.success, true);
         history.push('/dashboard');
       }
     });

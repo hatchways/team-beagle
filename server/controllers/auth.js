@@ -29,6 +29,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     password,
   });
 
+  console.log(user);
   await Profile.create({
     userId: user._id,
     firstName: username,
@@ -37,8 +38,10 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     location: "(this user has not set a location yet)",
     isDogSitter: false,
     hourlyRate: 15,
+    tagLine: "(no tagline)",
   });
 
+  console.log("profile created");
   if (user) {
     const token = generateToken(user._id);
     const secondsInWeek = 604800;
