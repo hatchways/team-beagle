@@ -43,14 +43,7 @@ exports.newConversation = asyncHandler(async (req, res) => {
         unreadMsgs: 1,
       });
       res.status(200).json({
-        success: {
-          message: {
-            id: message._id,
-            content: message.content,
-            read: message.read,
-          },
-          conversation,
-        },
+        success: true,
       });
     }
   } catch (error) {
