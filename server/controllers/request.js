@@ -75,9 +75,13 @@ exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      sitterId: userId,
-    });
+    requests = await Request.find(
+      {
+        sitterId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {
@@ -112,9 +116,13 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      userId: userId,
-    });
+    requests = await Request.find(
+      {
+        userId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {

@@ -67,6 +67,11 @@ const detachPaymentMethod = async (req, res, next) => {
     const detachedPaymentMethod = await stripe.paymentMethods.detach(
       paymentMethods.data[0].id
     );
+    const updatedProfile = await Profile.findOneAndUpdate(
+      { userId: userId },
+      { isPaymentMethod: false },
+      { new: true }
+    );
     return res.status(200).json({ detachedPaymentMethod });
   } catch (error) {
     return res.status(500).json({ message: error });
@@ -97,6 +102,11 @@ const addPaymentMethod = async (req, res, next) => {
       }
     );
 
+    const updatedProfile = await Profile.findOneAndUpdate(
+      { userId: userId },
+      { isPaymentMethod: true },
+      { new: true }
+    );
     return res.status(200).json({ attachedPaymentMethod });
   } catch (error) {
     return res.status(500).json({ message: error });
@@ -119,8 +129,9 @@ const payBooking = async (req, res, next) => {
   const sitterUser = await User.findById(sitterId);
   const sitterPayment = await Payment.findOne({ userId: sitterId });
 
-  if (!sitterPayment.paymentCurrency)
-    res.status(400).json("dog sitter has not set payments");
+  console.log(sitterUser, sitterPayment);
+  if (!sitterPayment || !sitterPayment.paymentMethodId)
+    return res.status(400).json("dog sitter has not set payments");
 
   const start = new moment(request.startDate);
   const end = new moment(request.endDate);
@@ -132,13 +143,13 @@ const payBooking = async (req, res, next) => {
   const ownerPayment = await Payment.findOne({
     userId: ownerId,
   });
-  if (!ownerPayment.paymentMethodId)
-    res.status(400).json("dog owner has not set payments");
+  if (!ownerPayment || !ownerPayment.paymentMethodId)
+    return res.status(400).json("dog owner has not set payments");
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: ownerPayment.customerId,
     amount,
-    currency: sitterPayment.paymentCurrency,
+    currency: sitterPayment ? sitterPayment.paymentCurrency : "usd",
     payment_method: ownerPayment.paymentMethodId,
     off_session: true,
     confirm: true,

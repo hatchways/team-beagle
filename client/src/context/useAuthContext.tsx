@@ -10,6 +10,7 @@ interface IAuthContext {
   loggedInUser: User | null | undefined;
   userProfile: Profile | null | undefined;
   updateLoginContext: (data: AuthApiDataSuccess, newUser: boolean) => void;
+  updateProfileContext: (data: any) => void;
   logout: () => void;
   // for notifications error
   setLoggedInUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
@@ -19,6 +20,7 @@ export const AuthContext = createContext<IAuthContext>({
   loggedInUser: undefined,
   userProfile: undefined,
   updateLoginContext: () => null,
+  updateProfileContext: () => null,
   logout: () => null,
   // for notifications error
   setLoggedInUser: () => null,
@@ -32,6 +34,9 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   const updateLoginContext = useCallback((data: AuthApiDataSuccess, newUser: boolean) => {
     setLoggedInUser({ ...data.user, newUser });
     setUserProfile(data.profile);
+  }, []);
+  const updateProfileContext = useCallback((data: any) => {
+    setUserProfile(data);
   }, []);
 
   const logout = useCallback(async () => {
@@ -64,7 +69,7 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
   }, [updateLoginContext, history]);
 
   return (
-    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout, setLoggedInUser }}>
+    <AuthContext.Provider value={{ loggedInUser, userProfile, updateLoginContext, logout, setLoggedInUser, updateProfileContext }}>
       {children}
     </AuthContext.Provider>
   );

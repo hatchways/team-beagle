@@ -7,6 +7,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   appBar: {
     backgroundColor: '#FFFFFF',
+    height: 85,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   toolbar: {},
 

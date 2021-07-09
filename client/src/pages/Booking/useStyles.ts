@@ -62,7 +62,8 @@ const useStyles = makeStyles((theme) => ({
       width: `calc(100%/7)`,
     },
     '& .DayPicker-Day--today': {
-      color: `${theme.palette.secondary.main} !important`,
+      backgroundColor: `${theme.palette.warning.main} !important`,
+      color: 'white !important',
     },
     '& .DayPicker-Caption div': {
       color: `${theme.palette.primary.main} !important`,
