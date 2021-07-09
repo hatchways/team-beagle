@@ -11,6 +11,7 @@ import { useAuth } from '../../context/useAuthContext';
 import { useHistory } from 'react-router-dom';
 import { useSocket } from '../../context/useSocketContext';
 import sendNotification from '../../helpers/APICalls/sendNotification';
+import startConversation from '../../helpers/APICalls/startConversation';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -60,6 +61,9 @@ export default function BookingRequest({ profile }: any): JSX.Element {
             recipient: sitterId,
           });
         }
+        const initiateConversation = async (sitterId: string, username: string) =>
+          await startConversation(sitterId, username).then((data) => console.log(data));
+        initiateConversation(sitterId, username);
         history.push('/sitters');
       }
     });
