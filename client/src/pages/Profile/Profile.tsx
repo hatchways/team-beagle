@@ -104,13 +104,13 @@ export default function Profile(props: any): JSX.Element {
           ))}
         </Hidden>
       </Grid>
-      <Container maxWidth="md" className={classes.menuContainer}>
+      <Grid className={classes.menuContainer}>
         {currentSection === 'editprofile' && <EditProfile />}
         {currentSection === 'profilephoto' && <ProfilePhoto />}
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}
-      </Container>
+      </Grid>
     </Grid>
   );
 }
