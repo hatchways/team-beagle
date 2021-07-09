@@ -81,7 +81,7 @@ export default function EditProfile(): JSX.Element {
     username: string;
   }
 
-  const { loggedInUser } = useContext(AuthContext);
+  const { loggedInUser, updateProfileContext } = useContext(AuthContext);
   const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
 
   const handleSwitch = () => {
@@ -152,11 +152,12 @@ export default function EditProfile(): JSX.Element {
       hourlyRate,
       tagLine,
       availability,
-    ).then((data) => {
+    ).then((data: any) => {
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('Your profile has been upated');
+        updateProfileContext(data.profile);
         if (loggedInUser?.newUser === true) history.push({ pathname: '/dashboard' });
       }
     });
@@ -167,11 +168,12 @@ export default function EditProfile(): JSX.Element {
       const data = await getProfile(loggedInUserId)();
       if (data.profile) {
         setCurrentProfile(data);
+        updateProfileContext(data.profile);
         setIsDogSitter(data.profile.isDogSitter);
       }
     };
     fetchProfile();
-  }, [loggedInUserId]);
+  }, [loggedInUserId, updateProfileContext]);
 
   const formik = useFormik({
     enableReinitialize: true,
