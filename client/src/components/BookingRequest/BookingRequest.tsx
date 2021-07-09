@@ -20,7 +20,6 @@ interface Props {
 
 interface FormProps {
   startDate: string;
-
   endDate: string;
 }
 
