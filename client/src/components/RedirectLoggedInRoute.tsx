@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
-import { useAuth } from './../context/useAuthContext';
+import { useAuth } from '../context/useAuthContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import { Box } from '@material-ui/core';
@@ -9,9 +9,8 @@ interface Props extends RouteProps {
   component: React.ComponentType;
 }
 
-const ProtectedRoute = ({ component: Component, ...rest }: Props): JSX.Element => {
+const RedirectLoggedInRoute = ({ component: Component, ...rest }: Props): JSX.Element => {
   const { loggedInUser } = useAuth();
-
   return (
     <Route
       {...rest}
@@ -24,13 +23,13 @@ const ProtectedRoute = ({ component: Component, ...rest }: Props): JSX.Element =
             </Grid>
           );
         } else {
-          if (loggedInUser) {
+          if (!loggedInUser) {
             return <Component {...rest} {...props} />;
           } else {
             return (
               <Redirect
                 to={{
-                  pathname: '/unauthorized',
+                  pathname: '/',
                   state: {
                     from: props.location,
                   },
@@ -44,4 +43,4 @@ const ProtectedRoute = ({ component: Component, ...rest }: Props): JSX.Element =
   );
 };
 
-export default ProtectedRoute;
+export default RedirectLoggedInRoute;

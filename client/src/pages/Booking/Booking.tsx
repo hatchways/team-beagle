@@ -7,6 +7,8 @@ import { updateBookingsAccept, deleteBooking, updateBookingsPaid } from '../../h
 import { paymentPayBooking } from '../../helpers/APICalls/payment';
 import { Request, RequestWithProfile } from '../../interface/Request';
 
+import { Box } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import useStyles from './useStyles';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
@@ -42,6 +44,7 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
   const username =
     userProfile?.lastName === '(n/a)' ? userProfile.firstName : `${userProfile?.firstName} ${userProfile?.lastName}`;
   const [expanded, setExpanded] = useState<string | false>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [mostRecentUpdate, setMostRecentUpdate] = useState(Date.now());
   const [nextBooking, setNextBooking] = useState<RequestObj>();
@@ -87,6 +90,7 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
       setCurrBooking(curr);
       setPastBooking(past);
       setpastDates(oldDates);
+      setIsLoading(false);
     });
   }, [apiCall, isDogStitter, mostRecentUpdate]);
 
@@ -251,6 +255,14 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
       });
     }
   };
+  if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
 
   return (
     <Grid container component="main" className={`${classes.root}`}>

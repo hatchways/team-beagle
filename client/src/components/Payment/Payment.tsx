@@ -8,12 +8,13 @@ import useStyles from './useStyles';
 import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormGroup';
 import Alert from '@material-ui/lab/Alert';
-import { Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function Payment(): JSX.Element {
   const { loggedInUser, userProfile, updateProfileContext } = useAuth();
@@ -31,6 +32,7 @@ export default function Payment(): JSX.Element {
   const [success, setSuccess] = useState<boolean>(false);
   const [card, setCard] = useState<any>();
   const [currency, setCurrency] = React.useState('EUR');
+  const [isLoading, setIsLoading] = useState(true);
 
   const currencies = [
     {
@@ -60,6 +62,7 @@ export default function Payment(): JSX.Element {
       const secret = res.customerSecret;
       setPaymentSecret(secret);
       if (res.card) setCard(res.card);
+      setIsLoading(false);
     });
   }, []);
 
@@ -111,6 +114,14 @@ export default function Payment(): JSX.Element {
 
   let cardInfo;
   if (card) cardInfo = card.card;
+  if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
   return (
     <Grid className={classes.root}>
       {!card && (
