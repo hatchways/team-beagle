@@ -23,20 +23,7 @@ const RedirectLoggedInRoute = ({ component: Component, ...rest }: Props): JSX.El
             </Grid>
           );
         } else {
-          if (!loggedInUser) {
-            return <Component {...rest} {...props} />;
-          } else {
-            return (
-              <Redirect
-                to={{
-                  pathname: '/',
-                  state: {
-                    from: props.location,
-                  },
-                }}
-              />
-            );
-          }
+          return <Component {...rest} {...props} />;
         }
       }}
     />
