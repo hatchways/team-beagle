@@ -72,6 +72,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   cardFooterHr: {
     fontWeight: 'bolder',
   },
+  showMore: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '0 auto',
+    marginTop: '42px',
+  }
 }));
 
 export default useStyles;

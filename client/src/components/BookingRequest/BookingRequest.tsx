@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { Typography, Card, Box, TextField, Button } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import useStyles from './useStyles';
@@ -13,8 +14,8 @@ import { useSocket } from '../../context/useSocketContext';
 import sendNotification from '../../helpers/APICalls/sendNotification';
 import startConversation from '../../helpers/APICalls/startConversation';
 import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
 import { Link as RouterLink } from 'react-router-dom';
-
 interface Props {
   profile: Profile;
 }
@@ -30,6 +31,7 @@ export default function BookingRequest({ profile }: any): JSX.Element {
   const { updateSnackBarMessage } = useSnackBar();
   const history = useHistory();
   const { socket } = useSocket();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = (values: FormProps, { setSubmitting }: FormikHelpers<FormProps>): void => {
     const { startDate, endDate } = values;
@@ -69,6 +71,18 @@ export default function BookingRequest({ profile }: any): JSX.Element {
     });
   };
 
+  useEffect(() => {
+      setTimeout(function(){setIsLoading(false);}, 1000);
+    },[])
+
+  if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
   if (!userProfile?.isPaymentMethod) {
     return (
       <Card className={classes.bookingCard}>
