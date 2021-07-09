@@ -2,7 +2,7 @@ import { Typography, Card, Box, TextField, Button } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import useStyles from './useStyles';
 import { Profile } from '../../interface/Profile';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { createBookingRequest } from '../../helpers/APICalls/requestBooking';
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
@@ -132,7 +132,7 @@ export default function BookingRequest({ profile }: any): JSX.Element {
               </Box>
               <Box>
                 <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
-                  SEND REQUEST
+                  {isSubmitting ? <CircularProgress style={{ color: 'white' }} /> : 'Send Request'}
                 </Button>
               </Box>
             </form>
