@@ -195,15 +195,15 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
       });
     }
 
-    // if (updatedBookingAccept.request) {
-    //   setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
-    //   const paidBooking = await paymentPayBooking(id);
-    //   if (paidBooking.paymentIntent) {
-    //     const updatedBookingPaid: any = await updateBookingsPaid(id, true);
-    //     if (updatedBookingPaid.request)
-    //       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], paid: true } }));
-    //   }
-    // }
+    if (updatedBookingAccept.request) {
+      setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
+      const paidBooking = await paymentPayBooking(id);
+      if (paidBooking.paymentIntent) {
+        const updatedBookingPaid: any = await updateBookingsPaid(id, true);
+        if (updatedBookingPaid.request)
+          setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], paid: true } }));
+      }
+    }
   };
 
   const handleDecline = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
