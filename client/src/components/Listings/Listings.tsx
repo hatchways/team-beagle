@@ -51,9 +51,6 @@ export default function Listings(): JSX.Element {
   const [isTourOpen, setIsTourOpen] = useState(true);
   const [showMoreUsers, setShowMoreUsers] = useState(false);
 
-
-
-
   const profilesOnLoad = () => {
     const profileList: Profile[] = [];
     getProfiles().then((data) => {
@@ -70,60 +67,86 @@ export default function Listings(): JSX.Element {
   };
 
   const updateProfilesByCity = useCallback(async () => {
-    const searchList: Profile[] = [];
-    const data = await searchSitters(searchProfiles);
-    const profile: any = data.profiles;
-    if (profile) {
-      profile.map((user: Profile) => {
-        if (profile) {
-          searchList.push(user);
-        }
-      });
-      setSearchCityUsers(searchList);
-    }
-  }, [searchProfiles]);
-
-  const updateProfilesByDate = useCallback(async () => {
     const profileDaysList: Profile[] = [];
     const profileCityList: Profile[] = [];
-    const idList:[] = [];
-    const profile:[] = [];
+    const idList = new Set();
+    const profile: Profile[] = [];
     if (dates && searchProfiles) {
       const dataDays = await searchSittersByDays(dates);
       const dataCity = await searchSitters(searchProfiles);
       const daysProfiles: any = dataDays.profiles;
-      console.log(daysProfiles)
+      console.log(daysProfiles);
       const cityProfiles: any = dataCity.profiles;
-      console.log(cityProfiles)
-          if (daysProfiles) {
-        daysProfiles.map((user: any) => {
+      console.log(cityProfiles);
+      if (daysProfiles) {
+        daysProfiles.forEach((user: any) => {
           profileDaysList.push(user);
-          idList.push(user?.userId);
+          idList.add(user.userId);
         });
       }
-        if(cityProfiles) {
-          cityProfiles.map((user: Profile) => {
-            profileCityList.push(user)
-          })
-        }
-  
-      let filteredUsers: [] = [];
-      
-    function uniq(profileList: any) {
-    const seen: any = {};
-    return profileList.filter(function(item: any) {
-        return seen.hasOwnProperty(item.userId) ? false : (seen[item] = true);
-    });
-}   
-    filteredUsers = uniq()
-    console.log(filteredUsers);
-    setSitters(filteredUsers);
-    }  else if (dates) {
-      const profileList: [] = [];
-      const data = await searchSittersByDays(dates);
+      if (cityProfiles) {
+        cityProfiles.forEach((user: any) => {
+          profileCityList.push(user);
+          if (idList.has(user.userId)) {
+            profile.push(user);
+          }
+        });
+      }
+
+      console.log(profile);
+      setSitters(profile);
+    } else if (searchProfiles) {
+      const searchList: Profile[] = [];
+      const data = await searchSitters(searchProfiles);
       const profile: any = data.profiles;
       if (profile) {
         profile.map((user: Profile) => {
+          if (profile) {
+            searchList.push(user);
+          }
+        });
+        setSitters(searchList);
+      }
+    } else {
+      profilesOnLoad();
+    }
+  }, [searchProfiles, dates]);
+
+  const updateProfilesByDate = useCallback(async () => {
+    const profileDaysList: Profile[] = [];
+    const profileCityList: Profile[] = [];
+    const idList = new Set();
+    const profile: Profile[] = [];
+    if (dates && searchProfiles) {
+      const dataDays = await searchSittersByDays(dates);
+      const dataCity = await searchSitters(searchProfiles);
+      const daysProfiles: any = dataDays.profiles;
+      console.log(daysProfiles);
+      const cityProfiles: any = dataCity.profiles;
+      console.log(cityProfiles);
+      if (daysProfiles) {
+        daysProfiles.forEach((user: any) => {
+          profileDaysList.push(user);
+          idList.add(user.userId);
+        });
+      }
+      if (cityProfiles) {
+        cityProfiles.forEach((user: any) => {
+          profileCityList.push(user);
+          if (idList.has(user.userId)) {
+            profile.push(user);
+          }
+        });
+      }
+
+      console.log(profile);
+      setSitters(profile);
+    } else if (dates) {
+      const profileList: Profile[] = [];
+      const data = await searchSittersByDays(dates);
+      const profile: any = data.profiles;
+      if (profile) {
+        profile.map((user: any) => {
           profileList.push(user);
         });
       } else {
@@ -145,11 +168,11 @@ export default function Listings(): JSX.Element {
 
   const handleShowMore = () => {
     setShowMoreUsers(true);
-  }
-  
+  };
+
   const handleShowLess = () => {
     setShowMoreUsers(false);
-  }
+  };
 
   useEffect(() => {
     updateProfilesByCity();
@@ -232,35 +255,34 @@ export default function Listings(): JSX.Element {
         </Grid>
       </Container>
       {/* End search */}
-      
-      {!showMoreUsers ?
-      <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
-        <Grid container spacing={4}>
-          {sitters.slice(0, 6).map((profile) => (
-            <Grid item key={profile.userId} xs={12} sm={6} md={4}>
-              <ProfileCard profile={profile} />
-            </Grid>
-          ))}
-          
-        </Grid>
-        <Button onClick={handleShowMore} variant="outlined" className={classes.showMore}>
+
+      {!showMoreUsers ? (
+        <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
+          <Grid container spacing={4}>
+            {sitters.slice(0, 6).map((profile) => (
+              <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+                <ProfileCard profile={profile} />
+              </Grid>
+            ))}
+          </Grid>
+          <Button onClick={handleShowMore} variant="outlined" className={classes.showMore}>
             Show More Options
-        </Button>
-      </Container>
-      :
-      <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
-      <Grid container spacing={4}>
-          {sitters.slice(0, 12).map((profile) => (
-            <Grid item key={profile.userId} xs={12} sm={6} md={4}>
-              <ProfileCard profile={profile} />
-            </Grid>
-          ))}
-        </Grid>
-        <Button onClick={handleShowLess} variant="outlined" className={classes.showMore}>
+          </Button>
+        </Container>
+      ) : (
+        <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
+          <Grid container spacing={4}>
+            {sitters.slice(0, 12).map((profile) => (
+              <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+                <ProfileCard profile={profile} />
+              </Grid>
+            ))}
+          </Grid>
+          <Button onClick={handleShowLess} variant="outlined" className={classes.showMore}>
             Show Fewer Options
-        </Button>
-      </Container>
-      } 
+          </Button>
+        </Container>
+      )}
     </Grid>
   );
 }
