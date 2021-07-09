@@ -14,6 +14,7 @@ import sendNotification from '../../helpers/APICalls/sendNotification';
 import startConversation from '../../helpers/APICalls/startConversation';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink } from 'react-router-dom';
+import moment from 'moment';
 
 interface Props {
   profile: Profile;
@@ -42,7 +43,9 @@ export default function BookingRequest({ profile }: any): JSX.Element {
       await sendNotification(
         'bookingRequested',
         `Booking request from ${username}`,
-        `${username} would like to request dogsitting services from ${startDate} to ${endDate}`,
+        `${username} would like to request dogsitting services from ${moment(startDate).format(
+          'MMMM Do YYYY',
+        )} to ${moment(endDate).format('MMMM Do YYYY')}`,
         sitterId,
       )();
 
