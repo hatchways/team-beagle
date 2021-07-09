@@ -7,7 +7,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Container from '@material-ui/core/Container';
 import SearchIcon from '@material-ui/icons/Search';
 
-
 //Api calls
 import React, { useState, useEffect, useCallback, useContext } from 'react';
 import searchSitters from '../../helpers/APICalls/searchSitters';
@@ -21,9 +20,7 @@ import ProfileCard from '../ProfileCard/ProfileCard';
 import Tour from 'reactour';
 import { AuthContext } from '../../context/useAuthContext';
 
-
 import moment from 'moment';
-
 
 export interface ProfileProps {
   firstName: string;
@@ -39,8 +36,6 @@ interface DateProps {
   startDate: Date;
   endDate: Date;
 }
-
-
 
 export default function Listings(): JSX.Element {
   const classes = useStyles();
@@ -67,8 +62,6 @@ export default function Listings(): JSX.Element {
     });
   };
 
-  }
-
   const updateProfilesByCity = useCallback(async () => {
     const searchList: Profile[] = [];
     const data = await searchSitters(searchProfiles);
@@ -83,22 +76,21 @@ export default function Listings(): JSX.Element {
     }
   }, [searchProfiles]);
 
-
   const updateProfilesByDate = useCallback(async () => {
     const profileList: Profile[] = [];
     if (!dates) {
-      profilesOnLoad()
+      profilesOnLoad();
     } else {
       const data = await searchSittersByDays(dates);
       const profile: any = data.profiles;
       if (profile) {
         profile.map((user: Profile) => {
           profileList.push(user);
-        })
+        });
       } else {
         profilesOnLoad();
       }
-      setSitters(profileList)
+      setSitters(profileList);
     }
   }, [dates]);
 
@@ -108,17 +100,16 @@ export default function Listings(): JSX.Element {
   };
 
   const handleDateChange = (e: any) => {
-
-    const now = moment(e.target.value).format("dddd").toLocaleLowerCase()
+    const now = moment(e.target.value).format('dddd').toLocaleLowerCase();
     setDates(now);
-  }
+  };
   useEffect(() => {
     updateProfilesByCity();
   }, [setSearchProfiles, updateProfilesByCity]);
 
   useEffect(() => {
-    updateProfilesByDate()
-  }, [updateProfilesByDate, setSearchProfiles])
+    updateProfilesByDate();
+  }, [updateProfilesByDate, setSearchProfiles]);
 
   useEffect(() => {
     profilesOnLoad();
@@ -178,20 +169,18 @@ export default function Listings(): JSX.Element {
             }}
           />
           <TextField
-            className={`${classes.textField} ${classes.textFieldLocation}`}
+            className={`${classes.textField} ${classes.textFieldLocation} fifth-step`}
             label="Drop Off"
             id="outlined-basic"
             variant="outlined"
             type="date"
             defaultValue={new Date()}
-            className={`${classes.textField} fifth-step`}
             InputLabelProps={{
               shrink: true,
             }}
             name="startDate"
             onChange={handleDateChange}
           />
-
         </Grid>
       </Container>
       {/* End search */}
