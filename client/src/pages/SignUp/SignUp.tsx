@@ -28,8 +28,8 @@ export default function Register(): JSX.Element {
         setSubmitting(false);
         updateSnackBarMessage(data.error.message);
       } else if (data.success) {
-        updateLoginContext(data.success);
-        history.push({pathname: '/profile/editprofile', state: {newUser: true}});
+        updateLoginContext(data.success, true);
+        history.push({ pathname: '/profile/editprofile', state: { newUser: true } });
       } else {
         // should not get here from backend but this catch is for an unknown issue
         console.error({ data });

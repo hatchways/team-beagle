@@ -55,7 +55,6 @@ const NavBar = (): JSX.Element => {
   };
 
   const markAllNotificationsAsRead = async () => {
-    console.log('marking all notifications as read');
     const data = await patchAllNotificationsAsRead();
     if (data.notifications) {
       fetchUnreadNotifications();
@@ -149,7 +148,7 @@ const NavBar = (): JSX.Element => {
                 >
                   Bookings
                 </Link>
-                {unreadNotifications && (
+                {loggedInUser.newUser === false && unreadNotifications && (
                   <>
                     <Badge
                       color="secondary"
@@ -185,38 +184,40 @@ const NavBar = (): JSX.Element => {
                         horizontal: 'center',
                       }}
                     >
-                      <List>
-                        {unreadNotifications.length > 0 ? (
-                          unreadNotifications.map((notification, idx) => (
-                            <>
-                              <Notification
-                                key={notification._id}
-                                title={notification.title}
-                                content={notification.content}
-                                date={notification.createdAt}
-                                type={notification.type}
-                              />
-                              {idx === unreadNotifications.length - 1 ? (
-                                <>
-                                  <Link
-                                    className={classes.viewNotifications}
-                                    underline="none"
-                                    onClick={() => markAllNotificationsAsRead()}
-                                  >
-                                    <Typography className={classes.notificationsLink}>
-                                      Mark all notifications as read
-                                    </Typography>
-                                  </Link>
-                                </>
-                              ) : (
-                                <Divider />
-                              )}
-                            </>
-                          ))
-                        ) : (
-                          <MenuItem>You have no unread notifications</MenuItem>
-                        )}
-                      </List>
+                      {loggedInUser.newUser === false && (
+                        <List>
+                          {unreadNotifications.length > 0 ? (
+                            unreadNotifications.map((notification, idx) => (
+                              <>
+                                <Notification
+                                  key={notification._id}
+                                  title={notification.title}
+                                  content={notification.content}
+                                  date={notification.createdAt}
+                                  type={notification.type}
+                                />
+                                {idx === unreadNotifications.length - 1 ? (
+                                  <>
+                                    <Link
+                                      className={classes.viewNotifications}
+                                      underline="none"
+                                      onClick={() => markAllNotificationsAsRead()}
+                                    >
+                                      <Typography className={classes.notificationsLink}>
+                                        Mark all notifications as read
+                                      </Typography>
+                                    </Link>
+                                  </>
+                                ) : (
+                                  <Divider />
+                                )}
+                              </>
+                            ))
+                          ) : (
+                            <MenuItem>You have no unread notifications</MenuItem>
+                          )}
+                        </List>
+                      )}
                       <Link
                         className={classes.viewNotifications}
                         underline="none"

@@ -35,6 +35,7 @@ export default function Profile(props: any): JSX.Element {
       return props.location.state.newUser;
     }
   };
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -103,13 +104,13 @@ export default function Profile(props: any): JSX.Element {
           ))}
         </Hidden>
       </Grid>
-      <Grid className={classes.menuContainer}>
-        {currentSection === 'editprofile' && <EditProfile newUser={isNewUser()} />}
-        {currentSection === 'profilephoto' && <ProfilePhoto newUser={isNewUser()} />}
+      <Container maxWidth="md" className={classes.menuContainer}>
+        {currentSection === 'editprofile' && <EditProfile />}
+        {currentSection === 'profilephoto' && <ProfilePhoto />}
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}
-      </Grid>
+      </Container>
     </Grid>
   );
 }

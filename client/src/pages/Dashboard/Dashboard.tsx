@@ -12,13 +12,6 @@ export default function Dashboard(): JSX.Element {
   const { socket } = useSocket();
   const { loggedInUser } = useContext(AuthContext);
 
-  // useEffect(() => {
-  //   initSocket();
-  //   // return () => {
-  //   //   socket.close();
-  //   // }
-  // }, [initSocket]);
-
   socket !== undefined && loggedInUser !== undefined && loggedInUser !== null && socket.emit('login', loggedInUser.id);
 
   return (
