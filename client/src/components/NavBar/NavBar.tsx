@@ -24,26 +24,20 @@ import LoginHeader from '../LoginHeader/LoginHeader';
 import SignupHeader from '../SignUpHeader/SignUpHeader';
 import Popover from '@material-ui/core/Popover';
 import getUnreadNotifications from '../../helpers/APICalls/getUnreadNotifications';
+import { patchAllNotificationsAsRead, patchNotificationAsRead } from '../../helpers/APICalls/markNotificationAsRead';
 import Notification from '../Notification/Notification';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-
-interface Notification {
-  title: string;
-  content: string;
-  date: Date;
-  sender: string;
-  recipient: string;
-  type: string;
-  read: boolean;
-}
+import { useHistory } from 'react-router-dom';
+import { useSocket } from '../../context/useSocketContext';
+import { INotification } from '../../interface/Notification';
 
 const NavBar = (): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser, logout, userProfile } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = React.useState<Element | null>(null);
-  const [unreadNotifications, setUnreadNotifications] = React.useState<any[]>([]);
+  const [unreadNotifications, setUnreadNotifications] = React.useState<INotification[]>([]);
 
   const handleMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(e.currentTarget);
@@ -51,6 +45,20 @@ const NavBar = (): JSX.Element => {
 
   const handleNotificationsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     setNotificationsAnchorEl(e.currentTarget);
+  };
+
+  const history = useHistory();
+
+  const handleViewNotifications = () => {
+    handleMenuClose();
+    history.push('/notifications');
+  };
+
+  const markAllNotificationsAsRead = async () => {
+    const data = await patchAllNotificationsAsRead();
+    if (data.notifications) {
+      fetchUnreadNotifications();
+    }
   };
 
   const handleMenuClose = () => {
@@ -62,22 +70,34 @@ const NavBar = (): JSX.Element => {
     logout();
   };
 
+  const fetchUnreadNotifications = async () => {
+    const data = await getUnreadNotifications()();
+    if (data.notifications) {
+      setUnreadNotifications(
+        data.notifications.sort(
+          (a: INotification, b: INotification) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
+        ),
+      );
+    }
+  };
+
   useEffect(() => {
-    const fetchUnreadNotifications = async () => {
-      const data = await getUnreadNotifications()();
-      if (data.notifications) {
-        setUnreadNotifications(
-          data.notifications.sort(
-            (a: Notification, b: Notification) => new Date(b.date).valueOf() - new Date(a.date).valueOf(),
-          ),
-        );
-      }
-    };
     fetchUnreadNotifications();
   }, [loggedInUser]);
 
+  const { socket } = useSocket();
+  socket !== undefined
+    ? socket.once('notification', ({ from, to, type }) => {
+        if (loggedInUser !== undefined && loggedInUser !== null) {
+          if (to === loggedInUser.id) {
+            fetchUnreadNotifications();
+          }
+        }
+      })
+    : '';
+
   return (
-    <Grid container component="main" className={`${classes.root}`}>
+    <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
@@ -128,13 +148,14 @@ const NavBar = (): JSX.Element => {
                 >
                   Bookings
                 </Link>
-                {unreadNotifications && (
+                {loggedInUser.newUser === false && unreadNotifications && (
                   <>
                     <Badge
                       color="secondary"
                       badgeContent={unreadNotifications.length}
                       max={99}
                       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      className={classes.link}
                     >
                       <Link
                         aria-controls="notifications-menu"
@@ -142,7 +163,7 @@ const NavBar = (): JSX.Element => {
                         component={RouterLink}
                         variant="button"
                         to="#"
-                        className={classes.link}
+                        className={classes.messages}
                         onClick={handleNotificationsClick}
                         color="textPrimary"
                       >
@@ -163,32 +184,51 @@ const NavBar = (): JSX.Element => {
                         horizontal: 'center',
                       }}
                     >
-                      <List>
-                        {unreadNotifications.length > 0 ? (
-                          unreadNotifications.map((notification, idx) => (
-                            <>
-                              <Notification
-                                key={notification._id}
-                                title={notification.title}
-                                content={notification.content}
-                                date={notification.date}
-                              />
-                              {idx === unreadNotifications.length - 1 ? (
-                                <Link>
-                                  <Typography className={classes.notificationsLink}>View all notifications</Typography>
-                                </Link>
-                              ) : (
-                                <Divider />
-                              )}
-                            </>
-                          ))
-                        ) : (
-                          <MenuItem>You have no unread notifications</MenuItem>
-                        )}
-                      </List>
+                      {loggedInUser.newUser === false && (
+                        <List>
+                          {unreadNotifications.length > 0 ? (
+                            unreadNotifications.map((notification, idx) => (
+                              <>
+                                <Notification
+                                  key={notification._id}
+                                  title={notification.title}
+                                  content={notification.content}
+                                  date={notification.createdAt}
+                                  type={notification.type}
+                                />
+                                {idx === unreadNotifications.length - 1 ? (
+                                  <>
+                                    <Link
+                                      className={classes.viewNotifications}
+                                      underline="none"
+                                      onClick={() => markAllNotificationsAsRead()}
+                                    >
+                                      <Typography className={classes.notificationsLink}>
+                                        Mark all notifications as read
+                                      </Typography>
+                                    </Link>
+                                  </>
+                                ) : (
+                                  <Divider />
+                                )}
+                              </>
+                            ))
+                          ) : (
+                            <MenuItem>You have no unread notifications</MenuItem>
+                          )}
+                        </List>
+                      )}
+                      <Link
+                        className={classes.viewNotifications}
+                        underline="none"
+                        onClick={() => handleViewNotifications()}
+                      >
+                        <Typography className={classes.notificationsLink}>View all notifications</Typography>
+                      </Link>
                     </Popover>
                   </>
                 )}
+
                 <Badge color="primary" variant="dot" className={classes.link}>
                   <Link
                     component={RouterLink}
@@ -221,10 +261,6 @@ const NavBar = (): JSX.Element => {
                   vertical: 'bottom',
                   horizontal: 'right',
                 }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
               >
                 <MenuItem>
                   <Typography variant="h6" color="primary">
@@ -237,19 +273,37 @@ const NavBar = (): JSX.Element => {
                 </MenuItem>
                 <Hidden mdUp>
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/dashboard" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/dashboard"
+                      activeClassName="selected"
+                    >
                       Dashboard
                     </Link>
                   </MenuItem>
 
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/sitters" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/sitters"
+                      activeClassName="selected"
+                    >
                       Bookings
                     </Link>
                   </MenuItem>
 
                   <MenuItem>
-                    <Link component={RouterLink} color="textPrimary" to="/messages" activeClassName="selected">
+                    <Link
+                      component={RouterLink}
+                      onClick={handleMenuClose}
+                      color="textPrimary"
+                      to="/messages"
+                      activeClassName="selected"
+                    >
                       Messages
                     </Link>
                   </MenuItem>

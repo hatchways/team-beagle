@@ -7,6 +7,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   appBar: {
     backgroundColor: '#FFFFFF',
+    height: 85,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   toolbar: {},
 
@@ -88,6 +92,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   notificationsLink: {
     textAlign: 'center',
+  },
+  viewNotifications: {
+    cursor: 'pointer',
   },
 }));
 

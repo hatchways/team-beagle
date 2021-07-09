@@ -23,8 +23,9 @@ export interface Profile {
   };
   rating?: number;
   hourlyRate?: number;
-  tagLine?: string;
+  tagLine: string;
   fullName?: string;
+  isPaymentMethod?: boolean;
 }
 
 export interface SearchProfileApiData {

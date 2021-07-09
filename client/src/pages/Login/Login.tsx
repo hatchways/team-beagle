@@ -29,7 +29,7 @@ export default function Login(): JSX.Element {
         updateSnackBarMessage(data.error.message);
       } else if (data.success) {
         setSubmitting(false);
-        updateLoginContext(data.success);
+        updateLoginContext(data.success, false);
         history.push('/dashboard');
       } else {
         // should not get here from backend but this catch is for an unknown issue

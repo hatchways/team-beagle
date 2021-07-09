@@ -7,18 +7,20 @@ import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-
-import { Request } from './../../interface/Request';
+import Link from '@material-ui/core/Link';
+import { Link as RouterLink } from 'react-router-dom';
+import { Request, RequestWithProfile } from './../../interface/Request';
 import React from 'react';
+import { useAuth } from '../../context/useAuthContext';
 
-interface ExtRequest extends Request {
+interface ExtRequest extends RequestWithProfile {
   dates: any;
 }
 interface RequestObj {
   [key: string]: ExtRequest;
 }
 interface Props {
-  booking: Request;
+  booking: RequestWithProfile;
   isDogStitter: boolean;
   text?: string;
   showActions?: boolean;
@@ -41,6 +43,7 @@ export default function BookingCard({
   handleCancelBooking,
 }: Props): JSX.Element {
   const classes = useStyles();
+  const { loggedInUser, userProfile } = useAuth();
 
   const profile = booking.profile;
 
@@ -68,24 +71,33 @@ export default function BookingCard({
 
           {isDogStitter && (
             <Typography variant="body2" className={classes.cardStatus}>
-              {statusSetter(booking.accept, booking.decline)}
+              {!booking.paid && statusSetter(booking.accept, booking.decline)}
+              {booking.paid && 'PAID'}
             </Typography>
           )}
         </Grid>
       </CardContent>
-
-      {isDogStitter && showActions && (
+      {!booking.paid && isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
-          <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
-            Accept
-          </Button>
-          <Button size="small" color="primary" onClick={() => handleDecline(setState, booking._id)}>
-            Decline
-          </Button>
+          {userProfile?.isPaymentMethod && (
+            <>
+              <Button size="small" color="primary" onClick={() => handleAccept(setState, booking._id)}>
+                Accept
+              </Button>
+              <Button size="small" color="primary" onClick={() => handleDecline(setState, booking._id)}>
+                Decline
+              </Button>
+            </>
+          )}
+          {!userProfile?.isPaymentMethod && (
+            <Button size="small" color="primary" to="/profile/payment" component={RouterLink}>
+              Enter payment method
+            </Button>
+          )}
         </CardActions>
       )}
 
-      {!isDogStitter && showActions && (
+      {!booking.paid && !isDogStitter && showActions && (
         <CardActions className={classes.cardActions}>
           <Button size="small" color="primary" onClick={() => handleCancelBooking(setState, booking._id)}>
             Cancel Booking

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../context/useAuthContext'
+import { AuthContext } from '../../context/useAuthContext';
 import {
   Grid,
   Typography,
@@ -24,16 +24,14 @@ import * as Yup from 'yup';
 import editProfile from '../../helpers/APICalls/editProfile';
 import getProfile from '../../helpers/APICalls/getProfile';
 import { useSnackBar } from '../../context/useSnackbarContext';
-import { CurrentProfile } from '../../interface/AuthApiData'
+import { CurrentProfile } from '../../interface/AuthApiData';
 import { useHistory } from 'react-router-dom';
+import Tour from 'reactour';
 
-interface Props {
-  newUser: boolean
-}
-
-export default function EditProfile({newUser}: Props): JSX.Element {
+export default function EditProfile(): JSX.Element {
   const classes = useStyles();
 
+  const [isTourOpen, setIsTourOpen] = useState(true);
   const [isDogSitter, setIsDogSitter] = useState(false);
   const [CurrentProfile, setCurrentProfile] = useState<CurrentProfile>({
     profile: {
@@ -78,13 +76,13 @@ export default function EditProfile({newUser}: Props): JSX.Element {
   });
 
   interface loggedInUser {
-    email: string,
-    id: string,
-    username: string
+    email: string;
+    id: string;
+    username: string;
   }
 
-  const { loggedInUser } = useContext(AuthContext)
-  const loggedInUserId: string = (loggedInUser !== null && loggedInUser !== undefined) ? loggedInUser.id : ""
+  const { loggedInUser, updateProfileContext } = useContext(AuthContext);
+  const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
 
   const handleSwitch = () => {
     formik.setFieldValue('isDogSitter', !isDogSitter);
@@ -145,12 +143,22 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       };
     };
   }) => {
-    editProfile(loggedInUserId, isDogSitter, firstName, lastName, selfDescription, hourlyRate, tagLine, availability).then((data) => {
+    editProfile(
+      loggedInUserId,
+      isDogSitter,
+      firstName,
+      lastName,
+      selfDescription,
+      hourlyRate,
+      tagLine,
+      availability,
+    ).then((data: any) => {
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('Your profile has been upated');
-        if (newUser === true) history.push({pathname: '/dashboard'})
+        updateProfileContext(data.profile);
+        if (loggedInUser?.newUser === true) history.push({ pathname: '/dashboard' });
       }
     });
   };
@@ -159,12 +167,13 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     const fetchProfile = async () => {
       const data = await getProfile(loggedInUserId)();
       if (data.profile) {
-      setCurrentProfile(data);
-      setIsDogSitter(data.profile.isDogSitter)
+        setCurrentProfile(data);
+        updateProfileContext(data.profile);
+        setIsDogSitter(data.profile.isDogSitter);
       }
     };
     fetchProfile();
-  }, [loggedInUserId]);
+  }, [loggedInUserId, updateProfileContext]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -174,8 +183,14 @@ export default function EditProfile({newUser}: Props): JSX.Element {
       lastName: CurrentProfile.profile.lastName === '(n/a)' ? '' : CurrentProfile.profile.lastName,
       primaryPhone: '',
       secondaryPhone: '',
-      location: CurrentProfile.profile.location === '(this user has not set a location yet)' ? '' : CurrentProfile.profile.location,
-      selfDescription: CurrentProfile.profile.description === '(this user has not written a description yet)' ? '' : CurrentProfile.profile.description,
+      location:
+        CurrentProfile.profile.location === '(this user has not set a location yet)'
+          ? ''
+          : CurrentProfile.profile.location,
+      selfDescription:
+        CurrentProfile.profile.description === '(this user has not written a description yet)'
+          ? ''
+          : CurrentProfile.profile.description,
       hourlyRate: CurrentProfile.profile.hourlyRate,
       tagLine: CurrentProfile.profile.tagLine,
       availability: {
@@ -283,15 +298,36 @@ export default function EditProfile({newUser}: Props): JSX.Element {
     onSubmit: (values) => handleSubmit(values),
   });
 
+  const steps = [
+    {
+      content: 'Welcome to Loving Sitter! The #1 place to find dogsitters on the internet!',
+    },
+    {
+      selector: '.first-step',
+      content: "To begin, let's start with setting up your profile!",
+    },
+    {
+      selector: '.third-step',
+      content: 'Be sure to turn on this toggle if you want to work as a dogsitter',
+    },
+  ];
+
   return (
-    <Grid className={classes.root}>
+    <Grid className={`${classes.root} first-step`}>
       <CssBaseline />
-      {/* Replace the line below when using Reactour */}
-      {newUser === true && <Typography className={classes.newUserHeading}>Welcome to Loving Sitter! To begin, let&apos;s start with setting up your profile. </Typography>}
+      {loggedInUser?.newUser === true && (
+        <Tour steps={steps} isOpen={isTourOpen} onRequestClose={() => setIsTourOpen(false)} />
+      )}
       <form onSubmit={formik.handleSubmit}>
-        <Grid className={classes.formItem}>
+        <Grid className={`${classes.formItem} second-step `}>
           <Typography className={classes.formLabel}>I WANT TO DOG SIT</Typography>
-          <Switch id="isDogSitter" checked={isDogSitter} onChange={handleSwitch} name="isDogSitter" />
+          <Switch
+            className="third-step"
+            id="isDogSitter"
+            checked={isDogSitter}
+            onChange={handleSwitch}
+            name="isDogSitter"
+          />
         </Grid>
 
         <Grid className={classes.formItem}>
