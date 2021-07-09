@@ -4,6 +4,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     marginLeft: '10px',
   },
+  unread: {
+    backgroundColor: '#bbb',
+  },
+  notificationsContainer: {
+    '&:hover': {
+      pointer: 'cursor',
+    },
+  },
 }));
 
 export default useStyles;

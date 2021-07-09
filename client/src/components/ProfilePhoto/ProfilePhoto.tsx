@@ -75,6 +75,7 @@ export default function ProfilePhoto(): JSX.Element {
   const updateMainPhoto = (idx: number) => {
     const setNewMainPhoto = async () => {
       const data = await changeMainPhoto(idx);
+      console.log(data.profile.images);
       const images = data.profile.images;
       setPhotos(images);
       if (data.error) {
@@ -90,6 +91,7 @@ export default function ProfilePhoto(): JSX.Element {
     const deleteCurrentPhoto = async () => {
       const data = await deletePhoto(photo, index);
       const images = data.profile.images;
+      console.log(images);
       setPhotos(images);
       if (data.error) {
         updateSnackBarMessage(data.error.message);
