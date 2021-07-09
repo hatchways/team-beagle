@@ -20,6 +20,7 @@ import Unauthorized from './pages/Unauthorize/Unauthorized';
 import BookingTabs from './pages/Booking/BookingTabs';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import RedirectLoggedInRoute from './components/RedirectLoggedInRoute';
 
 import './App.css';
 
@@ -38,8 +39,8 @@ function App(): JSX.Element {
 
                   <Switch>
                     <Route exact path="/" component={Landing} />
-                    <Route exact path="/login" component={Login} />
-                    <Route exact path="/signup" component={Signup} />
+                    <RedirectLoggedInRoute exact path="/login" component={Login} />
+                    <RedirectLoggedInRoute exact path="/signup" component={Signup} />
 
                     <ProtectedRoute exact path="/sitters" component={BookingTabs} />
                     <ProtectedRoute exact path="/messages" component={Messages} />
