@@ -110,6 +110,7 @@ export default function Profile(props: any): JSX.Element {
         {currentSection === 'payment' && <Payment />}
         {currentSection === 'security' && <Security />}
         {currentSection === 'settings' && <Settings />}
+      </Container>
       </Grid>
     </Grid>
   );
