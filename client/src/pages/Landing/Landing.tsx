@@ -31,6 +31,10 @@ export default function Landing(): JSX.Element {
     });
   };
 
+  const handleSignup = () => {
+    history.push('/signup');
+  }
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -84,9 +88,10 @@ export default function Landing(): JSX.Element {
                       />
                     </Box>
                     <Box>
-                      <Button type="submit" size="large" variant="contained" color="primary" className={classes.submit}>
+                      <Button onClick={handleSignup} size="large" variant="contained" color="primary" className={classes.submit}>
                         Find My Dog Sitter
                       </Button>
+
                     </Box>
                     <Typography>
                       Not a Member?
