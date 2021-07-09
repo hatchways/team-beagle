@@ -1,43 +1,76 @@
 import React, { useEffect, useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { useAuth } from '../../context/useAuthContext';
 import CardSection from './CardSection';
-import { getPaymentSecret } from '../../helpers/APICalls/payment';
-import Button from '@material-ui/core/Button';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
+import { getPaymentSecret, deletePaymentCard, addPaymentMethod } from '../../helpers/APICalls/payment';
 import useStyles from './useStyles';
+
+import Button from '@material-ui/core/Button';
+import FormGroup from '@material-ui/core/FormGroup';
 import Alert from '@material-ui/lab/Alert';
-import { Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function Payment(): JSX.Element {
+  const { loggedInUser, userProfile, updateProfileContext } = useAuth();
   const stripe = useStripe();
   const classes = useStyles();
   const elements = useElements();
-  const [paymentSecret, setPaymentSecret] = useState<any>();
+
+  const defaultBillingDetails = {
+    email: loggedInUser?.email,
+    name: `${userProfile?.firstName} ${userProfile?.lastName}`,
+  };
+  const [billingDetails, setBillingDetails] = useState(defaultBillingDetails);
+  const [paymentSecret, setPaymentSecret] = useState<string>();
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState<boolean>(false);
   const [card, setCard] = useState<any>();
-  const [billingDetails, setBillingDetails] = useState({
-    email: '',
-    name: '',
-  });
+  const [currency, setCurrency] = React.useState('EUR');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const currencies = [
+    {
+      value: 'USD',
+      label: 'USD',
+    },
+    {
+      value: 'CAD',
+      label: 'CAD',
+    },
+    {
+      value: 'EUR',
+      label: 'EUR',
+    },
+    {
+      value: 'BTC',
+      label: 'BTC',
+    },
+    {
+      value: 'JPY',
+      label: 'JPY',
+    },
+  ];
+
   useEffect(() => {
     getPaymentSecret().then((res: any) => {
       const secret = res.customerSecret;
       setPaymentSecret(secret);
-      console.log(res.card);
       if (res.card) setCard(res.card);
+      setIsLoading(false);
     });
   }, []);
 
-  const handleSubmit = async (event: any) => {
-    // We don't want to let default form submission happen here,
-    // which would refresh the page.
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrency(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
@@ -45,32 +78,50 @@ export default function Payment(): JSX.Element {
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
+    const cardElement = elements.getElement(CardElement);
 
-    const result = await stripe.confirmCardSetup(paymentSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement) || { token: '' },
-        billing_details: billingDetails,
-      },
+    if (!cardElement) return;
+
+    const card: any = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement || { token: '' },
+      billing_details: billingDetails,
     });
-
-    if (result.error) {
-      // Display result.error.message in your UI.
-      setError(result.error.message);
+    if (card.error) {
+      setError(card?.error.message);
     } else {
-      // The setup has succeeded. Display a success message and send
-      // result.setupIntent.payment_method to your server to save the
-      // card to a Customer
-      setSuccess(true);
+      const result = await addPaymentMethod(card.paymentMethod.id, currency);
+
+      if (result.error) {
+        setError(result.error.message);
+      } else {
+        updateProfileContext({ ...userProfile, isPaymentMethod: true });
+        setSuccess(true);
+        setCard(result.attachedPaymentMethod);
+        setBillingDetails(defaultBillingDetails);
+      }
     }
   };
 
-  const handleDelete = async (event: any) => {
-    // card.id;
-    setCard(null);
+  const handleDelete = () => {
+    setSuccess(false);
+    setError('');
+    deletePaymentCard().then((res: any) => {
+      if (!res.error) setCard(null);
+    });
+    updateProfileContext({ ...userProfile, isPaymentMethod: false });
   };
 
   let cardInfo;
   if (card) cardInfo = card.card;
+  if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
   return (
     <Grid className={classes.root}>
       {!card && (
@@ -79,10 +130,24 @@ export default function Payment(): JSX.Element {
             <form onSubmit={handleSubmit}>
               <FormGroup>
                 <TextField
+                  id="outlined-select-currency"
+                  select
+                  required
+                  label="Select"
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  variant="outlined"
+                >
+                  {currencies.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
                   label="Name"
                   id="name"
                   type="text"
-                  placeholder="Jane Doe"
                   required
                   autoComplete="name"
                   variant="outlined"
@@ -95,7 +160,6 @@ export default function Payment(): JSX.Element {
                   label="Email"
                   id="email"
                   type="email"
-                  placeholder="janedoe@gmail.com"
                   required
                   autoComplete="email"
                   variant="outlined"
@@ -106,14 +170,7 @@ export default function Payment(): JSX.Element {
                 />
 
                 <CardSection />
-                <Button
-                  className={classes.btnSave}
-                  color="primary"
-                  variant="contained"
-                  // onClick={handleSubmit}
-                  disabled={!stripe}
-                  type="submit"
-                >
+                <Button className={classes.btn} color="primary" variant="contained" disabled={!stripe} type="submit">
                   Save Card
                 </Button>
                 {error && <Alert severity="warning">{error}</Alert>}
@@ -141,8 +198,8 @@ export default function Payment(): JSX.Element {
               </Grid>
             </CardContent>
             <CardActions>
-              <Button size="small" color="primary" onClick={handleDelete}>
-                Delete
+              <Button className={classes.btn} color="primary" variant="contained" onClick={handleDelete}>
+                Delete Card
               </Button>
             </CardActions>
           </Card>

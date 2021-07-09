@@ -12,10 +12,6 @@ import { AuthContext } from '../../context/useAuthContext';
 import { useSnackBar } from '../../context/useSnackbarContext';
 import { useHistory } from 'react-router-dom';
 
-interface Props {
-  newUser: boolean
-}
-
 function InputButton({ ...props }): JSX.Element {
   const classes = useStyles();
 
@@ -57,7 +53,7 @@ function InputButton({ ...props }): JSX.Element {
   );
 }
 
-export default function ProfilePhoto({newUser}: Props): JSX.Element {
+export default function ProfilePhoto(): JSX.Element {
   const classes = useStyles();
 
   const { updateSnackBarMessage } = useSnackBar();
@@ -85,7 +81,6 @@ export default function ProfilePhoto({newUser}: Props): JSX.Element {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('You have successfully updated your main photo');
-        if (newUser === true) history.push('/dashboard')
       }
     };
     setNewMainPhoto();
@@ -109,7 +104,6 @@ export default function ProfilePhoto({newUser}: Props): JSX.Element {
     <Grid className={classes.root}>
       <CssBaseline />
       {/* Replace the line below when using Reactour */}
-      {newUser === true && <Typography className={classes.newUserHeading}>Next, let&apos;s upload some photos to your profile! </Typography>}
       <Carousel autoPlay={false}>
         {photos.map((item, idx) => (
           <Grid key={idx} className={classes.photoContainer}>

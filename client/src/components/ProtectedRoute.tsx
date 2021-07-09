@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import { useAuth } from './../context/useAuthContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -11,19 +11,19 @@ interface Props extends RouteProps {
 
 const ProtectedRoute = ({ component: Component, ...rest }: Props): JSX.Element => {
   const { loggedInUser } = useAuth();
-  const [show, setShow] = useState(false);
-  const delay = 1;
-  useEffect(() => {
-    const timer1 = setTimeout(() => setShow(true), delay * 1000);
-    return () => {
-      clearTimeout(timer1);
-    };
-  }, []);
+
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (show) {
+        if (loggedInUser === undefined) {
+          return (
+            <Grid container justify="center" alignItems="center">
+              <Box mt={20}></Box>
+              <CircularProgress></CircularProgress>
+            </Grid>
+          );
+        } else {
           if (loggedInUser) {
             return <Component {...rest} {...props} />;
           } else {
@@ -38,13 +38,6 @@ const ProtectedRoute = ({ component: Component, ...rest }: Props): JSX.Element =
               />
             );
           }
-        } else {
-          return (
-            <Grid container justify="center" alignItems="center">
-              <Box mt={20}></Box>
-              <CircularProgress></CircularProgress>
-            </Grid>
-          );
         }
       }}
     />

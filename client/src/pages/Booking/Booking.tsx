@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
+import DayPicker from 'react-day-picker';
+import 'react-day-picker/lib/style.css';
+import BookingCard from '../../components/BookingCard/BookingCard';
+import { updateBookingsAccept, deleteBooking, updateBookingsPaid } from '../../helpers/APICalls/request';
+import { paymentPayBooking } from '../../helpers/APICalls/payment';
+import { Request, RequestWithProfile } from '../../interface/Request';
+
+import { Box } from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import useStyles from './useStyles';
+import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import useStyles from './useStyles';
-import BookingCard from '../../components/BookingCard/BookingCard';
-
-import Card from '@material-ui/core/Card';
-
 import Typography from '@material-ui/core/Typography';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { updateBookingsAccept, deleteBooking } from '../../helpers/APICalls/request';
-import moment from 'moment';
-
-import DayPicker from 'react-day-picker';
-import 'react-day-picker/lib/style.css';
-import { Request } from '../../interface/Request';
+import sendNotification from '../../helpers/APICalls/sendNotification';
+import { useAuth } from '../../context/useAuthContext';
+import { useSocket } from '../../context/useSocketContext';
 
 interface Props {
   apiCall: () => Promise<Request>;
   isDogStitter: boolean;
 }
 
-interface ExtRequest extends Request {
+interface ExtRequest extends RequestWithProfile {
   dates: any;
 }
 interface RequestObj {
@@ -32,10 +36,17 @@ interface RequestObj {
 interface PickerDates {
   [index: number]: (Date | { after: Date; before: Date })[] | [];
 }
+
 export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
   const classes = useStyles();
+  const { userProfile, loggedInUser } = useAuth();
+  const { socket } = useSocket();
+  const username =
+    userProfile?.lastName === '(n/a)' ? userProfile.firstName : `${userProfile?.firstName} ${userProfile?.lastName}`;
   const [expanded, setExpanded] = useState<string | false>(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const [mostRecentUpdate, setMostRecentUpdate] = useState(Date.now());
   const [nextBooking, setNextBooking] = useState<RequestObj>();
   const [currBooking, setCurrBooking] = useState<RequestObj>();
   const [pastBooking, setPastBooking] = useState<RequestObj>();
@@ -48,7 +59,7 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
       const past: RequestObj = {};
       const curr: RequestObj = {};
       const oldDates: (Date | { after: Date; before: Date })[] = [];
-      const now = moment().subtract(5, 'days').toISOString();
+      const now = moment().toISOString();
 
       request = request.map((req: ExtRequest) => {
         req.profile.fullName = `${req.profile.firstName} ${req.profile.lastName}`;
@@ -79,8 +90,9 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
       setCurrBooking(curr);
       setPastBooking(past);
       setpastDates(oldDates);
+      setIsLoading(false);
     });
-  }, [apiCall, isDogStitter]);
+  }, [apiCall, isDogStitter, mostRecentUpdate]);
 
   useEffect(() => {
     const dates: any = [];
@@ -105,16 +117,117 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
     setExpanded(isExpanded ? panel : false);
   };
 
-  const handleAccept = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
-    updateBookingsAccept(id, true, false).then(() => {
-      setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
-    });
+  const sendConfirmationNotification = async (
+    username: string,
+    startDate: Date | undefined,
+    endDate: Date | undefined,
+    dogOwnerId: string,
+  ) =>
+    await sendNotification(
+      'bookingConfirmed',
+      `Booking confirmed from ${username}`,
+      `${username} has confirmed to dogsit for you from ${moment(startDate).format('MMMM Do YYYY')} to ${moment(
+        endDate,
+      ).format('MMMM Do YYYY')}  `,
+      dogOwnerId,
+    )();
+
+  const sendCancelNotification = async (
+    username: string,
+    startDate: Date | undefined,
+    endDate: Date | undefined,
+    dogOwnerId: string,
+  ) => {
+    await sendNotification(
+      'bookingCancelled',
+      `Booking cancelled from ${username}`,
+      `${username} has cancelled to dogsit for you from ${moment(startDate).format('MMMM Do YYYY')} to ${moment(
+        endDate,
+      ).format('MMMM Do YYYY')}  `,
+      dogOwnerId,
+    )();
+  };
+
+  const sendDeclineNotification = async (
+    username: string,
+    startDate: Date | undefined,
+    endDate: Date | undefined,
+    sitterId: string | undefined,
+  ) => {
+    await sendNotification(
+      'bookingCancelled',
+      `Booking request cancelled from ${username}`,
+      `${username} has cancelled their request for dogsitting from ${moment(startDate).format(
+        'MMMM Do YYYY',
+      )} to ${moment(endDate).format('MMMM Do YYYY')}  `,
+      sitterId !== undefined ? sitterId : '',
+    )();
+  };
+
+  socket !== undefined
+    ? socket.once('notification', ({ from, to, type }) => {
+        if (loggedInUser !== undefined && loggedInUser !== null) {
+          if (to === loggedInUser.id) {
+            setMostRecentUpdate(Date.now());
+          }
+        }
+      })
+    : '';
+
+  const handleAccept = async (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
+    const updatedBookingAccept: any = await updateBookingsAccept(id, true, false);
+
+    const allBookings = { ...nextBooking, ...currBooking };
+    const bookingDetailsTemp =
+      allBookings !== undefined ? Object.values(allBookings).filter((booking) => booking._id === id)[0] : '';
+    const bookingDetails = { ...bookingDetailsTemp };
+    sendConfirmationNotification(
+      username,
+      bookingDetails.startDate,
+      bookingDetails.endDate,
+      bookingDetails.profile !== undefined ? bookingDetails.profile.userId : '',
+    );
+    if (socket !== undefined) {
+      socket.emit('notification', {
+        type: 'bookingConfirmed',
+        sender: username,
+        recipient: bookingDetails.profile !== undefined ? bookingDetails.profile.userId : '',
+      });
+    }
+
+    // if (updatedBookingAccept.request) {
+    //   setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: true, decline: false } }));
+    //   const paidBooking = await paymentPayBooking(id);
+    //   if (paidBooking.paymentIntent) {
+    //     const updatedBookingPaid: any = await updateBookingsPaid(id, true);
+    //     if (updatedBookingPaid.request)
+    //       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], paid: true } }));
+    //   }
+    // }
   };
 
   const handleDecline = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
     updateBookingsAccept(id, false, true).then(() => {
       setState((prevState: RequestObj) => ({ ...prevState, [id]: { ...prevState[id], accept: false, decline: true } }));
     });
+
+    const allBookings = { ...nextBooking, ...currBooking };
+    const bookingDetailsTemp =
+      allBookings !== undefined ? Object.values(allBookings).filter((booking) => booking._id === id)[0] : '';
+    const bookingDetails = { ...bookingDetailsTemp };
+    sendCancelNotification(
+      username,
+      bookingDetails.startDate,
+      bookingDetails.endDate,
+      bookingDetails.profile !== undefined ? bookingDetails.profile.userId : '',
+    );
+    if (socket !== undefined) {
+      socket.emit('notification', {
+        type: 'bookingCancelled',
+        sender: username,
+        recipient: bookingDetails.profile !== undefined ? bookingDetails.profile.userId : '',
+      });
+    }
   };
 
   const handleCancelBooking = (setState: React.Dispatch<(state: RequestObj) => RequestObj>, id: string) => {
@@ -124,13 +237,38 @@ export default function Sitters({ apiCall, isDogStitter }: Props): JSX.Element {
         return newState;
       });
     });
+    const allBookings = { ...nextBooking, ...currBooking };
+    const bookingDetailsTemp =
+      allBookings !== undefined ? Object.values(allBookings).filter((booking) => booking._id === id)[0] : '';
+    const bookingDetails = { ...bookingDetailsTemp };
+    sendDeclineNotification(
+      username,
+      bookingDetails.startDate,
+      bookingDetails.endDate,
+      bookingDetails !== undefined ? bookingDetails.sitterId : '',
+    );
+    if (socket !== undefined) {
+      socket.emit('notification', {
+        type: 'requestCancelled',
+        sender: loggedInUser !== undefined && loggedInUser !== null ? loggedInUser.id : '',
+        recipient: bookingDetails !== undefined ? bookingDetails.sitterId : '',
+      });
+    }
   };
+  if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
 
   return (
     <Grid container component="main" className={`${classes.root}`}>
       <CssBaseline />
 
-      <Grid container spacing={5} className={classes.innerContainer}>
+      <Grid container className={classes.innerContainer}>
         <Grid item className={classes.innerContainerItem}>
           {nextBooking && Object.keys(nextBooking).length > 0 && (
             <Card className={classes.cardTop}>

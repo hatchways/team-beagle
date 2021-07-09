@@ -1,7 +1,6 @@
 const Request = require("../models/Request");
 const asyncHandler = require("express-async-handler");
 const decodeToken = require("../utils/decodeToken");
-const { request } = require("express");
 
 // @route POST /request/new-request
 // @desc add request
@@ -45,14 +44,14 @@ exports.newRequest = asyncHandler(async (req, res, next) => {
 });
 
 // //@route Patch /request/edit-profile/:id
-// //update request
+// //update request sitter accept/decline/paid
 exports.editRequest = asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const update = req.body;
   const requestId = req.params.id;
   try {
     const updatedRequest = await Request.findOneAndUpdate(
-      { _id: requestId, userId: userId },
+      { _id: requestId, sitterId: userId },
       update,
       { new: true }
     );
@@ -62,7 +61,8 @@ exports.editRequest = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Request not found" });
     }
   } catch (error) {
-    return res.status(500).json({ error: "Could not update request" });
+    res.status(500).json({ error: "Could not update request" });
+    throw new Error("Could not update request");
   }
 });
 
@@ -75,9 +75,13 @@ exports.requestsforCurrentUserSitter = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      sitterId: userId,
-    });
+    requests = await Request.find(
+      {
+        sitterId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {
@@ -112,9 +116,13 @@ exports.requestsforCurrentUserOwner = asyncHandler(async (req, res, next) => {
   let requests;
 
   if (userId) {
-    requests = await Request.find({
-      userId: userId,
-    });
+    requests = await Request.find(
+      {
+        userId: userId,
+      },
+      null,
+      { sort: { startDate: 1 } }
+    );
   }
 
   if (!requests) {

@@ -7,16 +7,21 @@ const useStyles = makeStyles((theme) => ({
   innerContainer: {
     maxWidth: 1000,
     margin: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse',
+    },
   },
   innerContainerItem: {
+    margin: theme.spacing(0, 1),
     flexGrow: 1,
   },
   cardTop: {
     padding: theme.spacing(0.8),
+    marginBottom: theme.spacing(2.5),
   },
   cardBottom: {
-    marginTop: theme.spacing(2.5),
     flexGlow: 1,
+    marginBottom: theme.spacing(2.5),
   },
   sectionTitle: {
     fontWeight: 'bolder',
@@ -29,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: theme.spacing(2.5),
   },
   card: {
     flexGrow: 1,
@@ -40,18 +46,24 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: `${theme.palette.primary.main} !important`,
       color: 'white !important',
       padding: `.4em .6em !important `,
+      [theme.breakpoints.down('sm')]: {
+        padding: `.4em .4em !important `,
+      },
     },
     '& .DayPicker-Month': {
       borderCollapse: 'separate',
       borderSpacing: '15px 5px',
       tableLayout: 'fixed',
-      // width: 400,
+      [theme.breakpoints.down('sm')]: {
+        borderSpacing: '5px 5px',
+      },
     },
     '& .DayPicker-Day': {
       width: `calc(100%/7)`,
     },
     '& .DayPicker-Day--today': {
-      color: `${theme.palette.primary.main} !important`,
+      backgroundColor: `${theme.palette.warning.main} !important`,
+      color: 'white !important',
     },
     '& .DayPicker-Caption div': {
       color: `${theme.palette.primary.main} !important`,

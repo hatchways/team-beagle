@@ -14,11 +14,13 @@ import { AuthProvider } from './context/useAuthContext';
 import { SocketProvider } from './context/useSocketContext';
 import { SnackBarProvider } from './context/useSnackbarContext';
 import Messages from './pages/Messages/Messages';
+import Notifications from './pages/Notifications/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorize/Unauthorized';
 import BookingTabs from './pages/Booking/BookingTabs';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import RedirectLoggedInRoute from './components/RedirectLoggedInRoute';
 
 import './App.css';
 
@@ -37,11 +39,12 @@ function App(): JSX.Element {
 
                   <Switch>
                     <Route exact path="/" component={Landing} />
-                    <Route exact path="/login" component={Login} />
-                    <Route exact path="/signup" component={Signup} />
+                    <RedirectLoggedInRoute exact path="/login" component={Login} />
+                    <RedirectLoggedInRoute exact path="/signup" component={Signup} />
 
                     <ProtectedRoute exact path="/sitters" component={BookingTabs} />
                     <ProtectedRoute exact path="/messages" component={Messages} />
+                    <ProtectedRoute exact path="/notifications" component={Notifications} />
                     <ProtectedRoute exact path="/profile/:menuitem" component={Profile} />
                     <Route exact path="/profile">
                       <Redirect to="/profile/editprofile" />

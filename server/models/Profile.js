@@ -29,7 +29,9 @@ const profileSchema = new mongoose.Schema({
     },
   ],
   default: [],
-
+  isPaymentMethod: {
+    type: Boolean,
+  },
   //  sitter
   isDogSitter: {
     type: Boolean,
@@ -52,6 +54,9 @@ const profileSchema = new mongoose.Schema({
   rating: {
     type: Number,
   },
+  numberOfReviews: {
+    type: Number,
+  },
   hourlyRate: {
     // if sitter require
     type: Number,
@@ -59,6 +64,7 @@ const profileSchema = new mongoose.Schema({
   tagLine: {
     // if sitter require
     type: String,
+    default: "",
   },
 });
 
