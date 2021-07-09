@@ -144,15 +144,14 @@ exports.findSittersByLocation = asyncHandler(async (req, res) => {
 //@route Get /profile/day/:search
 //return list of profiles who match users selected day(s)
 exports.findSittersByDay = asyncHandler(async (req, res) => {
-
   let findQuery = { $and: [] };
   let search = [req.params.search];
 
   search.forEach((a) => {
-    let aName = `availabilityWeek.${a}`
-    findQuery['$and'].push({
-      [aName]: true
-    })
+    let aName = `availabilityWeek.${a}`;
+    findQuery["$and"].push({
+      [aName]: true,
+    });
   });
 
   try {
@@ -166,7 +165,7 @@ exports.findSittersByDay = asyncHandler(async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error });
   }
-})
+});
 
 // @route POST /profile/uploadphoto/
 // Upload photo
@@ -199,7 +198,10 @@ exports.changeMainPhoto = asyncHandler(async (req, res) => {
       const temp = profile.images[0];
       profile.images[0] = profile.images[index];
       profile.images[index] = temp;
-      await profile.save();
+      await Profile.findOneAndUpdate(
+        { userId },
+        { $set: { images: profile.images } }
+      );
       res.status(200).json({ profile });
     } else {
       res.status(404).json({ message: "Profile Not Found" });

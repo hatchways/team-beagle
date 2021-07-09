@@ -78,6 +78,7 @@ exports.readNotification = asyncHandler(async (req, res) => {
       { _id: notificationId },
       { read: true }
     );
+    console.log(`notification: ${notificationId} has been updated`);
     res.status(200).json({
       notification,
     });

@@ -59,7 +59,7 @@ export default function ProfilePhoto(): JSX.Element {
   const { updateSnackBarMessage } = useSnackBar();
   const history = useHistory();
 
-  const { loggedInUser } = useContext(AuthContext);
+  const { loggedInUser, updateProfileContext } = useContext(AuthContext);
   const loggedInUserId: string = loggedInUser !== null && loggedInUser !== undefined ? loggedInUser.id : '';
 
   useEffect(() => {
@@ -75,12 +75,14 @@ export default function ProfilePhoto(): JSX.Element {
   const updateMainPhoto = (idx: number) => {
     const setNewMainPhoto = async () => {
       const data = await changeMainPhoto(idx);
+      console.log(data.profile.images);
       const images = data.profile.images;
       setPhotos(images);
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('You have successfully updated your main photo');
+        updateProfileContext(data.profile);
       }
     };
     setNewMainPhoto();
@@ -90,11 +92,13 @@ export default function ProfilePhoto(): JSX.Element {
     const deleteCurrentPhoto = async () => {
       const data = await deletePhoto(photo, index);
       const images = data.profile.images;
+      console.log(images);
       setPhotos(images);
       if (data.error) {
         updateSnackBarMessage(data.error.message);
       } else {
         updateSnackBarMessage('You have successfully deleted a photo');
+        updateProfileContext(data.profile);
       }
     };
     deleteCurrentPhoto();

@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '60px',
     display: 'flex',
     flexDirection: 'row',
-    maxHeight: '100vh',
+    maxHeight: '100vh - 85px',
   },
   conversationsHeading: {
     fontSize: '1.2rem',
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   '@keyframes showOptions': {
     '0%': {
-      transform: 'translateX(-10px)',
+      transform: 'translateX(-80px)',
     },
     '100%': {
       transform: 'translateX(0px)',
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    transform: 'translateX(-10px)',
+    transform: 'translateX(-80px)',
     zIndex: -3,
     width: '500px',
   },

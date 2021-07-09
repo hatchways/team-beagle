@@ -48,7 +48,7 @@ export default function Profile(props: any): JSX.Element {
   return (
     <Grid container className={`${classes.root}`}>
       <CssBaseline />
-      <Hidden only={['md', 'lg', 'xl']}>
+      <Hidden only={['sm', 'md', 'lg', 'xl']}>
         <Box className={classes.buttonContainer}>
           <Button style={{ width: '100%' }} aria-controls="simple-menu" aria-haspopup="true" onClick={handleClickMenu}>
             <ExpandMoreIcon />
@@ -88,8 +88,8 @@ export default function Profile(props: any): JSX.Element {
           </Menu>
         </Box>
       </Hidden>
-      <Grid className={`${classes.menuItems}`}>
-        <Hidden only={['xs', 'sm']}>
+      <Hidden only={['xs']}>
+        <Grid className={`${classes.menuItems}`}>
           {MENU_LIST.map((item) => (
             <Link
               onClick={() => handleClick(item.replace(/\s/g, '').toLowerCase())}
@@ -102,8 +102,9 @@ export default function Profile(props: any): JSX.Element {
               {item}
             </Link>
           ))}
-        </Hidden>
-      </Grid>
+        </Grid>
+      </Hidden>
+
       <Grid className={classes.menuContainer}>
         {currentSection === 'editprofile' && <EditProfile />}
         {currentSection === 'profilephoto' && <ProfilePhoto />}

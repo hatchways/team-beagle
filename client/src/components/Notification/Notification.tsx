@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, InputAdornment } from '@material-ui/core/';
+import { ListItem, ListItemText, Grid } from '@material-ui/core/';
 import useStyles from './useStyles';
 import moment from 'moment';
 import MessageIcon from '@material-ui/icons/Message';
@@ -12,9 +12,11 @@ interface Notification {
   content: string;
   date: Date;
   type: string;
+  read: boolean;
+  id: string;
 }
 
-export default function Notification({ title, content, date, type }: Notification): JSX.Element {
+export default function Notification({ id, title, content, date, type, read }: Notification): JSX.Element {
   const classes = useStyles();
 
   const notificationDate = (date: Date) => {
@@ -37,13 +39,9 @@ export default function Notification({ title, content, date, type }: Notificatio
   };
 
   return (
-    <ListItem>
+    <ListItem className={read === false ? classes.unread : ''}>
       {getIcon(type)}
-      <ListItemText
-        className={classes.root}
-        primary={title}
-        secondary={content.length > 40 ? `${notificationDate(date)} - ${content.slice(0, 30)}...` : content}
-      />
+      <ListItemText className={classes.root} primary={title} secondary={`${notificationDate(date)} - ${content}`} />
     </ListItem>
   );
 }

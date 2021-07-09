@@ -39,6 +39,14 @@ exports.appSocket = (server) => {
       });
     });
 
+    socket.on("clearNotification", ({ type, sender, recipient }) => {
+      socket.emit("notification", {
+        type,
+        from: sender,
+        to: recipient,
+      });
+    });
+
     socket.on("message", ({ sender, recipient }) => {
       socket.broadcast.emit("message", {
         from: sender,

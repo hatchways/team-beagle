@@ -195,6 +195,8 @@ const NavBar = (): JSX.Element => {
                                   content={notification.content}
                                   date={notification.createdAt}
                                   type={notification.type}
+                                  read={true}
+                                  id={notification._id}
                                 />
                                 {idx === unreadNotifications.length - 1 ? (
                                   <>

@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from 'react';
-import { Box, Grid, Typography, TextField, InputAdornment, Button } from '@material-ui/core';
+import { Box, Grid, Typography, TextField, InputAdornment, Button, FormHelperText, InputBase } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useStyles from './useStyles';
 import Message from '../../components/Message/Message';
@@ -14,12 +14,14 @@ import { Conversation } from '../../interface/Conversation';
 import { IMessage } from '../../interface/Message';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSocket } from '../../context/useSocketContext';
+import sendImage from '../../helpers/APICalls/sendImage';
 
 export default function Messages(): JSX.Element {
   const classes = useStyles();
   const { socket } = useSocket();
 
   const { loggedInUser, userProfile } = useContext(AuthContext);
+  const [errorMsg, setErrorMsg] = useState('');
   const [message, setMessage] = useState('');
   const [showOptions, setShowOptions] = useState('');
   const [allConversations, setAllConversations] = useState<Conversation[]>([]);
@@ -100,25 +102,31 @@ export default function Messages(): JSX.Element {
     content: string,
   ) => {
     e.preventDefault();
-    const data = await sendMessage(recipient, type, content)();
-    setMessage(() => '');
-    if (socket !== undefined) {
-      socket.emit('message', {
-        content: message,
-        sender: loggedInUser?.id,
-        recipient,
-      });
-      socket.emit('notification', {
-        type: 'message',
-        sender: loggedInUser?.id,
-        recipient,
-      });
-    }
-    if (data !== undefined) {
-      setSelectedConversation({
-        ...selectedConversation,
-        messages: [...selectedConversation.messages, data.message],
-      });
+    if (content.length === 0) {
+      setErrorMsg('You cannot send an empty message');
+    } else if (content.length > 150) {
+      setErrorMsg('You cannot send a message that is more than 150 characters ');
+    } else {
+      const data = await sendMessage(recipient, type, content)();
+      setMessage(() => '');
+      if (socket !== undefined) {
+        socket.emit('message', {
+          content: message,
+          sender: loggedInUser?.id,
+          recipient,
+        });
+        socket.emit('notification', {
+          type: 'message',
+          sender: loggedInUser?.id,
+          recipient,
+        });
+      }
+      if (data !== undefined) {
+        setSelectedConversation({
+          ...selectedConversation,
+          messages: [...selectedConversation.messages, data.message],
+        });
+      }
     }
   };
 
@@ -173,6 +181,48 @@ export default function Messages(): JSX.Element {
 
   const handleMsgInput = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     setMessage(e.target.value);
+  };
+
+  interface HTMLInputEvent extends Event {
+    target: HTMLInputElement & EventTarget;
+  }
+
+  const validateAndUploadFile = (e: HTMLInputEvent | React.ChangeEvent<HTMLInputElement>) => {
+    console.log('uploading file...');
+    if (e.target.files) {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/x-icon'];
+      const file = e.target.files[0];
+      if (validTypes.indexOf(file.type) === -1) {
+        console.error('Invalid file type. Uplaod a jpg or png file.');
+      } else if (file.size > 2000000) {
+        console.error('File size is too large. The maximum size is 2MB');
+      } else {
+        const addPhoto = async () => {
+          const data = await sendImage('messageImage', file, selectedConversation.participantProfiles[0].userId)();
+          if (data.message) {
+            if (socket !== undefined) {
+              socket.emit('message', {
+                content: message,
+                sender: loggedInUser?.id,
+                recipient: selectedConversation.participantProfiles[0].userId,
+              });
+              socket.emit('notification', {
+                type: 'message',
+                sender: loggedInUser?.id,
+                recipient: selectedConversation.participantProfiles[0].userId,
+              });
+            }
+            if (data !== undefined) {
+              setSelectedConversation({
+                ...selectedConversation,
+                messages: [...selectedConversation.messages, data.message],
+              });
+            }
+          }
+        };
+        addPhoto();
+      }
+    }
   };
 
   return (
@@ -252,6 +302,7 @@ export default function Messages(): JSX.Element {
             <Grid ref={endRef}></Grid>
           </Grid>
         </Grid>
+        <FormHelperText>{errorMsg}</FormHelperText>
         <form onSubmit={(e) => handleMsgSubmit(e, selectedConversation.participantProfiles[0].userId, 'msg', message)}>
           {selectedConversation.participants.length !== 0 && (
             <TextField
@@ -266,8 +317,9 @@ export default function Messages(): JSX.Element {
                     <Button type="submit">
                       <SendIcon />
                     </Button>
-                    <Button>
+                    <Button component="label">
                       <ImageIcon />
+                      <input type="file" hidden onChange={(e) => validateAndUploadFile(e)} />
                     </Button>
                   </InputAdornment>
                 ),
