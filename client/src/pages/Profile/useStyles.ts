@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '5px',
     overflowY: 'scroll',
     margin: '0 45px',
-    height: 'calc((100vh - 85px) * .8)',
+    height: 'calc((100vh - 85px) * .95)',
     flexGrow: 1,
     padding: '0 50px',
     [theme.breakpoints.down('sm')]: {

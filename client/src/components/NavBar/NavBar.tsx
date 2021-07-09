@@ -115,7 +115,7 @@ const NavBar = (): JSX.Element => {
               <Hidden only={['xs']}>
                 <Hidden only={['xs', 'sm']}>
                   <Typography className={classes.toolbarLink}>
-                    <Link className={classes.secondaryLink} href="/sitters">
+                    <Link className={classes.secondaryLink} href="/signup">
                       Become a Sitter
                     </Link>
                   </Typography>
