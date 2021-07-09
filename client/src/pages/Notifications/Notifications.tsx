@@ -9,6 +9,7 @@ import getAllNotifications from '../../helpers/APICalls/getAllNotifications';
 import Notification from '../../components/Notification/Notification';
 import { INotification } from '../../interface/Notification';
 import { patchNotificationAsRead } from '../../helpers/APICalls/markNotificationAsRead';
+import { useSocket } from '../../context/useSocketContext';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -43,6 +44,7 @@ function a11yProps(index: number) {
 export default function FullWidthTabs(): JSX.Element {
   const classes = NotificationsTabStyle();
   const theme = useTheme();
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<any>, newValue: number) => {
@@ -79,6 +81,7 @@ export default function FullWidthTabs(): JSX.Element {
 const Notifications = ({ apiCall }: any): JSX.Element => {
   const classes = useStyles();
   const { loggedInUser } = useAuth();
+  const { socket } = useSocket();
 
   const [notifications, setNotifications] = useState<INotification[]>([]);
 
@@ -87,6 +90,13 @@ const Notifications = ({ apiCall }: any): JSX.Element => {
     if (selectedNotification.read === false && apiCall === 'getUnreadNotifications') {
       patchNotificationAsRead(id);
       setNotifications(notifications.filter((notification) => notification._id !== id));
+      if (socket !== undefined) {
+        socket.emit('clearNotification', {
+          type: 'readNotification',
+          sender: loggedInUser?.id,
+          recipient: loggedInUser?.id,
+        });
+      }
     }
   };
 
