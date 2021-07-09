@@ -23,10 +23,12 @@ export default function Login(): JSX.Element {
     { setSubmitting }: FormikHelpers<{ email: string; password: string }>,
   ) => {
     login(email, password).then((data) => {
+      setSubmitting(true);
       if (data.error) {
         setSubmitting(false);
         updateSnackBarMessage(data.error.message);
       } else if (data.success) {
+        setSubmitting(false);
         updateLoginContext(data.success, false);
         history.push('/dashboard');
       } else {
