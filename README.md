@@ -47,7 +47,7 @@ Loving Sitter is a full-stack CRUD website that helps dog owners find dogsitters
 ![Signup Demo](demo/images/loving-sitter-signup.png)
 ![Login Demo](demo/images/loving-sitter-login.png)
 
-https://www.loom.com/share/3c59f6d3e4914c0582c0f6043e07d67c
+![Signup gif](demo/images/loving-sitter-gif1.gif)
 
 2. Search. Users can find dogsitters based on their schedule and location
 
