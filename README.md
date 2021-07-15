@@ -47,6 +47,27 @@ Loving Sitter is a full-stack CRUD website that helps dog owners find dogsitters
 ![Signup Demo](demo/images/loving-sitter-signup.png)
 ![Login Demo](demo/images/loving-sitter-login.png)
 
-2. Dashboard. Here is a description about what a user can expect to see
+2. Search. Users can find dogsitters based on their schedule and location
 
-![Dashboard](demo/images/dashboard.png)
+![Search](demo/images/search.png)
+
+3. Profile Details. Users can click on a dogsitter's profile to view more images and reviews from other users. They can also send booking requests.
+
+![Profile Details](demo/images/profile-details.png)
+
+4. Notifications. Users can get real-time notifications when another user books, cancels, or sends a request for dogsitting.
+
+![Notifications](demo/images/loving-sitter-notifications.png)
+
+5. Bookings. Once another user has sent a booking request, dogsitters and dog owners can view their booking requests based on their schedule. Dog owners can choose to cancel their requests. Dogsitters can choose to accept or decline offers for dog sitting.
+
+![Bookings](demo/images/loving-sitter-bookings.png)
+
+6. Messages. Once a dog owner has sent a request for dogsitting services, a conversation is created between the dog owner and dogsitter, and they can message in real-time in the messages section.
+
+![Messages](demo/images/loving-sitter-messages.png)
+
+7. Profile Settings. Users can edit their profile by changing their name, availability, description, tagline and images
+
+![Profile Settings](demo/images/loving-sitter-profile-settings.png)
+
