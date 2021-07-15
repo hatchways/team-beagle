@@ -42,9 +42,10 @@ Loving Sitter is a full-stack CRUD website that helps dog owners find dogsitters
 
 ### Demo
 
-1. Registration. Users will be able to create a new account using their email and password
+1. Registration/Login. Users will be able to create a new account using a username, email and password or sign in with their email and password
 
 ![Signup Demo](demo/images/loving-sitter-signup.png)
+![Login Demo](demo/images/loving-sitter-login.png)
 
 2. Dashboard. Here is a description about what a user can expect to see
 
