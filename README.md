@@ -73,7 +73,7 @@ Loving Sitter is a full-stack CRUD website that helps dog owners find dogsitters
 
 ![Messages](demo/images/loving-sitter-messages.png)
 
-![Messages gif](demo/images/loving-sitter-gif4.png)
+![Messages gif](demo/images/loving-sitter-gif4.gif)
 
 7. Profile Settings. Users can edit their profile by changing their name, availability, description, tagline and images
 
