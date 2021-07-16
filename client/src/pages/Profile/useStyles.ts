@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
     height: 'calc((100vh - 85px) * .95)',
     flexGrow: 1,
     padding: '0 50px',
-    // height: 'calc(100vh - 210px)',
     [theme.breakpoints.down('xs')]: {
       width: '100%',
       overflowY: 'unset',

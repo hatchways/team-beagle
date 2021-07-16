@@ -256,31 +256,41 @@ export default function Listings(): JSX.Element {
       </Container>
       {/* End search */}
 
-      {!showMoreUsers ? (
+      {sitters &&
+        sitters?.length > 0 &&
+        (!showMoreUsers ? (
+          <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
+            <Grid container spacing={4}>
+              {sitters.slice(0, 6).map((profile) => (
+                <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+                  <ProfileCard profile={profile} />
+                </Grid>
+              ))}
+            </Grid>
+            <Button onClick={handleShowMore} variant="outlined" className={classes.showMore}>
+              Show More Options
+            </Button>
+          </Container>
+        ) : (
+          <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
+            <Grid container spacing={4}>
+              {sitters.slice(0, 12).map((profile) => (
+                <Grid item key={profile.userId} xs={12} sm={6} md={4}>
+                  <ProfileCard profile={profile} />
+                </Grid>
+              ))}
+            </Grid>
+            <Button onClick={handleShowLess} variant="outlined" className={classes.showMore}>
+              Show Fewer Options
+            </Button>
+          </Container>
+        ))}
+
+      {sitters && sitters?.length === 0 && (
         <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
-          <Grid container spacing={4}>
-            {sitters.slice(0, 6).map((profile) => (
-              <Grid item key={profile.userId} xs={12} sm={6} md={4}>
-                <ProfileCard profile={profile} />
-              </Grid>
-            ))}
+          <Grid container justify="center">
+            <Typography>No Sitters Found</Typography>
           </Grid>
-          <Button onClick={handleShowMore} variant="outlined" className={classes.showMore}>
-            Show More Options
-          </Button>
-        </Container>
-      ) : (
-        <Container className={`${classes.cardGrid} sixth-step`} maxWidth="md">
-          <Grid container spacing={4}>
-            {sitters.slice(0, 12).map((profile) => (
-              <Grid item key={profile.userId} xs={12} sm={6} md={4}>
-                <ProfileCard profile={profile} />
-              </Grid>
-            ))}
-          </Grid>
-          <Button onClick={handleShowLess} variant="outlined" className={classes.showMore}>
-            Show Fewer Options
-          </Button>
         </Container>
       )}
     </Grid>
