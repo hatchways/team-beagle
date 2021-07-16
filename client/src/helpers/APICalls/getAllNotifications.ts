@@ -6,7 +6,7 @@ const getUnreadNotifications = () => async (): Promise<any> => {
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`http://localhost:3001/notifications/all`, fetchOptions)
+  return await fetch(`/notifications/all`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },

@@ -12,7 +12,7 @@ const sendMessage = (id: string, type: string, content: string) => async (): Pro
     credentials: 'include',
     body: JSON.stringify({ type, content }),
   };
-  return await fetch(`http://localhost:3001/message/${id}`, fetchOptions)
+  return await fetch(`/message/${id}`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },

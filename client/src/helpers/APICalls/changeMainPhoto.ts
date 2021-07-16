@@ -1,5 +1,5 @@
 const changeMainPhoto = async (index: number): Promise<any> => {
-  return await fetch(`http://localhost:3001/profile/change-main-photo/${index}`, {
+  return await fetch(`/profile/change-main-photo/${index}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

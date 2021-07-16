@@ -6,7 +6,7 @@ export const patchNotificationAsRead = async (id: string): Promise<any> => {
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`http://localhost:3001/notifications/read/${id}`, fetchOptions)
+  return await fetch(`/notifications/read/${id}`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
@@ -19,7 +19,7 @@ export const patchAllNotificationsAsRead = async (): Promise<any> => {
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
   };
-  return await fetch(`http://localhost:3001/notifications/readall`, fetchOptions)
+  return await fetch(`/notifications/readall`, fetchOptions)
     .then((res) => res.json())
     .catch(() => ({
       error: { message: 'Unable to connect to server. Please try again' },
