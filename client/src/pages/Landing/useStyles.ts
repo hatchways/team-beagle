@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    minHeight: 'calc(100vh - 85px)',
+    height: 'calc(100vh - 85px)',
     boxSizing: 'border-box',
     '& .MuiInput-underline:before': {
       borderBottom: '1.2px solid rgba(0, 0, 0, 0.2)',
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     flexDirection: 'column',
-    minHeight: '100vh',
+    height: 'calc(100vh - 85px)',
     backgroundColor: '#F8F8F8',
   },
   link: {
@@ -75,7 +75,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   banner: {
       width: '100%',
-      height: '100vh',
+      objectFit: 'cover',
+      height: 'calc(100vh - 85px)',
   },
   welcome: {
     width: '80%',
@@ -90,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'Roboto',
     [theme.breakpoints.down("lg")]: {
         width: '90%',
-      marginTop: '250px',
+      marginTop: '150px',
       marginBottom: '50px',
       fontSize: 56,
       alignItems: 'center',

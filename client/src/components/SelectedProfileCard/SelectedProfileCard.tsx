@@ -14,11 +14,26 @@ import Divider from '@material-ui/core/Divider';
 import React, { useState, useEffect } from 'react';
 import useStyles from './useStyles';
 import { Profile } from '../../interface/Profile';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import BackgroundImage from '../../Images/house.jpeg';
 import AvatarPic from '../../Images/avatar.png';
 
 export default function SelectedProfileCard({ profile }: any): JSX.Element {
   const classes = useStyles();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      setTimeout(function(){setIsLoading(false);}, 1000);
+    },[])
+
+    if (isLoading) {
+    return (
+      <Grid container alignItems="center" direction="column">
+        <Box mb={5} />
+        <CircularProgress />
+      </Grid>
+    );
+  }
   return (
     <Card className={classes.contentArea}>
       <CardMedia className={classes.cardMedia} image={BackgroundImage} />
@@ -29,7 +44,7 @@ export default function SelectedProfileCard({ profile }: any): JSX.Element {
             {profile.firstName} {profile.lastName}
           </Typography>
           <Typography gutterBottom variant="subtitle2" component="p">
-            {profile.description}
+            {profile.tagLine}
           </Typography>
           <Typography className={classes.cardFooterLocation} variant="subtitle2" component="p">
             <RoomIcon color="primary" />

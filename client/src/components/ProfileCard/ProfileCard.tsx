@@ -41,11 +41,6 @@ const ProfileCard: React.FC<CardProps> = ({ profile }) => {
             marginBottom: '.4rem',
           }}
         />
-
-        <Typography gutterBottom variant="button" component="p" className={classes.cardDescription}>
-          {profile.description}
-        </Typography>
-
         <Divider
           style={{
             width: '100%',

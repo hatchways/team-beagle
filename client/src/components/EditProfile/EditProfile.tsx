@@ -235,8 +235,7 @@ export default function EditProfile(): JSX.Element {
       primaryPhone: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')
-        .min(10, 'You must enter a ten-digit phone number with the area code')
-        .required('Your primary phone is required'),
+        .min(10, 'You must enter a ten-digit phone number with the area code'),
       secondaryPhone: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .max(14, 'You must enter a ten-digit phone number with the area code')
